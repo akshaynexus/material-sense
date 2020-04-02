@@ -22,8 +22,7 @@ const styles = theme => ({
   appBar: {
     position: "relative",
     boxShadow: "none",
-    borderBottom: `1px solid ${theme.palette.grey["100"]}`,
-    backgroundColor: "white"
+    // borderBottom: `1px solid ${theme.palette.grey["100"]}`,
   },
   inline: {
     display: "inline"
@@ -42,7 +41,7 @@ const styles = theme => ({
   },
   productLogo: {
     display: "inline-block",
-    borderLeft: `1px solid ${theme.palette.grey["A100"]}`,
+    // borderLeft: `1px solid ${theme.palette.grey["A100"]}`,
     marginLeft: 32,
     paddingLeft: 24,
     [theme.breakpoints.up("md")]: {
@@ -104,7 +103,7 @@ class Topbar extends Component {
     if (this.props.currentPath === "/home") {
       return 0;
     }
-    if (this.props.currentPath === "/dashboard") {
+    if (this.props.currentPath.includes( "/dashboard")) {
       return 1;
     }
     if (this.props.currentPath === "/signup") {
@@ -130,14 +129,14 @@ class Topbar extends Component {
                 <Typography variant="h6" color="inherit" noWrap>
                   <Link to="/" className={classes.link}>
                     <img width={20} src={logo} alt="" />
-                    <span className={classes.tagline}>Material Sense</span>
+                    <span className={classes.tagline}>Mineit Pool</span>
                   </Link>
                 </Typography>
               </div>
               {!this.props.noTabs && (
                 <React.Fragment>
                   <div className={classes.productLogo}>
-                    <Typography>A material UI Template</Typography>
+                    <Typography>Altcoin pool UI</Typography>
                   </div>
                   <div className={classes.iconContainer}>
                     <IconButton

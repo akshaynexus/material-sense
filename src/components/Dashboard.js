@@ -18,14 +18,14 @@ import Topbar from "./Topbar";
 const numeral = require("numeral");
 numeral.defaultFormat("0,000");
 
-const backgroundShape = require("../images/shape.svg");
+// const backgroundShape = require("../images/shape.svg");
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    backgroundColor: theme.palette.grey["100"],
+    backgroundColor: theme.palette.primary,
     overflow: "hidden",
-    background: `url(${backgroundShape}) no-repeat`,
+    // background: `url(${backgroundShape}) no-repeat`,
     backgroundSize: "cover",
     backgroundPosition: "0 400px",
     paddingBottom: 200
@@ -180,7 +180,7 @@ class Dashboard extends Component {
       monthlyPayment,
       monthlyInterest,
       data,
-      loading
+      loading,
     } = this.state;
     const currentPath = this.props.location.pathname;
 
@@ -201,7 +201,7 @@ class Dashboard extends Component {
                 <div className={classes.topBar}>
                   <div className={classes.block}>
                     <Typography variant="h6" gutterBottom>
-                      Dashboard
+                      Dashboard        {this.props.match.params.coin}
                     </Typography>
                     <Typography variant="body1">
                       Adjust and play with our sliders.

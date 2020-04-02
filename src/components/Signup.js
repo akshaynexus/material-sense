@@ -22,7 +22,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Fade from "@material-ui/core/Fade";
 import Back from "./common/Back";
 
-const backgroundShape = require("../images/shape.svg");
+// const backgroundShape = require("../images/shape.svg");
 
 const logo = require("../images/logo.svg");
 
@@ -34,7 +34,7 @@ const styles = theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.secondary["A100"],
     overflow: "hidden",
-    background: `url(${backgroundShape}) no-repeat`,
+    // background: `url(${backgroundShape}) no-repeat`,
     backgroundSize: "cover",
     backgroundPosition: "0 400px",
     marginTop: 10,

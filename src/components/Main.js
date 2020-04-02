@@ -8,17 +8,18 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import InstructionDialog from "./dialogs/InstructionDialog";
 import SwipeDialog from "./dialogs/SwipeDialog";
+import PoolsList from "./PoolsList";
 
 import Topbar from "./Topbar";
 
-const backgroundShape = require("../images/shape.svg");
+// const backgroundShape = require("../images/shape.svg");
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.grey["100"],
     overflow: "hidden",
-    background: `url(${backgroundShape}) no-repeat`,
+    // background: `url(${backgroundShape}) no-repeat`,
     backgroundSize: "cover",
     backgroundPosition: "0 400px",
     paddingBottom: 200
@@ -240,6 +241,8 @@ class Main extends Component {
               </Grid>
             </Grid>
           </Grid>
+          <PoolsList></PoolsList>
+
           <SwipeDialog
             open={this.state.learnMoredialog}
             onClose={this.dialogClose}

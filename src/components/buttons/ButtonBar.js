@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import withStyles from '@material-ui/styles/withStyles';
 import Button from '@material-ui/core/Button';
+import { Link } from 'react-router-dom'
 
 const styles = theme => ({
   primary: {
@@ -16,23 +17,19 @@ const styles = theme => ({
 })
 
 class ButtonBar extends Component {
-
   render() {
     const { classes } = this.props;
-
+    const redirpath = "/dashboard/" + this.props.coinname
     return (
       <div className={classes.spaceTop}>
         <Button
-          className={classes.primary}
-        >
-          Delete
-        </Button>
-        <Button
           variant="contained"
           color="primary"
-          className={classes.secondary}
+          className={classes.primary}
+          component={Link}
+          to={redirpath}
         >
-          Edit
+          Stats
         </Button>
       </div>
     )

@@ -87,37 +87,61 @@ class CardItem extends Component {
             <div className={classes.baseline}>
               <div className={classes.inline}>
                 <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Months
+                  Coin
                 </Typography>
                 <Typography variant="h6" gutterBottom>
-                  4 month(s)
+                  {this.props.coin}
                 </Typography>
               </div>
               <div className={classes.inline}>
                 <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Creation date
+                  Algo
                 </Typography>
                 <Typography variant="h6" gutterBottom>
-                  01 February 2019
+                {this.props.algo}
                 </Typography>
               </div>
               <div className={classes.inline}>
                 <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Amount
+                  Miners
                 </Typography>
                 <Typography variant="h6" gutterBottom>
-                  6,600 USD
+                {this.props.minercount}
+                </Typography>
+              </div>
+              <div className={classes.inline}>
+                <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                  Pool Hashrate
+                </Typography>
+                <Typography variant="h6" gutterBottom>
+                {this.props.poolhashrate}
+                </Typography>
+              </div>
+              <div className={classes.inline}>
+                <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                  Network hashrate
+                </Typography>
+                <Typography variant="h6" gutterBottom>
+                {this.props.nethashrate}
+                </Typography>
+              </div>
+              <div className={classes.inline}>
+                <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                  Total Paid
+                </Typography>
+                <Typography variant="h6" gutterBottom>
+                {this.props.totalpaid}
                 </Typography>
               </div>
             </div>
             <div className={classes.inlineRight}>
               <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                Other Amount
+                Block height
               </Typography>
               <Typography variant="h4" gutterBottom>
-                Once a month
+              {this.props.blockheight}
               </Typography>
-              <ButtonBar />
+              <ButtonBar coinname={this.props.poolid} />
             </div>
           </div>
         </Paper>
