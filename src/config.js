@@ -1,5 +1,5 @@
 const config = {
-    "poolapiurl":"http://mineit.io:4000/api/",
+    "poolapiurl":"https://mineit.io/api/",
     "algos":{
         "asic/fgpa":[
            "x16r",
