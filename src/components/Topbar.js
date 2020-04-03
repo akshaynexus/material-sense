@@ -120,7 +120,7 @@ class Topbar extends Component {
     return (
       <AppBar position="static" color="default"className={classes.appBar}>
         <Toolbar>
-          <Grid container spacing={10} alignItems="baseline">
+          <Grid container spacing={1} alignItems="baseline">
             <Grid item xs={12} className={classes.flex}>
             <div className={classes.iconContainer}>
                     <IconButton
