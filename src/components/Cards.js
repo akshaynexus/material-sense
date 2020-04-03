@@ -6,28 +6,20 @@ import CardCoin from "./cards/CardCoin";
 import Topbar from "./Topbar";
 import SectionHeader from "./typo/SectionHeader";
 import Loading from "./common/Loading";
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
 import config from '../config.js'
 const styles = theme => ({
   grid: {
     width: 1100
-  },
-  selectType: {
-    width: 200,
   }
 });
 
 class Cards extends Component {
   state = {
     loading:true,
-    pooldata:null
+    pooldata:null,
   }
   async componentDidMount(){
     const APIPath = config.poolapiurl;
-    console.log(config)
     const response = await fetch(APIPath + "pools");
     const data = await response.json();
     this.setState({pooldata: data.pools,loading:false});
@@ -70,9 +62,12 @@ class Cards extends Component {
   <br></br> </div>))
   }
   render() {
+    // const handleChange = (event) => {
+    //   return selectedindex = event.target.value;
+    // };
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
-
+    var selectedindex = 1;
     return (
       <React.Fragment>
         <CssBaseline />
@@ -90,25 +85,8 @@ class Cards extends Component {
                 <SectionHeader
                   title="Coins"
                   subtitle="Available coins to mine"
+                  val={selectedindex}
                 />
-                        <FormControl className={classes.selectType} justify="center">
-        <InputLabel id="demo-simple-select-label">Algo Type</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={10}
-          onChange={null}
-        >
-          <MenuItem value={10}>ASIC/FGPA</MenuItem>
-          <MenuItem value={20}>GPU</MenuItem>
-          <MenuItem value={30}>CPU</MenuItem>
-        </Select>
-      </FormControl>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-
                 {(this.state.loading|| !this.state.pooldata) ?
                 <Loading loading={this.state.loading} />:this.buildCoinCards()}
               </Grid>

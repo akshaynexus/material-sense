@@ -29,7 +29,6 @@ const styles = theme => ({
     display: "flex",
     [theme.breakpoints.down("sm")]: {
       display: "flex",
-      justifyContent: "space-evenly",
       alignItems: "center"
     }
   },
