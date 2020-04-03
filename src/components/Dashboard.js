@@ -18,14 +18,12 @@ import Topbar from "./Topbar";
 const numeral = require("numeral");
 numeral.defaultFormat("0,000");
 
-// const backgroundShape = require("../images/shape.svg");
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.primary,
     overflow: "hidden",
-    // background: `url(${backgroundShape}) no-repeat`,
     backgroundSize: "cover",
     backgroundPosition: "0 400px",
     paddingBottom: 200
@@ -113,6 +111,8 @@ const styles = theme => ({
 const monthRange = Months;
 
 class Dashboard extends Component {
+  pooid = this.props.match.params.coin;
+
   state = {
     loading: true,
     amount: 15000,
@@ -154,6 +154,7 @@ class Dashboard extends Component {
 
   componentDidMount() {
     this.updateValues();
+
   }
 
   handleChangeAmount = (event, value) => {
@@ -183,7 +184,6 @@ class Dashboard extends Component {
       loading,
     } = this.state;
     const currentPath = this.props.location.pathname;
-
     return (
       <React.Fragment>
         <CssBaseline />
@@ -201,7 +201,7 @@ class Dashboard extends Component {
                 <div className={classes.topBar}>
                   <div className={classes.block}>
                     <Typography variant="h6" gutterBottom>
-                      Dashboard        {this.props.match.params.coin}
+                      {this.pooid} Dashboard
                     </Typography>
                     <Typography variant="body1">
                       Adjust and play with our sliders.

@@ -1,0 +1,31 @@
+const config = {
+    "poolapiurl":"http://mineit.io:4000/api/",
+    "algos":{
+        "asic/fgpa":[
+           "x16r",
+           "x16rv2",
+           "sha256d",
+           "scrypt",
+           "x11",
+           "quark",
+           "skunkhash"
+        ],
+        "cpu":[
+           "randomx",
+           "yespower",
+           "yescript",
+           "argon2d",
+           "yespower-litb"
+        ],
+        "gpu":[
+           "x16rv2",
+           "neoscrypt",
+           "ethash",
+           "x25x",
+           "progpow",
+           "mtp",
+           "x21s"
+        ]
+     }
+}
+module.exports = config;

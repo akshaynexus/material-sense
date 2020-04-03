@@ -21,8 +21,6 @@ const logo = require("../images/logo.svg");
 const styles = theme => ({
   appBar: {
     position: "relative",
-    boxShadow: "none",
-    // borderBottom: `1px solid ${theme.palette.grey["100"]}`,
   },
   inline: {
     display: "inline"
@@ -121,24 +119,11 @@ class Topbar extends Component {
     const { classes } = this.props;
 
     return (
-      <AppBar position="absolute" color="default" className={classes.appBar}>
+      <AppBar position="static" color="default"className={classes.appBar}>
         <Toolbar>
           <Grid container spacing={10} alignItems="baseline">
             <Grid item xs={12} className={classes.flex}>
-              <div className={classes.inline}>
-                <Typography variant="h6" color="inherit" noWrap>
-                  <Link to="/" className={classes.link}>
-                    <img width={20} src={logo} alt="" />
-                    <span className={classes.tagline}>Mineit Pool</span>
-                  </Link>
-                </Typography>
-              </div>
-              {!this.props.noTabs && (
-                <React.Fragment>
-                  <div className={classes.productLogo}>
-                    <Typography>Altcoin pool UI</Typography>
-                  </div>
-                  <div className={classes.iconContainer}>
+            <div className={classes.iconContainer}>
                     <IconButton
                       onClick={this.mobileMenuOpen}
                       className={classes.iconButton}
@@ -148,9 +133,23 @@ class Topbar extends Component {
                       <MenuIcon />
                     </IconButton>
                   </div>
+              <div className={classes.inline}>
+                <Typography variant="h6" color="inherit" noWrap>
+                  <Link to="/" className={classes.link}>
+                    <img width={20} src={logo} alt="" />
+                    <span className={classes.tagline}>Mineit Pool</span>
+                  </Link>
+                </Typography>
+              </div>
+
+              {!this.props.noTabs && (
+                <React.Fragment>
+                  <div className={classes.productLogo}>
+                    <Typography>Altcoin pool UI</Typography>
+                  </div>
                   <div className={classes.tabContainer}>
                     <SwipeableDrawer
-                      anchor="right"
+                      anchor="left"
                       open={this.state.menuDrawer}
                       onClose={this.mobileMenuClose}
                       onOpen={this.mobileMenuOpen}

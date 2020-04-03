@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import withStyles from '@material-ui/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import DescriptionIcon from '@material-ui/icons/Description';
-import ButtonBar from '../buttons/ButtonBar';
+import { Link } from 'react-router-dom'
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
 
 const styles = theme => ({
   paper: {
@@ -13,9 +12,7 @@ const styles = theme => ({
     color: theme.palette.text.secondary
   },
   avatar: {
-    margin: 10,
-    backgroundColor: theme.palette.grey['200'],
-    color: theme.palette.text.primary,
+    margin: 10
   },
   avatarContainer: {
     [theme.breakpoints.down('sm')]: {
@@ -70,19 +67,22 @@ const styles = theme => ({
   }
 })
 
-class CardItem extends Component {
+class CardCoin extends Component {
 
   render() {
     const { classes } = this.props;
+    const redirpath = "/dashboard/" + this.props.poolid
 
     return (
       <div className={classes.root}>
-        <Paper className={classes.paper}>
+        <CardActionArea
+                  component={Link}
+                  to={redirpath}
+        >
+        <Card className={classes.paper}>
           <div className={classes.itemContainer}>
             <div className={classes.avatarContainer}>
-              <Avatar className={classes.avatar}>
-                <DescriptionIcon />
-              </Avatar>
+                <img className={classes.avatar} src={"http://mineit.io/img/coin/icon/" + this.props.ticker.toLowerCase() + ".png"} style={{height: '50px', width: '50px', objectFit:'contain'}} alt=""></img>
             </div>
             <div className={classes.baseline}>
               <div className={classes.inline}>
@@ -111,7 +111,7 @@ class CardItem extends Component {
               </div>
               <div className={classes.inline}>
                 <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Pool Hashrate
+                  Pool Hash
                 </Typography>
                 <Typography variant="h6" gutterBottom>
                 {this.props.poolhashrate}
@@ -119,35 +119,28 @@ class CardItem extends Component {
               </div>
               <div className={classes.inline}>
                 <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Network hashrate
+                  Fee
                 </Typography>
                 <Typography variant="h6" gutterBottom>
-                {this.props.nethashrate}
+                {this.props.fee}
                 </Typography>
               </div>
               <div className={classes.inline}>
                 <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Total Paid
+                  Diff
                 </Typography>
                 <Typography variant="h6" gutterBottom>
-                {this.props.totalpaid}
+                {this.props.diff}
                 </Typography>
               </div>
             </div>
-            <div className={classes.inlineRight}>
-              <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                Block height
-              </Typography>
-              <Typography variant="h4" gutterBottom>
-              {this.props.blockheight}
-              </Typography>
-              <ButtonBar coinname={this.props.poolid} />
-            </div>
           </div>
-        </Paper>
+        </Card>
+        </CardActionArea>
+
       </div>
     )
   }
 }
 
-export default withStyles(styles)(CardItem);
+export default withStyles(styles)(CardCoin);

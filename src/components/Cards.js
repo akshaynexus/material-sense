@@ -2,26 +2,21 @@ import React, { Component } from "react";
 import withStyles from "@material-ui/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
-import CardItem from "./cards/CardItem";
+import CardCoin from "./cards/CardCoin";
 import Topbar from "./Topbar";
-import CircularProgress from '@material-ui/core/CircularProgress';
 import SectionHeader from "./typo/SectionHeader";
-// const backgroundShape = require("../images/shape.svg");
-
+import Loading from "./common/Loading";
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import config from '../config.js'
 const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.grey["A500"],
-    overflow: "hidden",
-    // background: `url(${backgroundShape}) no-repeat`,
-    backgroundSize: "cover",
-    backgroundPosition: "0 400px",
-    marginTop: 20,
-    padding: 20,
-    paddingBottom: 200
-  },
   grid: {
-    width: 1000
+    width: 1100
+  },
+  selectType: {
+    width: 200,
   }
 });
 
@@ -31,7 +26,8 @@ class Cards extends Component {
     pooldata:null
   }
   async componentDidMount(){
-    const APIPath = "http://mineit.io:4000/api/";
+    const APIPath = config.poolapiurl;
+    console.log(config)
     const response = await fetch(APIPath + "pools");
     const data = await response.json();
     this.setState({pooldata: data.pools,loading:false});
@@ -61,14 +57,14 @@ class Cards extends Component {
 }
   buildCoinCards() {
    return this.state.pooldata.map(coin => (<div key={1}>
-     <CardItem
+     <CardCoin
     coin={coin.coin.name}
+    ticker={coin.coin.type}
     algo={coin.coin.algorithm}
     minercount={coin.poolStats.connectedMiners}
-    poolhashrate={this.hashformat(coin.poolStats.poolHashrate,5, 'H/s')}
-    nethashrate={this.hashformat(coin.networkStats.networkHashrate,5, 'H/s')}
-    blockheight={coin.networkStats.blockHeight}
-    totalpaid={coin.totalPaid + " " + coin.coin.type}
+    poolhashrate={this.hashformat(coin.poolStats.poolHashrate,2, 'H/s')}
+    diff={this.hashformat(coin.networkStats.networkDifficulty,2, '')}
+    fee={coin.poolFeePercent + "%"}
     poolid={coin.id}
     />
   <br></br> </div>))
@@ -81,7 +77,7 @@ class Cards extends Component {
       <React.Fragment>
         <CssBaseline />
         <Topbar currentPath={currentPath} />
-        <div className={classes.root}>
+        <div>
           <Grid container justify="center">
             <Grid
               spacing={10}
@@ -90,13 +86,31 @@ class Cards extends Component {
               container
               className={classes.grid}
             >
-              <Grid item xs={12}>
+              <Grid item xs={15}>
                 <SectionHeader
                   title="Coins"
                   subtitle="Available coins to mine"
                 />
+                        <FormControl className={classes.selectType} justify="center">
+        <InputLabel id="demo-simple-select-label">Algo Type</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={10}
+          onChange={null}
+        >
+          <MenuItem value={10}>ASIC/FGPA</MenuItem>
+          <MenuItem value={20}>GPU</MenuItem>
+          <MenuItem value={30}>CPU</MenuItem>
+        </Select>
+      </FormControl>
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+
                 {(this.state.loading|| !this.state.pooldata) ?
-                <CircularProgress />:this.buildCoinCards()}
+                <Loading loading={this.state.loading} />:this.buildCoinCards()}
               </Grid>
             </Grid>
           </Grid>
