@@ -121,7 +121,7 @@ class Topbar extends Component {
       <AppBar position="static" color="default"className={classes.appBar}>
         <Toolbar>
           <Grid container spacing={1} alignItems="baseline">
-            <Grid item xs={12} className={classes.flex}>
+            <Grid item xs={7} className={classes.flex}>
             <div className={classes.iconContainer}>
                     <IconButton
                       onClick={this.mobileMenuOpen}
