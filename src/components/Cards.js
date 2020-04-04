@@ -81,7 +81,7 @@ class Cards extends Component {
               container
               className={classes.grid}
             >
-              <Grid item xs={15}>
+              <Grid item xs={12}>
                 <SectionHeader
                   title="Coins"
                   subtitle="Available coins to mine"
