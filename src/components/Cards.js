@@ -88,7 +88,7 @@ class Cards extends Component {
                   val={selectedindex}
                 />
                 {(this.state.loading|| !this.state.pooldata) ?
-                <Loading loading={this.state.loading} />:this.buildCoinCards()}
+                <Loading  overlay={true} loading={this.state.loading} />:this.buildCoinCards()}
               </Grid>
             </Grid>
           </Grid>

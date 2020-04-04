@@ -12,6 +12,7 @@ import SimpleLineChart from "./SimpleLineChart";
 import Months from "./common/Months";
 import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import Loading from "./common/Loading";
+import config from '../config.js'
 
 import Topbar from "./Topbar";
 
@@ -119,6 +120,7 @@ class Dashboard extends Component {
     period: 3,
     start: 0,
     monthlyInterest: 0,
+    ppolperformance:null,
     totalInterest: 0,
     monthlyPayment: 0,
     totalPayment: 0,
@@ -151,8 +153,11 @@ class Dashboard extends Component {
       data
     });
   }
+  async getPoolChartData() {
+    const poolchartdata = await fetch(config.poolapiurl + "pools/" + this.poolid + "/performance");
 
-  componentDidMount() {
+  }
+  async componentDidMount() {
     this.updateValues();
 
   }
@@ -200,11 +205,11 @@ class Dashboard extends Component {
               <Grid item xs={12}>
                 <div className={classes.topBar}>
                   <div className={classes.block}>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h4" gutterBottom>
                       {this.pooid} Dashboard
                     </Typography>
                     <Typography variant="body1">
-                      Adjust and play with our sliders.
+                      Pool and network stats
                     </Typography>
                   </div>
                   <div>
@@ -323,7 +328,7 @@ class Dashboard extends Component {
                     className={classes.paper}
                     style={{ position: "relative" }}
                   >
-                    <Loading loading={loading} />
+                    <Loading overlay={false} loading={loading} />
                     <div className={loading ? classes.loadingState : ""}>
                       <Typography variant="subtitle1" gutterBottom>
                         Some details
@@ -380,7 +385,7 @@ class Dashboard extends Component {
                     className={classes.paper}
                     style={{ position: "relative" }}
                   >
-                    <Loading loading={loading} />
+                    <Loading  overlay={false} loading={loading} />
                     <div className={loading ? classes.loadingState : ""}>
                       <Typography variant="subtitle1" gutterBottom>
                         State
