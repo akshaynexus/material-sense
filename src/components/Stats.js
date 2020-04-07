@@ -15,14 +15,20 @@ import Typography from '@material-ui/core/Typography';
 
 import "./Stats.css";
 import {
-    XAxis, YAxis, Tooltip, Legend, AreaChart, Area
+    XAxis, YAxis, Tooltip, Legend, AreaChart, Area, ResponsiveContainer
 } from 'recharts';
 
 const useStyles = makeStyles({
     root: {
         // maxWidth: 275,
         borderWidth: "1px",
-        borderColor: "green !important"
+        borderColor: "green !important",
+        '@media (min-width: 600px)': {
+            marginTop: "30px",
+        },
+        '@media (min-width: 320px)': {
+            marginTop: "30px",
+        }
     },
     valueItems: {
         width: 275,
@@ -108,25 +114,30 @@ const Stats = (props) => {
     const CardChart = (data, CardSubtitle, CardLateststat) => {
         return <Card className={classes.root}>
             <CardContent>
-                <AreaChart width={800} height={400} data={data}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                    <defs>
-                        <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
-                        </linearGradient>
-                    </defs>
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
-                </AreaChart>
+                <div style={{ width: 800, height: 400 }}>
+                    <ResponsiveContainer>
+                        <AreaChart data={data}
+                            margin={{ top: 15, right: 30, left: 25, bottom: 5 }}>
+                            <defs>
+                                <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
+                                    <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
                 <Typography variant="h5" component="h2">
                     {CardLateststat}
                 </Typography>
                 <Typography variant="body" component="h5">
                     {CardSubtitle}
                 </Typography>
+
             </CardContent>
         </Card>
     }
@@ -152,7 +163,7 @@ const Stats = (props) => {
         <React.Fragment>
             <CssBaseline />
             <Topbar currentPath={"/stats"} />
-            <div className="container">
+            <div className="container_main">
                 <Grid container spacing={2} direction="row">
                     <Grid item xs={12} sm={12} md={6}>
                         <Grid
