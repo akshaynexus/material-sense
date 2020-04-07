@@ -100,7 +100,7 @@ class Topbar extends Component {
     if (this.props.currentPath === "/home") {
       return 0;
     }
-    if (this.props.currentPath.includes( "/dashboard")) {
+    if (this.props.currentPath.includes("/dashboard")) {
       return 1;
     }
     if (this.props.currentPath === "/signup") {
@@ -112,26 +112,27 @@ class Topbar extends Component {
     if (this.props.currentPath === "/cards") {
       return 4;
     }
+
   };
 
   render() {
     const { classes } = this.props;
 
     return (
-      <AppBar position="static" color="default"className={classes.appBar}>
+      <AppBar position="static" color="default" className={classes.appBar}>
         <Toolbar>
           <Grid container spacing={1} alignItems="baseline">
             <Grid item xs={7} className={classes.flex}>
-            <div className={classes.iconContainer}>
-                    <IconButton
-                      onClick={this.mobileMenuOpen}
-                      className={classes.iconButton}
-                      color="inherit"
-                      aria-label="Menu"
-                    >
-                      <MenuIcon />
-                    </IconButton>
-                  </div>
+              <div className={classes.iconContainer}>
+                <IconButton
+                  onClick={this.mobileMenuOpen}
+                  className={classes.iconButton}
+                  color="inherit"
+                  aria-label="Menu"
+                >
+                  <MenuIcon />
+                </IconButton>
+              </div>
               <div className={classes.inline}>
                 <Typography variant="h6" color="inherit" noWrap>
                   <Link to="/" className={classes.link}>
@@ -163,9 +164,9 @@ class Topbar extends Component {
                               item.external
                                 ? null
                                 : {
-                                    pathname: item.pathname,
-                                    search: this.props.location.search
-                                  }
+                                  pathname: item.pathname,
+                                  search: this.props.location.search
+                                }
                             }
                             button
                             key={item.label}
@@ -190,9 +191,9 @@ class Topbar extends Component {
                             item.external
                               ? null
                               : {
-                                  pathname: item.pathname,
-                                  search: this.props.location.search
-                                }
+                                pathname: item.pathname,
+                                search: this.props.location.search
+                              }
                           }
                           classes={{ root: classes.tabItem }}
                           label={item.label}

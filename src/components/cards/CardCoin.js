@@ -72,7 +72,7 @@ class CardCoin extends Component {
   render() {
     const { classes } = this.props;
     // const redirpath = "/dashboard/" + this.props.poolid
-    const redirpath = "/stats";
+    const redirpath = "/stats/" + this.props.poolid;
 
     return (
       <div className={classes.root}>

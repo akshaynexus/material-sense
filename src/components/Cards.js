@@ -100,8 +100,8 @@ class Cards extends Component {
                 {this.state.loading || !this.state.pooldata ? (
                   <Loading overlay={true} loading={this.state.loading} />
                 ) : (
-                  this.buildCoinCards()
-                )}
+                    this.buildCoinCards()
+                  )}
               </Grid>
             </Grid>
           </Grid>
