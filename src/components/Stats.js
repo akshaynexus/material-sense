@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import withStyles from "@material-ui/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,23 +9,12 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
 import "./Stats.css";
-import {
-    ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine, ReferenceArea,
-    ReferenceDot, Tooltip, CartesianGrid, Legend, Brush, ErrorBar, AreaChart, Area,
-    Label, LabelList
+import { XAxis, YAxis, Tooltip, Legend, AreaChart, Area
 } from 'recharts';
-
-import { scalePow, scaleLog } from 'd3-scale';
-
-const styles = theme => ({
-    grid: {
-        width: 1100
-    }
-});
 
 const useStyles = makeStyles({
     root: {
-        maxWidth: 275,
+        // maxWidth: 275,
         borderWidth: "1px",
         borderColor: "green !important"
     },
@@ -48,23 +36,11 @@ const useStyles = makeStyles({
 });
 
 
-
-
-// Sample response from the api data. 
-// "poolHashrate": 8.304559E+09,
-//       "connectedMiners": 15,
-//       "validSharesPerSecond": 0,
-//       "networkHashrate": 19632872718.33352,
-//       "networkDifficulty": 289.6462763411404,
-//       "created": "2020-04-04T07:00:00"
-
-
 const Stats = (props) => {
 
     // Name of the chain, getting the value from the router parameter.
     const poolid = props.match.params.coin;
 
-    // const [graphDataResponse, setGraphDataResponse] = useState([]);
     const [poolHashrates, setPoolHashrates] = useState([]);
     const [connectedMiners, setConnectedMiners] = useState([]);
     const [networkHashRates, setNetworkHashrates] = useState([]);
@@ -82,8 +58,6 @@ const Stats = (props) => {
         connectedPeers: 0
     });
 
-    const [poolHashrate, setPoolHashrate] = useState();
-    // const [connectedMiners, setConnectedMiners] = useState();
 
 
     useEffect(() => {
@@ -98,10 +72,6 @@ const Stats = (props) => {
 
         const data = await response.json();
 
-        // console.log(data);
-        // console.log(data.stats);
-        // setGraphDataResponse(data.stats);
-
         data.stats.map((stats, index) => (
             setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]),
             setConnectedMiners(connectedMiners => [...connectedMiners, { value: stats.connectedMiners, name: stats.created.substring(11, 16) }]),
@@ -110,12 +80,48 @@ const Stats = (props) => {
         ));
     };
 
+    const CardChart = (data,CardSubtitle,CardLateststat) =>{
+        return <Card className={classes.root}>
+                <CardContent>
+                    <AreaChart width={800} height={400} data={data}
+                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    <defs>
+                         <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
+                        </linearGradient>
+                    </defs>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
+                </AreaChart>
+            <Typography variant="h5" component="h2">
+                {CardLateststat}
+            </Typography>
+            <Typography variant="body" component="h5">
+                {CardSubtitle}
+            </Typography>
+        </CardContent>
+    </Card>
+    }
+
+    const CardInfo = (data,Title) => {
+    return  <Card className={classes.valueItems} variant="outlined">
+            <CardContent>
+                <Typography variant="h5" component="h2">
+                    {data}
+                </Typography>
+                <Typography variant="body" component="h5">
+                    {Title}
+                </Typography>
+            </CardContent>
+        </Card>
+    }
+
     const getPoolData = async () => {
         const response = await fetch(`https://mineit.io/api/pools/${poolid}`);
-
         const data = await response.json();
-        console.log(data.pool);
-
         setPoolData({
             poolHashRate: data.pool.poolStats.poolHashrate,
             miners: data.pool.poolStats.connectedMiners,
@@ -127,18 +133,10 @@ const Stats = (props) => {
             blockchainHeight: data.pool.networkStats.blockHeight,
             connectedPeers: data.pool.networkStats.connectedPeers
         })
-
-        // setPoolHashrate(data.pool.poolStats.poolHashrate)
-
     }
 
     const classes = useStyles();
-    const bull = <span className={classes.bullet}>•</span>;
-
     return (
-
-
-
         <React.Fragment>
             <CssBaseline />
             <Topbar currentPath={"/stats"} />
@@ -152,31 +150,7 @@ const Stats = (props) => {
                             alignItems="center"
                             spacing={3}
                         >
-                            <AreaChart width={800} height={400} data={poolHashrates}
-                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                <defs>
-                                    <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
-                                        <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <CartesianGrid strokeDasharray="1 " />
-                                <Tooltip />
-                                <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
-                            </AreaChart>
-
-                            <Card className={classes.root} variant="outlined">
-                                <CardContent>
-                                    <Typography variant="h5" component="h2">
-                                        {poolData.poolHashRate}
-                                    </Typography>
-                                    <Typography variant="body" component="h5">
-                                        Pool Hashrate
-                                    </Typography>
-                                </CardContent>
-                            </Card>
+                        {CardChart(poolHashrates,"Pool Hashrate",poolData.poolHashRate)}
                         </Grid>
                     </Grid>
 
@@ -188,31 +162,7 @@ const Stats = (props) => {
                             alignItems="center"
                             spacing={3}
                         >
-                            <AreaChart width={800} height={400} data={connectedMiners}
-                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                <defs>
-                                    <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
-                                        <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <CartesianGrid strokeDasharray="1 " />
-                                <Tooltip />
-                                <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
-                            </AreaChart>
-
-                            <Card className={classes.root} variant="outlined">
-                                <CardContent>
-                                    <Typography variant="h5" component="h2">
-                                        {poolData.miners} Miners
-                        </Typography>
-                                    <Typography variant="body" component="h5">
-                                        Miners (Workers)
-                        </Typography>
-                                </CardContent>
-                            </Card>
+                            {CardChart(connectedMiners,"Miners",poolData.miners + " Miners")}
                         </Grid>
                     </Grid>
 
@@ -222,30 +172,8 @@ const Stats = (props) => {
                             direction="row"
                             justify="space-evenly"
                             alignItems="center">
-
-                            <Card className={classes.valueItems} variant="outlined">
-                                <CardContent>
-                                    <Typography variant="h5" component="h2">
-
-                                        {poolData.blockchainHeight}
-                                    </Typography>
-                                    <Typography variant="body" component="h5">
-                                        Blockchain Height
-                        </Typography>
-                                </CardContent>
-                            </Card>
-
-                            <Card className={classes.valueItems} variant="outlined">
-                                <CardContent>
-                                    <Typography variant="h5" component="h2">
-                                        {poolData.connectedPeers}
-                                    </Typography>
-                                    <Typography variant="body" component="h5">
-                                        Connected Peers
-                        </Typography>
-                                </CardContent>
-                            </Card>
-
+                            {CardInfo(poolData.blockchainHeight,"Blockchain Height")}
+                            {CardInfo(poolData.connectedPeers,"Connected Peers")}
                             <Card className={classes.valueItems} variant="outlined">
                                 <CardContent>
                                     <Typography variant="h5" component="h2">
@@ -256,20 +184,12 @@ const Stats = (props) => {
                                     </Typography>
                                     <Typography variant="body" component="h5">
                                         Payment Threshold
-                        </Typography>
+                                    </Typography>
                                 </CardContent>
                             </Card>
 
-                            <Card className={classes.valueItems} variant="outlined">
-                                <CardContent>
-                                    <Typography variant="h5" component="h2">
-                                        {poolData.poolFee} %
-                        </Typography>
-                                    <Typography variant="body" component="h5">
-                                        Pool Fee
-                        </Typography>
-                                </CardContent>
-                            </Card>
+                            {CardInfo(poolData.poolFee + "%","Pool Fee")}
+
                         </Grid>
 
                     </Grid>
@@ -282,32 +202,7 @@ const Stats = (props) => {
                             alignItems="center"
                             spacing={3}
                         >
-                            <AreaChart width={800} height={400} data={networkHashRates}
-                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                <defs>
-                                    <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
-                                        <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <CartesianGrid strokeDasharray="1 " />
-                                <Tooltip />
-                                <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
-                            </AreaChart>
-
-                            <Card className={classes.root} variant="outlined">
-                                <CardContent>
-                                    <Typography variant="h5" component="h2">
-                                        {poolData.networkHashrate}
-                                    </Typography>
-                                    <Typography variant="body" component="h5">
-                                        Network Hashrate
-                        </Typography>
-                                </CardContent>
-                            </Card>
-
+                            {CardChart(networkHashRates,"Network Hashrate",poolData.networkHashrate)}
                         </Grid>
                     </Grid>
 
@@ -319,45 +214,13 @@ const Stats = (props) => {
                             alignItems="center"
                             spacing={3}
                         >
-
-                            <AreaChart width={800} height={400} data={networkDifficulty}
-                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                <defs>
-                                    <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
-                                        <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <CartesianGrid strokeDasharray="1 " />
-                                <Tooltip />
-                                <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
-                            </AreaChart>
-
-
-
-                            <Card className={classes.root} variant="outlined">
-                                <CardContent>
-                                    <Typography variant="h5" component="h2">
-                                        {poolData.networkDifficulty}
-                                    </Typography>
-                                    <Typography variant="body" component="h5">
-                                        Network Difficulty
-                        </Typography>
-                                </CardContent>
-                            </Card>
+                            {CardChart(networkDifficulty,"Network Difficulty",poolData.networkDifficulty)}
                         </Grid>
                     </Grid>
-
                 </Grid>
-
-
             </div>
-
         </React.Fragment>
-
     )
 }
 
-export default Stats; 
+export default Stats;

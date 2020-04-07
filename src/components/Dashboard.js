@@ -12,7 +12,6 @@ import SimpleLineChart from "./SimpleLineChart";
 import Months from "./common/Months";
 import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import Loading from "./common/Loading";
-import config from '../config.js'
 
 import Topbar from "./Topbar";
 
@@ -152,10 +151,6 @@ class Dashboard extends Component {
       monthlyPayment,
       data
     });
-  }
-  async getPoolChartData() {
-    const poolchartdata = await fetch(config.poolapiurl + "pools/" + this.poolid + "/performance");
-
   }
   async componentDidMount() {
     this.updateValues();
