@@ -3,6 +3,11 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+
 import Grid from '@material-ui/core/Grid';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
@@ -107,16 +112,17 @@ const Stats = (props) => {
     }
 
     const CardInfo = (data,Title) => {
-    return  <Card className={classes.valueItems} variant="outlined">
-            <CardContent>
-                <Typography variant="h5" component="h2">
-                    {data}
-                </Typography>
-                <Typography variant="body" component="h5">
-                    {Title}
-                </Typography>
-            </CardContent>
-        </Card>
+    return  <Card className={classes.valueItems}>
+              <CardHeader
+                 avatar={
+                    <Avatar aria-label={Title} className={classes.avatar}>
+                    {/*Put icon related to cardinfo here*/}
+                    </Avatar>
+                }
+                title={Title}
+                subheader={data}
+                />
+            </Card>
     }
 
     const getPoolData = async () => {
@@ -174,7 +180,7 @@ const Stats = (props) => {
                             alignItems="center">
                             {CardInfo(poolData.blockchainHeight,"Blockchain Height")}
                             {CardInfo(poolData.connectedPeers,"Connected Peers")}
-                            <Card className={classes.valueItems} variant="outlined">
+                            <Card className={classes.valueItems}>
                                 <CardContent>
                                     <Typography variant="h5" component="h2">
                                         {poolData.paymentThreshold}
