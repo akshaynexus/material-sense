@@ -5,18 +5,21 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-
+import hashformat from './common/hashutil.js'
 import Grid from '@material-ui/core/Grid';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-
+import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
+import MenuIcon from '@material-ui/icons/Menu';
+import PieChartIcon from '@material-ui/icons/PieChart';
+import SendIcon from '@material-ui/icons/Send';
 import "./Stats.css";
 import {
-    XAxis, YAxis, Tooltip, Legend, AreaChart, Area, ResponsiveContainer
+    XAxis, YAxis, Tooltip, AreaChart, Area, ResponsiveContainer
 } from 'recharts';
+import config from "../config.js";
+import { withSnackbar } from 'notistack';
+import Loading from "./common/Loading";
 
 const useStyles = makeStyles({
     root: {
@@ -46,13 +49,10 @@ const useStyles = makeStyles({
         marginBottom: 12,
     },
 });
-
-
 const Stats = (props) => {
 
     // Name of the chain, getting the value from the router parameter.
-    const poolid = props.match.params.coin;
-
+    const poolid = localStorage.getItem("poolid");
     const [poolHashrates, setPoolHashrates] = useState([]);
     const [connectedMiners, setConnectedMiners] = useState([]);
     const [networkHashRates, setNetworkHashrates] = useState([]);
@@ -69,55 +69,98 @@ const Stats = (props) => {
         blockchainHeight: 0,
         connectedPeers: 0
     });
+    const [loading, setLoading] = useState({
+        loading:true,
+        loadingtext:"Loading Graph data",
+        error:'NoError'
+    });
 
 
 
     useEffect(() => {
         const getGraphData = async () => {
-            const response = await fetch(
-                `https://mineit.io/api/pools/${poolid}/performance`
-            );
+            let response,data;
+            try {
+                response = await fetch(config.poolapiurl + `pools/${poolid}/performance`);
+                data = await response.json();
+                props.enqueueSnackbar('Successfully fetched the data.')
+                setLoading({loading : true,loadingtext:"Loading Pool data"});
+                data.stats.map((stats) => {
+                    setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
+                    setConnectedMiners(connectedMiners => [...connectedMiners, { value: stats.connectedMiners, name: stats.created.substring(11, 16) }]);
+                    setNetworkHashrates(networkHashRates => [...networkHashRates, { value: (stats.networkHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
+                    setNetworkDifficulty(networkDifficulty => [...networkDifficulty, { value: stats.networkDifficulty, name: stats.created.substring(11, 16) }]);
 
-            const data = await response.json();
+                    return true;
+                });
+              } catch (ex) {
+                return console.log(ex);
+              }
 
-            data.stats.map((stats, index) => (
-                setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]),
-                setConnectedMiners(connectedMiners => [...connectedMiners, { value: stats.connectedMiners, name: stats.created.substring(11, 16) }]),
-                setNetworkHashrates(networkHashRates => [...networkHashRates, { value: (stats.networkHashrate / 1000000000), name: stats.created.substring(11, 16) }]),
-                setNetworkDifficulty(networkDifficulty => [...networkDifficulty, { value: stats.networkDifficulty, name: stats.created.substring(11, 16) }])
-            ));
         };
 
         const getPoolData = async () => {
-            const response = await fetch(`https://mineit.io/api/pools/${poolid}`);
-            const data = await response.json();
-            setPoolData({
-                poolHashRate: data.pool.poolStats.poolHashrate,
-                miners: data.pool.poolStats.connectedMiners,
-                networkHashrate: data.pool.networkStats.networkHashrate,
-                networkDifficulty: data.pool.networkStats.networkDifficulty,
-                poolFee: data.pool.poolFeePercent,
-                paymentThreshold: data.pool.paymentProcessing.minimumPayment + " " + data.pool.coin.type,
-                paymentScheme: data.pool.paymentProcessing.payoutScheme,
-                blockchainHeight: data.pool.networkStats.blockHeight,
-                connectedPeers: data.pool.networkStats.connectedPeers
-            })
+            let response,data;
+            try {
+                response = await fetch(config.poolapiurl + `pools/${poolid}`);
+                data = await response.json();
+                setPoolData({
+                    poolHashRate: data.pool.poolStats.poolHashrate,
+                    miners: data.pool.poolStats.connectedMiners,
+                    networkHashrate: data.pool.networkStats.networkHashrate,
+                    networkDifficulty: data.pool.networkStats.networkDifficulty,
+                    poolFee: data.pool.poolFeePercent,
+                    paymentThreshold: data.pool.paymentProcessing.minimumPayment + " " + data.pool.coin.type,
+                    paymentScheme: data.pool.paymentProcessing.payoutScheme,
+                    blockchainHeight: data.pool.networkStats.blockHeight,
+                    connectedPeers: data.pool.networkStats.connectedPeers
+                })
+                props.enqueueSnackbar('Successfully fetched the data.')
+                setLoading({loading : false,loadingtext:""});
+
+                return true;
+              } catch (ex) {
+                return console.log(ex);
+              }
         }
 
 
-        getGraphData();
-        getPoolData();
-    }, [])
+         getGraphData();
+         getPoolData();
 
-
-
+    }, [props,poolid])
+    
+    //Extra row cards for basic pool data
+    const InfoCard = () => {
+        return <Grid item xs={12} >
+        <Grid
+            container spacing={3}
+            direction="row"
+            justify="space-evenly"
+            alignItems="center">
+            {CardInfo(poolData.blockchainHeight, "Blockchain Height")}
+            {CardInfo(poolData.connectedPeers, "Connected Peers")}
+            {CardInfo(poolData.paymentThreshold,"Payment Threshold")}
+            {CardInfo(poolData.poolFee + "%", "Pool Fee")}
+        </Grid>
+    </Grid>
+    }
+    //Wrapper for Charts in a Card
     const CardChart = (data, CardSubtitle, CardLateststat) => {
-        return <Card className={classes.root}>
+        return  <Grid item xs={12} sm={12} md={6}>
+        <Grid
+            container
+            direction="column"
+            justify="center"
+            alignItems="center"
+            spacing={1}
+        >
+        <Card className={classes.root} style={{ width: "90%"}}>
             <CardContent>
-                <div style={{ width: 800, height: 400 }}>
-                    <ResponsiveContainer>
+                <div style={{ width: "100%", height: 400 }}>
+                <ResponsiveContainer >
                         <AreaChart data={data}
-                            margin={{ top: 15, right: 30, left: 25, bottom: 5 }}>
+                            margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
                             <defs>
                                 <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
@@ -126,28 +169,47 @@ const Stats = (props) => {
                             </defs>
                             <XAxis dataKey="name" />
                             <YAxis />
-                            <Tooltip />
+                            <Tooltip
+                            contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+                            labelStyle={{ fontWeight: 'bold', color: '#666666' }} />
                             <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
-                <Typography variant="h5" component="h2">
+                <Typography variant="h5" component="h5">
                     {CardLateststat}
                 </Typography>
-                <Typography variant="body" component="h5">
+                <Typography variant="h6" component="h6">
                     {CardSubtitle}
                 </Typography>
 
             </CardContent>
         </Card>
+        </Grid></Grid>
     }
 
+    const GetCardAvatar = (title) =>{
+        if(title.includes("Peers")){
+            return <SettingsEthernetIcon />
+        }
+        else if(title.includes("Height")){
+            return <MenuIcon />
+        }
+        else if(title.includes("Threshold")){
+            return <SendIcon />
+        }
+        else{
+            return <PieChartIcon />
+        }
+    }
+
+    //Cards giving data on cardHEader
     const CardInfo = (data, Title) => {
         return <Card className={classes.valueItems}>
             <CardHeader
                 avatar={
                     <Avatar aria-label={Title} className={classes.avatar}>
-                        {/*Put icon related to cardinfo here*/}
+                        {GetCardAvatar(Title)}
                     </Avatar>
                 }
                 title={Title}
@@ -156,94 +218,27 @@ const Stats = (props) => {
         </Card>
     }
 
-
-
     const classes = useStyles();
     return (
         <React.Fragment>
             <CssBaseline />
             <Topbar currentPath={"/stats"} />
             <div className="container_main">
-                <Grid container spacing={2} direction="row">
-                    <Grid item xs={12} sm={12} md={6}>
-                        <Grid
-                            container
-                            direction="column"
-                            justify="center"
-                            alignItems="center"
-                            spacing={3}
-                        >
-                            {CardChart(poolHashrates, "Pool Hashrate", poolData.poolHashRate)}
-                        </Grid>
-                    </Grid>
-
-                    <Grid item xs={12} sm={12} md={6}>
-                        <Grid
-                            container
-                            direction="column"
-                            justify="center"
-                            alignItems="center"
-                            spacing={3}
-                        >
-                            {CardChart(connectedMiners, "Miners", poolData.miners + " Miners")}
-                        </Grid>
-                    </Grid>
-
-                    <Grid item xs={12} >
-                        <Grid
-                            container spacing={3}
-                            direction="row"
-                            justify="space-evenly"
-                            alignItems="center">
-                            {CardInfo(poolData.blockchainHeight, "Blockchain Height")}
-                            {CardInfo(poolData.connectedPeers, "Connected Peers")}
-                            <Card className={classes.valueItems}>
-                                <CardContent>
-                                    <Typography variant="h5" component="h2">
-                                        {poolData.paymentThreshold}
-                                    </Typography>
-                                    <Typography variant="body" component="h5">
-                                        {poolData.paymentScheme}
-                                    </Typography>
-                                    <Typography variant="body" component="h5">
-                                        Payment Threshold
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-
-                            {CardInfo(poolData.poolFee + "%", "Pool Fee")}
-
-                        </Grid>
-
-                    </Grid>
-
-                    <Grid item xs={12} sm={12} md={6}>
-                        <Grid
-                            container
-                            direction="column"
-                            justify="center"
-                            alignItems="center"
-                            spacing={3}
-                        >
-                            {CardChart(networkHashRates, "Network Hashrate", poolData.networkHashrate)}
-                        </Grid>
-                    </Grid>
-
-                    <Grid item xs={12} sm={12} md={6}>
-                        <Grid
-                            container
-                            direction="column"
-                            justify="center"
-                            alignItems="center"
-                            spacing={3}
-                        >
+                {loading.loading ?
+                (<Loading overlay={true} loading={loading.loading } loadingtext={loading.loadingtext} />)
+                :(
+                    <Grid container spacing={2} direction="row">
+                            {CardChart(poolHashrates, "Pool Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
+                            {CardChart(connectedMiners, "Miners", poolData.miners)}
+                            {InfoCard()}
+                            {CardChart(networkHashRates, "Network Hashrate",hashformat(poolData.networkHashrate, 2, "H/s"))}
                             {CardChart(networkDifficulty, "Network Difficulty", poolData.networkDifficulty)}
-                        </Grid>
                     </Grid>
-                </Grid>
+                )
+                }
             </div>
         </React.Fragment>
     )
 }
 
-export default Stats;
+export default withSnackbar(Stats);

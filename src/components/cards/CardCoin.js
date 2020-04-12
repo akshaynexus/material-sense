@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import withStyles from '@material-ui/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
-import { Link } from 'react-router-dom'
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
+import { Redirect } from 'react-router-dom'
 
 const styles = theme => ({
   paper: {
@@ -71,14 +71,17 @@ class CardCoin extends Component {
 
   render() {
     const { classes } = this.props;
-    // const redirpath = "/dashboard/" + this.props.poolid
-    const redirpath = "/stats/" + this.props.poolid;
-
+    const setPoolID = () => {
+      localStorage.setItem("poolid",this.props.poolid)
+      return ReDirtoStats();
+    }
+    const ReDirtoStats = () =>{
+      return <Redirect to='/stats'/>
+    }
     return (
       <div className={classes.root}>
         <CardActionArea
-          component={Link}
-          to={redirpath}
+          onClick={setPoolID}
         >
           <Card className={classes.paper}>
             <div className={classes.itemContainer}>

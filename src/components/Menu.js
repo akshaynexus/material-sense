@@ -4,6 +4,10 @@ const Menu = [
     pathname: "/"
   },
   {
+    label: "Stats",
+    pathname: "/stats"
+  },
+  {
     label: "Dashboard",
     pathname: "/dashboard/indexchain"
   },
