@@ -100,6 +100,11 @@ const Stats = (props) => {
             //     return console.log(ex);
             // }
 
+            setPoolHashrates([]);
+            setConnectedMiners([]);
+            setNetworkHashrates([]);
+            setNetworkDifficulty([]);
+
             setLoading({ loading: true, loadingtext: "Loading Pool data" });
             await axios.get(config.poolapiurl + `pools/${poolid}/performance`)
                 .then(function (response) {
