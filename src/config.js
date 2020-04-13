@@ -8,13 +8,16 @@ const config = {
            "scrypt",
            "x11",
            "quark",
-           "skunkhash"
+           "skunkhash",
+           "cryptonight",
+           "lyra2rev2"
         ],
         "cpu":[
            "randomx",
            "yespower",
            "yescript",
            "argon2d",
+           "argon2i",
            "yespower-litb"
         ],
         "gpu":[
@@ -24,7 +27,26 @@ const config = {
            "x25x",
            "progpow",
            "mtp",
-           "x21s"
+           "x21s",
+           "x16rt",
+           "x16s",
+           "x17",
+           "x15",
+           "x14",
+           "x13",
+           "blake2b",
+           "blake2s",
+           "keccak",
+           "allium",
+           "tribus",
+           "xevan",
+           "hex",
+           "phi2",
+           "c11",
+           "hmq1725",
+           "progpow",
+           "cuckoo",
+           "timetravel"
         ]
      }
 }
