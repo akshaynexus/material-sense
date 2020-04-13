@@ -120,7 +120,7 @@ const Stats = (props) => {
                 .catch(function (error) {
                     // handle error
                     console.log(error);
-                    props.enqueueSnackbar('Error loading graph data, please try again later.')
+                    props.enqueueSnackbar('Error loading graph data, please try again.')
                     setLoading({ loading: false, loadingtext: "" });
                 })
                 .then(function () {
@@ -180,7 +180,7 @@ const Stats = (props) => {
                 .catch(function (error) {
                     // handle error
                     console.log(error);
-                    props.enqueueSnackbar('Error loading pool data, please try again later.')
+                    props.enqueueSnackbar('Error loading pool data, please try again.')
                     setLoading({ loading: false, loadingtext: "" });
                 })
                 .then(function () {
