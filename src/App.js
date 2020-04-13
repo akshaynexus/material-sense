@@ -31,8 +31,8 @@ class App extends Component {
     return (
       <div>
         <ThemeProvider theme={theme}>
-        <SnackbarProvider maxSnack={3}>
-          <Routes />
+          <SnackbarProvider maxSnack={3}>
+            <Routes />
           </SnackbarProvider>
         </ThemeProvider>
       </div>

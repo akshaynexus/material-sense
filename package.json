@@ -8,6 +8,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.47",
     "@material-ui/styles": "^4.9.6",
+    "axios": "^0.19.2",
     "gh-pages": "^2.2.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
