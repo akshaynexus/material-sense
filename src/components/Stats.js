@@ -82,7 +82,7 @@ const Stats = (props) => {
 
     useEffect(() => {
         const getGraphData = async () => {
-            let  data;
+            let data;
             // try {
             //     response = await fetch(config.poolapiurl + `pools/${poolid}/performance`);
             //     data = await response.json();
@@ -115,20 +115,17 @@ const Stats = (props) => {
 
                         return true;
                     });
-                    props.enqueueSnackbar('Successfully fetched the graph data.',{
+                    props.enqueueSnackbar('Successfully fetched the graph data.', {
                         variant: 'success',
                     })
                 })
                 .catch(function (error) {
                     // handle error
                     console.log(error);
-<<<<<<< HEAD
-                    props.enqueueSnackbar('Error loading graph data, please try again.')
-=======
-                    props.enqueueSnackbar('Error loading graph data, please try again later.',{
+
+                    props.enqueueSnackbar('Error loading graph data, please try again later.', {
                         variant: 'error',
                     })
->>>>>>> 670c20241c35e2ae4e25310768929555f8e34f23
                     setLoading({ loading: false, loadingtext: "" });
                 })
                 .then(function () {
@@ -188,13 +185,9 @@ const Stats = (props) => {
                 .catch(function (error) {
                     // handle error
                     console.log(error);
-<<<<<<< HEAD
-                    props.enqueueSnackbar('Error loading pool data, please try again.')
-=======
                     props.enqueueSnackbar('Error loading pool data, please try again later.', {
                         variant: 'error',
                     })
->>>>>>> 670c20241c35e2ae4e25310768929555f8e34f23
                     setLoading({ loading: false, loadingtext: "" });
                 })
                 .then(function () {
