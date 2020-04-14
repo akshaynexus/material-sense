@@ -1,433 +1,350 @@
-import React, { Component } from "react";
-import withStyles from "@material-ui/styles/withStyles";
-import { withRouter, Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react'
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import Slider from "@material-ui/core/Slider";
-import Button from "@material-ui/core/Button";
-import Avatar from "@material-ui/core/Avatar";
-import SimpleLineChart from "./SimpleLineChart";
-import Months from "./common/Months";
-import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
+import Topbar from "./Topbar";
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import Avatar from '@material-ui/core/Avatar';
+import hashformat from './common/hashutil.js'
+import Grid from '@material-ui/core/Grid';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
+import MenuIcon from '@material-ui/icons/Menu';
+import PieChartIcon from '@material-ui/icons/PieChart';
+import SendIcon from '@material-ui/icons/Send';
+import axios from "axios";
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import "./Stats.css";
+
+import {
+    XAxis, YAxis, Tooltip, AreaChart, Area, ResponsiveContainer
+} from 'recharts';
+import config from "../config.js";
+import { withSnackbar } from 'notistack';
 import Loading from "./common/Loading";
 
-import Topbar from "./Topbar";
-
-const numeral = require("numeral");
-numeral.defaultFormat("0,000");
-
-
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.primary,
-    overflow: "hidden",
-    backgroundSize: "cover",
-    backgroundPosition: "0 400px",
-    paddingBottom: 200
-  },
-  grid: {
-    width: 1200,
-    margin: `0 ${theme.spacing(2)}px`,
-    [theme.breakpoints.down("sm")]: {
-      width: "calc(100% - 20px)"
-    }
-  },
-  loadingState: {
-    opacity: 0.05
-  },
-  paper: {
-    padding: theme.spacing(3),
-    margin: theme.spacing(2),
-    textAlign: "left",
-    color: theme.palette.text.secondary
-  },
-  rangeLabel: {
-    display: "flex",
-    justifyContent: "space-between",
-    paddingTop: theme.spacing(2)
-  },
-  topBar: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center"
-  },
-  outlinedButtom: {
-    textTransform: "uppercase",
-    margin: theme.spacing(1)
-  },
-  actionButtom: {
-    textTransform: "uppercase",
-    margin: theme.spacing(1),
-    width: 152,
-    height: 36
-  },
-  blockCenter: {
-    padding: theme.spacing(2),
-    textAlign: "center"
-  },
-  block: {
-    padding: theme.spacing(2)
-  },
-  loanAvatar: {
-    display: "inline-block",
-    verticalAlign: "center",
-    width: 16,
-    height: 16,
-    marginRight: 10,
-    marginBottom: -2,
-    color: theme.palette.primary.contrastText,
-    backgroundColor: theme.palette.primary.main
-  },
-  interestAvatar: {
-    display: "inline-block",
-    verticalAlign: "center",
-    width: 16,
-    height: 16,
-    marginRight: 10,
-    marginBottom: -2,
-    color: theme.palette.primary.contrastText,
-    backgroundColor: theme.palette.primary.light
-  },
-  inlining: {
-    display: "inline-block",
-    marginRight: 10
-  },
-  buttonBar: {
-    display: "flex"
-  },
-  noBorder: {
-    borderBottomStyle: "hidden"
-  },
-  mainBadge: {
-    textAlign: "center",
-    marginTop: theme.spacing(4),
-    marginBottom: theme.spacing(4)
-  }
+const useStyles = makeStyles({
+    root: {
+        // maxWidth: 275,
+        borderWidth: "1px",
+        borderColor: "green !important",
+        '@media (min-width: 600px)': {
+            marginTop: "30px",
+        },
+        '@media (min-width: 320px)': {
+            marginTop: "30px",
+        }
+    },
+    valueItems: {
+        width: 275,
+        marginTop: 35,
+        marginBottom: 35,
+        marginLeft: 10,
+        marginRight: 10,
+        borderWidth: "1px",
+        borderColor: "yellow !important"
+    },
+    title: {
+        fontSize: 16,
+    },
+    pos: {
+        marginBottom: 12,
+    },
 });
+const Stats = (props) => {
 
-const monthRange = Months;
+    // Name of the chain, getting the value from the router parameter.
+    const poolid = localStorage.getItem("poolid");
+    const [poolHashrates, setPoolHashrates] = useState([]);
 
-class Dashboard extends Component {
-  pooid = this.props.match.params.coin;
-
-  state = {
-    loading: true,
-    amount: 15000,
-    period: 3,
-    start: 0,
-    monthlyInterest: 0,
-    ppolperformance:null,
-    totalInterest: 0,
-    monthlyPayment: 0,
-    totalPayment: 0,
-    data: []
-  };
-
-  updateValues() {
-    const { amount, period, start } = this.state;
-    const monthlyInterest =
-      (amount * Math.pow(0.01 * 1.01, period)) / Math.pow(0.01, period - 1);
-    const totalInterest = monthlyInterest * (period + start);
-    const totalPayment = amount + totalInterest;
-    const monthlyPayment =
-      period > start ? totalPayment / (period - start) : totalPayment / period;
-
-    const data = Array.from({ length: period + start }, (value, i) => {
-      const delayed = i < start;
-      return {
-        name: monthRange[i],
-        Type: delayed ? 0 : Math.ceil(monthlyPayment).toFixed(0),
-        OtherType: Math.ceil(monthlyInterest).toFixed(0)
-      };
+    const [poolData, setPoolData] = useState({
+        poolHashRate: 0,
+        miners: 0,
+        networkHashrate: 0,
+        networkDifficulty: 0,
+        poolFee: 0,
+        paymentThreshold: "",
+        paymentScheme: "",
+        blockchainHeight: 0,
+        connectedPeers: 0
+    });
+    const [loading, setLoading] = useState({
+        loading: true,
+        loadingtext: "Loading Graph data",
+        error: 'NoError'
     });
 
-    this.setState({
-      monthlyInterest,
-      totalInterest,
-      totalPayment,
-      monthlyPayment,
-      data
-    });
-  }
-  async componentDidMount() {
-    this.updateValues();
 
-  }
 
-  handleChangeAmount = (event, value) => {
-    this.setState({ amount: value, loading: false });
-    this.updateValues();
-  };
+    useEffect(() => {
+        const getGraphData = async () => {
+            let data;
 
-  handleChangePeriod = (event, value) => {
-    this.setState({ period: value, loading: false });
-    this.updateValues();
-  };
+            setPoolHashrates([]);
 
-  handleChangeStart = (event, value) => {
-    this.setState({ start: value, loading: false });
-    this.updateValues();
-  };
+            setLoading({ loading: true, loadingtext: "Loading Pool data" });
+            await axios.get(config.poolapiurl + `pools/${poolid}/performance`)
+                .then(function (response) {
+                    // handle success
+                    console.log(response.data);
+                    data = response.data;
 
-  render() {
-    const { classes } = this.props;
-    const {
-      amount,
-      period,
-      start,
-      monthlyPayment,
-      monthlyInterest,
-      data,
-      loading,
-    } = this.state;
-    const currentPath = this.props.location.pathname;
-    return (
-      <React.Fragment>
-        <CssBaseline />
-        <Topbar currentPath={currentPath} />
-        <div className={classes.root}>
-          <Grid container justify="center">
+                    data.stats.map((stats) => {
+                        setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
+
+                        return true;
+                    });
+                    props.enqueueSnackbar('Successfully fetched the graph data.', {
+                        variant: 'success',
+                    })
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+
+                    props.enqueueSnackbar('Error loading graph data, please try again later.', {
+                        variant: 'error',
+                    })
+                    setLoading({ loading: false, loadingtext: "" });
+                })
+                .then(function () {
+                    // always executed
+                    // console.log(ex);
+                    // setLoading({ loading: false, loadingtext: "" });
+                });
+
+
+        };
+
+        const getPoolData = async () => {
+
+            await axios.get(config.poolapiurl + `pools/${poolid}`)
+                .then(function (response) {
+                    // handle success
+                    console.log(response);
+                    console.log(response.data);
+                    let data = response.data;
+                    setPoolData({
+                        poolHashRate: data.pool.poolStats.poolHashrate,
+                        miners: data.pool.poolStats.connectedMiners,
+                        networkHashrate: data.pool.networkStats.networkHashrate,
+                        networkDifficulty: data.pool.networkStats.networkDifficulty,
+                        poolFee: data.pool.poolFeePercent,
+                        paymentThreshold: data.pool.paymentProcessing.minimumPayment + " " + data.pool.coin.type,
+                        paymentScheme: data.pool.paymentProcessing.payoutScheme,
+                        blockchainHeight: data.pool.networkStats.blockHeight,
+                        connectedPeers: data.pool.networkStats.connectedPeers
+                    })
+                    props.enqueueSnackbar('Successfully fetched the pool data.', {
+                        variant: 'success',
+                    })
+                    setLoading({ loading: false, loadingtext: "" });
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                    props.enqueueSnackbar('Error loading pool data, please try again later.', {
+                        variant: 'error',
+                    })
+                    setLoading({ loading: false, loadingtext: "" });
+                })
+                .then(function () {
+                    // always executed
+                    // console.log(ex);
+                    // setLoading({ loading: false, loadingtext: "" });
+                });
+
+        }
+
+
+        getGraphData();
+        getPoolData();
+
+    }, [props, poolid])
+    const WalletCard = () => {
+      return <Grid item xs={12} >
+      <Grid
+          container spacing={3}
+          direction="row"
+          justify="space-evenly"
+          alignItems="left">
+      <Card className={classes.valueItems} style={{ width: "100%"}} >
+            <CardHeader
+                title={"Wallet address"}
+            />
+            <CardContent>
+            <TextField id="standard-basic" label="Address" style={{ width: "90%" }}/>
+            <br /><br />
+            <Button variant="contained" color="primary" style={{ width: "25%",height:"20%" }}>
+                Load wallet
+            </Button>
+            </CardContent>
+        </Card>
+        </Grid></Grid>
+    }
+    //Extra row cards for basic pool data
+    const InfoCard = () => {
+        return <Grid item xs={12} >
             <Grid
-              spacing={10}
-              alignItems="center"
-              justify="center"
-              container
-              className={classes.grid}
-            >
-              <Grid item xs={12}>
-                <div className={classes.topBar}>
-                  <div className={classes.block}>
-                    <Typography variant="h4" gutterBottom>
-                      {this.pooid} Dashboard
-                    </Typography>
-                    <Typography variant="body1">
-                      Pool and network stats
-                    </Typography>
-                  </div>
-                  <div>
-                    <Button
-                      variant="outlined"
-                      className={classes.outlinedButtom}
-                    >
-                      Get help
-                    </Button>
-                  </div>
-                </div>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Paper className={classes.paper}>
-                  <div>
-                    <Typography variant="subtitle1" gutterBottom>
-                      How much you want to transfer
-                    </Typography>
-                    <Typography variant="body1">
-                      Use slider to set the amount you need.
-                    </Typography>
-                    <div className={classes.blockCenter}>
-                      <Typography color="secondary" variant="h6" gutterBottom>
-                        {numeral(amount).format()} USD
-                      </Typography>
-                    </div>
-                    <div>
-                      <Slider
-                        value={amount}
-                        min={20000}
-                        max={150000}
-                        step={15000}
-                        onChange={this.handleChangeAmount}
-                      />
-                    </div>
-                    <div className={classes.rangeLabel}>
-                      <div>
-                        <Typography variant="subtitle2">15,000 USD</Typography>
-                      </div>
-                      <div>
-                        <Typography variant="subtitle2">150,000 USD</Typography>
-                      </div>
-                    </div>
-                  </div>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Paper className={classes.paper}>
-                  <div>
-                    <Typography variant="subtitle1" gutterBottom>
-                      Period
-                    </Typography>
-                    <Typography variant="body1">A sample period</Typography>
-                    <div className={classes.blockCenter}>
-                      <Typography color="secondary" variant="h6" gutterBottom>
-                        {period} months
-                      </Typography>
-                    </div>
-                    <div>
-                      <Slider
-                        value={period}
-                        min={1}
-                        max={6}
-                        step={1}
-                        onChange={this.handleChangePeriod}
-                      />
-                    </div>
-                    <div className={classes.rangeLabel}>
-                      <div>
-                        <Typography variant="subtitle2">1 month</Typography>
-                      </div>
-                      <div>
-                        <Typography variant="subtitle2">6 months</Typography>
-                      </div>
-                    </div>
-                  </div>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Paper className={classes.paper}>
-                  <div>
-                    <Typography variant="subtitle1" gutterBottom>
-                      Start date
-                    </Typography>
-                    <Typography variant="body1">
-                      Set your preferred start date.
-                    </Typography>
-                    <div className={classes.blockCenter}>
-                      <Typography color="secondary" variant="h6" gutterBottom>
-                        {monthRange[start]}
-                      </Typography>
-                    </div>
-                    <div>
-                      <Slider
-                        value={start}
-                        min={0}
-                        max={5}
-                        step={1}
-                        onChange={this.handleChangeStart}
-                      />
-                    </div>
-                    <div className={classes.rangeLabel}>
-                      <div>
-                        <Typography variant="subtitle2">Dec 2018</Typography>
-                      </div>
-                      <div>
-                        <Typography variant="subtitle2">May 2019</Typography>
-                      </div>
-                    </div>
-                  </div>
-                </Paper>
-              </Grid>
-              <Grid container spacing={4} justify="center">
-                <Grid item xs={12} md={8}>
-                  <Paper
-                    className={classes.paper}
-                    style={{ position: "relative" }}
-                  >
-                    <Loading overlay={false} loading={loading} />
-                    <div className={loading ? classes.loadingState : ""}>
-                      <Typography variant="subtitle1" gutterBottom>
-                        Some details
-                      </Typography>
-                      <Typography variant="body1">
-                        Details about the graph
-                      </Typography>
-                      <div style={{ marginTop: 14, marginBottom: 14 }}>
-                        <div className={classes.inlining}>
-                          <Avatar className={classes.loanAvatar}></Avatar>
-                          <Typography
-                            className={classes.inlining}
-                            variant="subtitle2"
-                            gutterBottom
-                          >
-                            Type
-                          </Typography>
-                          <Typography
-                            className={classes.inlining}
-                            color="secondary"
-                            variant="h6"
-                            gutterBottom
-                          >
-                            {numeral(monthlyPayment).format()} units
-                          </Typography>
-                        </div>
-                        <div className={classes.inlining}>
-                          <Avatar className={classes.interestAvatar}></Avatar>
-                          <Typography
-                            className={classes.inlining}
-                            variant="subtitle2"
-                            gutterBottom
-                          >
-                            Othe type
-                          </Typography>
-                          <Typography
-                            className={classes.inlining}
-                            color="secondary"
-                            variant="h6"
-                            gutterBottom
-                          >
-                            {numeral(monthlyInterest).format()} units
-                          </Typography>
-                        </div>
-                      </div>
-                      <div>
-                        <SimpleLineChart data={data} />
-                      </div>
-                    </div>
-                  </Paper>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <Paper
-                    className={classes.paper}
-                    style={{ position: "relative" }}
-                  >
-                    <Loading  overlay={false} loading={loading} />
-                    <div className={loading ? classes.loadingState : ""}>
-                      <Typography variant="subtitle1" gutterBottom>
-                        State
-                      </Typography>
-                      <div className={classes.mainBadge}>
-                        <VerifiedUserIcon
-                          style={{ fontSize: 72 }}
-                          fontSize={"large"}
-                          color={"secondary"}
-                        />
-                        <Typography
-                          variant="h5"
-                          color={"secondary"}
-                          gutterBottom
-                        >
-                          Verified
-                        </Typography>
-                      </div>
-                      <div className={classes.buttonBar}>
-                        <Button
-                          to={{ pathname: "/dashboard", search: `?type=save` }}
-                          component={Link}
-                          variant="outlined"
-                          className={classes.actionButtom}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          to={{ pathname: "/dashboard", search: `?type=apply` }}
-                          component={Link}
-                          color="primary"
-                          variant="contained"
-                          className={classes.actionButtom}
-                        >
-                          Apply
-                        </Button>
-                      </div>
-                    </div>
-                  </Paper>
-                </Grid>
-              </Grid>
+                container spacing={3}
+                direction="row"
+                justify="space-evenly"
+                alignItems="center">
+                {CardInfo(poolData.blockchainHeight, "Blockchain Height")}
+                {CardInfo(poolData.connectedPeers, "Connected Peers")}
+                {CardInfo(poolData.paymentThreshold, "Payment Threshold")}
+                {CardInfo(poolData.poolFee + "%", "Pool Fee")}
             </Grid>
-          </Grid>
-        </div>
-      </React.Fragment>
-    );
-  }
+        </Grid>
+    }
+    function createData(name, calories, fat, carbs, protein) {
+      return { name, calories, fat, carbs, protein };
+    }
+    
+    const rows = [
+      createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+      createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+      createData('Eclair', 262, 16.0, 24, 6.0),
+    ];
+    const WorkersTable = () => {
+      return <Grid item md={6}>
+      <Grid
+          item
+          direction="column"
+          justify="center"
+          alignItems="center"
+          spacing={1}
+      >
+      <TableContainer component={Paper}>
+      <Table className={classes.table} aria-label="caption table">
+        <caption>A basic table example with a caption</caption>
+        <TableHead>
+          <TableRow>
+            <TableCell>Dessert (100g serving)</TableCell>
+            <TableCell align="right">Calories</TableCell>
+            <TableCell align="right">Fat&nbsp;(g)</TableCell>
+            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
+            <TableCell align="right">Protein&nbsp;(g)</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((row) => (
+            <TableRow key={row.name}>
+              <TableCell component="th" scope="row">
+                {row.name}
+              </TableCell>
+              <TableCell align="right">{row.calories}</TableCell>
+              <TableCell align="right">{row.fat}</TableCell>
+              <TableCell align="right">{row.carbs}</TableCell>
+              <TableCell align="right">{row.protein}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+    </Grid></Grid>
+    }
+    //Wrapper for Charts in a Card
+    const CardChart = (data, CardSubtitle, CardLateststat) => {
+        return <Grid item xs={12} sm={12} md={6}>
+            <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                spacing={1}
+            >
+                <Card className={classes.root} style={{ width: "90%" }}>
+                    <CardContent>
+                        <div style={{ width: "100%", height: 400 }}>
+                            <ResponsiveContainer >
+                                <AreaChart data={data}
+                                    margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
+                                            <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+                                        labelStyle={{ fontWeight: 'bold', color: '#666666' }} />
+                                    <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
+                        <Typography variant="h5" component="h5">
+                            {CardLateststat}
+                        </Typography>
+                        <Typography variant="h6" component="h6">
+                            {CardSubtitle}
+                        </Typography>
+
+                    </CardContent>
+                </Card>
+            </Grid></Grid>
+    }
+
+    const GetCardAvatar = (title) => {
+        if (title.includes("Peers")) {
+            return <SettingsEthernetIcon />
+        }
+        else if (title.includes("Height")) {
+            return <MenuIcon />
+        }
+        else if (title.includes("Threshold")) {
+            return <SendIcon />
+        }
+        else {
+            return <PieChartIcon />
+        }
+    }
+    //Cards giving data on cardHEader
+    const CardInfo = (data, Title) => {
+        return <Card className={classes.valueItems}>
+            <CardHeader
+                avatar={
+                    <Avatar aria-label={Title} className={classes.avatar}>
+                        {GetCardAvatar(Title)}
+                    </Avatar>
+                }
+                title={Title}
+                subheader={data}
+            />
+        </Card>
+    }
+
+    const classes = useStyles();
+    return (
+        <React.Fragment>
+            <CssBaseline />
+            <Topbar currentPath={"/dashboard"} />
+            <div className="container_main">
+                {loading.loading ?
+                    (<Loading overlay={true} loading={loading.loading} loadingtext={loading.loadingtext} />)
+                    : (
+                        <Grid container spacing={2} direction="row">
+                          {WalletCard()}
+                          {InfoCard()}
+                          {CardChart(poolHashrates, "Pool Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
+                          {WorkersTable()}
+                        </Grid>
+                    )
+                }
+            </div>
+        </React.Fragment>
+    )
 }
 
-export default withRouter(withStyles(styles)(Dashboard));
+export default withSnackbar(Stats);

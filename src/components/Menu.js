@@ -9,7 +9,7 @@ const Menu = [
   },
   {
     label: "Dashboard",
-    pathname: "/dashboard/indexchain"
+    pathname: "/dashboard"
   },
   {
     label: "Signup",

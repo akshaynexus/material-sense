@@ -12,7 +12,7 @@ export default props => (
     <ScrollToTop>
       <Switch>
         <Route exact path='/' component={Cards} />
-        <Route exact path='/dashboard/:coin' component={Dashboard} />
+        <Route exact path='/dashboard/' component={Dashboard} />
         <Route exact path='/signup' component={Signup} />
         <Route exact path='/wizard' component={Wizard} />
         <Route exact path='/cards' component={Cards} />
