@@ -4,6 +4,7 @@ import { createMuiTheme } from '@material-ui/core/styles'
 import './App.css';
 import Routes from './routes'
 import { blue } from '@material-ui/core/colors'
+import { SnackbarProvider } from 'notistack';
 
 const theme = createMuiTheme({
   palette: {
@@ -30,7 +31,9 @@ class App extends Component {
     return (
       <div>
         <ThemeProvider theme={theme}>
-          <Routes />
+          <SnackbarProvider maxSnack={3}>
+            <Routes />
+          </SnackbarProvider>
         </ThemeProvider>
       </div>
     );

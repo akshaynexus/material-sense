@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import withStyles from '@material-ui/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
-import { Link } from 'react-router-dom'
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
+import { Redirect } from 'react-router-dom'
 
 const styles = theme => ({
   paper: {
@@ -71,71 +71,75 @@ class CardCoin extends Component {
 
   render() {
     const { classes } = this.props;
-    const redirpath = "/dashboard/" + this.props.poolid
-
+    const setPoolID = () => {
+      localStorage.setItem("poolid", this.props.poolid)
+      return ReDirtoStats();
+    }
+    const ReDirtoStats = () => {
+      return <Redirect to='/stats' />
+    }
     return (
       <div className={classes.root}>
         <CardActionArea
-                  component={Link}
-                  to={redirpath}
+          onClick={setPoolID}
         >
-        <Card className={classes.paper}>
-          <div className={classes.itemContainer}>
-            <div className={classes.avatarContainer}>
-                <img className={classes.avatar} src={"http://mineit.io/img/coin/icon/" + this.props.ticker.toLowerCase() + ".png"} style={{height: '50px', width: '50px', objectFit:'contain'}} alt=""></img>
+          <Card className={classes.paper}>
+            <div className={classes.itemContainer}>
+              <div className={classes.avatarContainer}>
+                <img className={classes.avatar} src={"http://mineit.io/img/coin/icon/" + this.props.ticker.toLowerCase() + ".png"} style={{ height: '50px', width: '50px', objectFit: 'contain' }} alt=""></img>
+              </div>
+              <div className={classes.baseline}>
+                <div className={classes.inline}>
+                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                    Coin
+                </Typography>
+                  <Typography variant="h6" gutterBottom>
+                    {this.props.coin}
+                  </Typography>
+                </div>
+                <div className={classes.inline}>
+                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                    Algo
+                </Typography>
+                  <Typography variant="h6" gutterBottom>
+                    {this.props.algo}
+                  </Typography>
+                </div>
+                <div className={classes.inline}>
+                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                    Miners
+                </Typography>
+                  <Typography variant="h6" gutterBottom>
+                    {this.props.minercount}
+                  </Typography>
+                </div>
+                <div className={classes.inline}>
+                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                    Pool Hash
+                </Typography>
+                  <Typography variant="h6" gutterBottom>
+                    {this.props.poolhashrate}
+                  </Typography>
+                </div>
+                <div className={classes.inline}>
+                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                    Fee
+                </Typography>
+                  <Typography variant="h6" gutterBottom>
+                    {this.props.fee}
+                  </Typography>
+                </div>
+                <div className={classes.inline}>
+                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                    Diff
+                </Typography>
+                  <Typography variant="h6" gutterBottom>
+                    {this.props.diff}
+                  </Typography>
+                </div>
+              </div>
             </div>
-            <div className={classes.baseline}>
-              <div className={classes.inline}>
-                <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Coin
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                  {this.props.coin}
-                </Typography>
-              </div>
-              <div className={classes.inline}>
-                <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Algo
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                {this.props.algo}
-                </Typography>
-              </div>
-              <div className={classes.inline}>
-                <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Miners
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                {this.props.minercount}
-                </Typography>
-              </div>
-              <div className={classes.inline}>
-                <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Pool Hash
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                {this.props.poolhashrate}
-                </Typography>
-              </div>
-              <div className={classes.inline}>
-                <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Fee
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                {this.props.fee}
-                </Typography>
-              </div>
-              <div className={classes.inline}>
-                <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Diff
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                {this.props.diff}
-                </Typography>
-              </div>
-            </div>
-          </div>
-        </Card>
+          </Card>
         </CardActionArea>
 
       </div>

@@ -100,38 +100,42 @@ class Topbar extends Component {
     if (this.props.currentPath === "/home") {
       return 0;
     }
-    if (this.props.currentPath.includes( "/dashboard")) {
+    if (this.props.currentPath.includes("/stats")) {
       return 1;
     }
-    if (this.props.currentPath === "/signup") {
+    if (this.props.currentPath.includes("/dashboard")) {
       return 2;
     }
-    if (this.props.currentPath === "/wizard") {
+    if (this.props.currentPath === "/signup") {
       return 3;
     }
-    if (this.props.currentPath === "/cards") {
+    if (this.props.currentPath === "/wizard") {
       return 4;
     }
+    if (this.props.currentPath === "/cards") {
+      return 5;
+    }
+
   };
 
   render() {
     const { classes } = this.props;
 
     return (
-      <AppBar position="static" color="default"className={classes.appBar}>
+      <AppBar position="static" color="default" className={classes.appBar}>
         <Toolbar>
           <Grid container spacing={1} alignItems="baseline">
             <Grid item xs={7} className={classes.flex}>
-            <div className={classes.iconContainer}>
-                    <IconButton
-                      onClick={this.mobileMenuOpen}
-                      className={classes.iconButton}
-                      color="inherit"
-                      aria-label="Menu"
-                    >
-                      <MenuIcon />
-                    </IconButton>
-                  </div>
+              <div className={classes.iconContainer}>
+                <IconButton
+                  onClick={this.mobileMenuOpen}
+                  className={classes.iconButton}
+                  color="inherit"
+                  aria-label="Menu"
+                >
+                  <MenuIcon />
+                </IconButton>
+              </div>
               <div className={classes.inline}>
                 <Typography variant="h6" color="inherit" noWrap>
                   <Link to="/" className={classes.link}>
@@ -143,9 +147,9 @@ class Topbar extends Component {
 
               {!this.props.noTabs && (
                 <React.Fragment>
-                  <div className={classes.productLogo}>
+                  {/* <div className={classes.productLogo}>
                     <Typography>Altcoin pool UI</Typography>
-                  </div>
+                  </div> */}
                   <div className={classes.tabContainer}>
                     <SwipeableDrawer
                       anchor="left"
@@ -163,9 +167,9 @@ class Topbar extends Component {
                               item.external
                                 ? null
                                 : {
-                                    pathname: item.pathname,
-                                    search: this.props.location.search
-                                  }
+                                  pathname: item.pathname,
+                                  search: this.props.location.search
+                                }
                             }
                             button
                             key={item.label}
@@ -190,9 +194,9 @@ class Topbar extends Component {
                             item.external
                               ? null
                               : {
-                                  pathname: item.pathname,
-                                  search: this.props.location.search
-                                }
+                                pathname: item.pathname,
+                                search: this.props.location.search
+                              }
                           }
                           classes={{ root: classes.tabItem }}
                           label={item.label}
