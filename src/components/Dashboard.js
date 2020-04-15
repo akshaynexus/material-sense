@@ -318,9 +318,6 @@ const Stats = (props) => {
         </Grid>
 
     }
-    function createData(name, calories, fat, carbs, protein) {
-        return { name, calories, fat, carbs, protein };
-    }
 
     const WorkersTable = () => {
         return <Grid item md={6}>
@@ -354,15 +351,6 @@ const Stats = (props) => {
                             </TableHead>
                             <TableBody>
 
-                                {/* {performanceSamples.map((performanceSample, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell align="center">{index + 1}</TableCell>
-                                        <TableCell align="center">370mh</TableCell>
-                                        <TableCell align="center">{performanceSample.workers["370mh"].hashrate}</TableCell>
-                                        <TableCell align="center">{performanceSample.workers["370mh"].sharesPerSecond}</TableCell>
-                                    </TableRow>
-                                ))} */}
-
                                 {workers.map((worker, index) => (
 
                                     <TableRow key={index}>
@@ -373,11 +361,6 @@ const Stats = (props) => {
                                         <TableCell align="center">{worker.sharesPerSecond}</TableCell>
                                     </TableRow>
                                 ))}
-
-
-
-
-
 
                             </TableBody>
                         </Table>
