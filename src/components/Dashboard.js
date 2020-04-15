@@ -53,6 +53,11 @@ const useStyles = makeStyles({
         borderWidth: "1px",
         borderColor: "yellow !important"
     },
+    tableHeader: {
+        width: 275,
+        marginTop: 0,
+        marginBottom: 1,
+    },
     title: {
         fontSize: 16,
     },
@@ -68,9 +73,13 @@ const Stats = (props) => {
         localStorage.getItem('address') || ''
     );
 
+    const [performanceSamples, setPerformanceSamples] = useState([]);
+
 
     const poolid = localStorage.getItem("poolid");
     const [poolHashrates, setPoolHashrates] = useState([]);
+
+
 
 
     const [poolData, setPoolData] = useState({
@@ -142,6 +151,8 @@ const Stats = (props) => {
                         paidBalanceToday: data.todayPaid,
                         lifetimeBalance: data.totalPaid
                     })
+
+                    setPerformanceSamples(data.performanceSamples);
 
                     props.enqueueSnackbar('Successfully fetched the wallet data', {
                         variant: 'success',
@@ -302,48 +313,53 @@ const Stats = (props) => {
         return { name, calories, fat, carbs, protein };
     }
 
-    const rows = [
-        createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-        createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-        createData('Eclair', 262, 16.0, 24, 6.0),
-    ];
     const WorkersTable = () => {
         return <Grid item md={6}>
             <Grid
                 item
                 direction="column"
                 justify="center"
-                alignItems="center"
-                spacing={1}
+                alignItems="left"
+                spacing={0}
+                container
             >
-                <TableContainer component={Paper}>
-                    <Table className={classes.table} aria-label="caption table">
-                        <caption>A basic table example with a caption</caption>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Dessert (100g serving)</TableCell>
-                                <TableCell align="right">Calories</TableCell>
-                                <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                                <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                                <TableCell align="right">Protein&nbsp;(g)</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows.map((row) => (
-                                <TableRow key={row.name}>
-                                    <TableCell component="th" scope="row">
-                                        {row.name}
-                                    </TableCell>
-                                    <TableCell align="right">{row.calories}</TableCell>
-                                    <TableCell align="right">{row.fat}</TableCell>
-                                    <TableCell align="right">{row.carbs}</TableCell>
-                                    <TableCell align="right">{row.protein}</TableCell>
+
+                <Grid item xs={12}>
+                    <Card className={classes.tableHeader} style={{ width: "100%" }} >
+                        <CardHeader
+                            title={"10 miners"}
+                            subheader={"List of miners working for you"}
+                        />
+                    </Card>
+                </Grid>
+                <Grid item xs={12} container>
+                    <TableContainer component={Paper}>
+                        <Table className={classes.table} aria-label="table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="center">Index</TableCell>
+                                    <TableCell align="center">Name</TableCell>
+                                    <TableCell align="center">Hashrate</TableCell>
+                                    <TableCell align="center">Share Rate</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Grid></Grid>
+                            </TableHead>
+                            <TableBody>
+
+                                {performanceSamples.map((performanceSample, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell align="center">{index + 1}</TableCell>
+                                        <TableCell align="center">370mh</TableCell>
+                                        <TableCell align="center">{performanceSample.workers["370mh"].hashrate}</TableCell>
+                                        <TableCell align="center">{performanceSample.workers["370mh"].sharesPerSecond}</TableCell>
+                                    </TableRow>
+                                ))}
+
+
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+            </Grid></Grid >
     }
     //Wrapper for Charts in a Card
     const CardChart = (data, CardSubtitle, CardLateststat) => {
