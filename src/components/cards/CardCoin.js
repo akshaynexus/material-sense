@@ -72,11 +72,11 @@ class CardCoin extends Component {
   render() {
     const { classes } = this.props;
     const setPoolID = () => {
-      localStorage.setItem("poolid",this.props.poolid)
+      localStorage.setItem("poolid", this.props.poolid)
       return ReDirtoStats();
     }
-    const ReDirtoStats = () =>{
-      return <Redirect to='/stats'/>
+    const ReDirtoStats = () => {
+      return <Redirect to='/stats' />
     }
     return (
       <div className={classes.root}>

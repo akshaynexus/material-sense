@@ -38,10 +38,10 @@ const useStyles = makeStyles({
         borderWidth: "1px",
         borderColor: "green !important",
         '@media (min-width: 600px)': {
-            marginTop: "30px",
+            marginTop: "5px",
         },
         '@media (min-width: 320px)': {
-            marginTop: "30px",
+            marginTop: "5px",
         }
     },
     valueItems: {
@@ -58,13 +58,20 @@ const useStyles = makeStyles({
     },
     pos: {
         marginBottom: 12,
-    },
+    }
 });
 const Stats = (props) => {
 
     // Name of the chain, getting the value from the router parameter.
+
+    const [address, setAddress] = React.useState(
+        localStorage.getItem('address') || ''
+    );
+
+
     const poolid = localStorage.getItem("poolid");
     const [poolHashrates, setPoolHashrates] = useState([]);
+
 
     const [poolData, setPoolData] = useState({
         poolHashRate: 0,
@@ -77,6 +84,14 @@ const Stats = (props) => {
         blockchainHeight: 0,
         connectedPeers: 0
     });
+
+    const [walletData, setWalletData] = useState({
+        pendingShares: 0,
+        pendingBalance: 0,
+        paidBalanceToday: 0,
+        lifetimeBalance: 0
+    });
+
     const [loading, setLoading] = useState({
         loading: true,
         loadingtext: "Loading Graph data",
@@ -86,11 +101,76 @@ const Stats = (props) => {
 
 
     useEffect(() => {
+
+        // TODO : Make api call for dashboard, pass address. 
+        // API : https://mineit.io/api/pools/indexchain/miners/i8X3tekuobxm8fW6TtAssUCKRBBEFJ2TeZ
+        // https://mineit.io/api/pools/indexchain/miners/{Address} 
+
+        // Make api call if api if address is not empty, the first time the app loads. 
+        console.log("Address is : " + address);
+
+        if (address !== '') {
+            loadWalletData();
+        }
+
+    }, [])
+
+
+    const loadWalletData = async () => {
+
+        let data;
+        if (address === '') {
+            props.enqueueSnackbar('Please enter address', {
+                variant: 'error',
+            })
+        } else {
+
+            // await axios.get("https://mineit.io/api/pools/indexchain/miners/i8X3tekuobxm8fW6TtAssUCKRBBEFJ2TeZ")
+            console.log(poolid)
+            console.log(config.poolapiurl + `pools/${poolid}/miners/${address}`)
+            await axios.get(config.poolapiurl + `pools/${poolid}/miners/${address}`)
+                .then(function (response) {
+                    // handle success
+                    console.log(response.data);
+                    data = response.data;
+
+                    localStorage.setItem("address", address);
+
+                    setWalletData({
+                        pendingShares: data.pendingShares,
+                        pendingBalance: data.pendingBalance,
+                        paidBalanceToday: data.todayPaid,
+                        lifetimeBalance: data.totalPaid
+                    })
+
+                    props.enqueueSnackbar('Successfully fetched the wallet data', {
+                        variant: 'success',
+                    })
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+
+                    props.enqueueSnackbar('Error loading wallet data, please try again.', {
+                        variant: 'error',
+                    })
+                    setLoading({ loading: false, loadingtext: "" });
+                })
+                .then(function () {
+                    // always executed
+                    // console.log(ex);
+                    // setLoading({ loading: false, loadingtext: "" });
+                });
+
+        }
+    }
+
+    useEffect(() => {
         const getGraphData = async () => {
             let data;
 
-            setPoolHashrates([]);
 
+            setPoolHashrates([]);
             setLoading({ loading: true, loadingtext: "Loading Pool data" });
             await axios.get(config.poolapiurl + `pools/${poolid}/performance`)
                 .then(function (response) {
@@ -100,7 +180,6 @@ const Stats = (props) => {
 
                     data.stats.map((stats) => {
                         setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
-
                         return true;
                     });
                     props.enqueueSnackbar('Successfully fetched the graph data.', {
@@ -170,26 +249,36 @@ const Stats = (props) => {
         getPoolData();
 
     }, [props, poolid])
+
     const WalletCard = () => {
-      return <Grid item xs={12} >
-      <Grid
-          container spacing={3}
-          direction="row"
-          justify="space-evenly"
-          alignItems="left">
-      <Card className={classes.valueItems} style={{ width: "100%"}} >
-            <CardHeader
-                title={"Wallet address"}
-            />
-            <CardContent>
-            <TextField id="standard-basic" label="Address" style={{ width: "90%" }}/>
-            <br /><br />
-            <Button variant="contained" color="primary" style={{ width: "25%",height:"20%" }}>
-                Load wallet
+        return <Grid item xs={12} >
+            <Grid
+                container spacing={3}
+                direction="row"
+                justify="space-evenly"
+                alignItems="left">
+                <Card className={classes.valueItems} style={{ width: "100%" }} >
+                    <CardHeader
+                        title={"Wallet address"}
+                    />
+                    <CardContent>
+                        <TextField
+                            id="standard-basic"
+                            label="Address"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            style={{ width: "90%" }} />
+                        <br /><br />
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={loadWalletData}
+                            style={{ width: "25%", height: "20%" }}>
+                            Load wallet
             </Button>
-            </CardContent>
-        </Card>
-        </Grid></Grid>
+                    </CardContent>
+                </Card>
+            </Grid></Grid>
     }
     //Extra row cards for basic pool data
     const InfoCard = () => {
@@ -199,59 +288,62 @@ const Stats = (props) => {
                 direction="row"
                 justify="space-evenly"
                 alignItems="center">
-                {CardInfo(poolData.blockchainHeight, "Blockchain Height")}
-                {CardInfo(poolData.connectedPeers, "Connected Peers")}
-                {CardInfo(poolData.paymentThreshold, "Payment Threshold")}
-                {CardInfo(poolData.poolFee + "%", "Pool Fee")}
+
+                {CardInfo(walletData.pendingShares, "Pending Shares")}
+                {CardInfo(walletData.pendingBalance, "Pending Balance")}
+                {CardInfo(walletData.paidBalanceToday, "Paid Balance Today")}
+                {CardInfo(walletData.lifetimeBalance, "Lifetime Balance")}
+
             </Grid>
         </Grid>
+
     }
     function createData(name, calories, fat, carbs, protein) {
-      return { name, calories, fat, carbs, protein };
+        return { name, calories, fat, carbs, protein };
     }
-    
+
     const rows = [
-      createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-      createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-      createData('Eclair', 262, 16.0, 24, 6.0),
+        createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+        createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+        createData('Eclair', 262, 16.0, 24, 6.0),
     ];
     const WorkersTable = () => {
-      return <Grid item md={6}>
-      <Grid
-          item
-          direction="column"
-          justify="center"
-          alignItems="center"
-          spacing={1}
-      >
-      <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="caption table">
-        <caption>A basic table example with a caption</caption>
-        <TableHead>
-          <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-    </Grid></Grid>
+        return <Grid item md={6}>
+            <Grid
+                item
+                direction="column"
+                justify="center"
+                alignItems="center"
+                spacing={1}
+            >
+                <TableContainer component={Paper}>
+                    <Table className={classes.table} aria-label="caption table">
+                        <caption>A basic table example with a caption</caption>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Dessert (100g serving)</TableCell>
+                                <TableCell align="right">Calories</TableCell>
+                                <TableCell align="right">Fat&nbsp;(g)</TableCell>
+                                <TableCell align="right">Carbs&nbsp;(g)</TableCell>
+                                <TableCell align="right">Protein&nbsp;(g)</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {rows.map((row) => (
+                                <TableRow key={row.name}>
+                                    <TableCell component="th" scope="row">
+                                        {row.name}
+                                    </TableCell>
+                                    <TableCell align="right">{row.calories}</TableCell>
+                                    <TableCell align="right">{row.fat}</TableCell>
+                                    <TableCell align="right">{row.carbs}</TableCell>
+                                    <TableCell align="right">{row.protein}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Grid></Grid>
     }
     //Wrapper for Charts in a Card
     const CardChart = (data, CardSubtitle, CardLateststat) => {
@@ -263,7 +355,7 @@ const Stats = (props) => {
                 alignItems="center"
                 spacing={1}
             >
-                <Card className={classes.root} style={{ width: "90%" }}>
+                <Card className={classes.root} style={{ width: "100%" }}>
                     <CardContent>
                         <div style={{ width: "100%", height: 400 }}>
                             <ResponsiveContainer >
@@ -297,19 +389,24 @@ const Stats = (props) => {
     }
 
     const GetCardAvatar = (title) => {
-        if (title.includes("Peers")) {
+        if (title.includes("Pending Shares")) {
             return <SettingsEthernetIcon />
-        }
-        else if (title.includes("Height")) {
+        } else if (title.includes("Pending Balance")) {
             return <MenuIcon />
         }
-        else if (title.includes("Threshold")) {
+        else if (title.includes("Paid Balance Today")) {
             return <SendIcon />
+        }
+        else if (title.includes("Lifetime Balance")) {
+            return <SettingsEthernetIcon />
         }
         else {
             return <PieChartIcon />
         }
     }
+
+
+
     //Cards giving data on cardHEader
     const CardInfo = (data, Title) => {
         return <Card className={classes.valueItems}>
@@ -335,10 +432,10 @@ const Stats = (props) => {
                     (<Loading overlay={true} loading={loading.loading} loadingtext={loading.loadingtext} />)
                     : (
                         <Grid container spacing={2} direction="row">
-                          {WalletCard()}
-                          {InfoCard()}
-                          {CardChart(poolHashrates, "Pool Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
-                          {WorkersTable()}
+                            {WalletCard()}
+                            {InfoCard()}
+                            {CardChart(poolHashrates, "Pool Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
+                            {WorkersTable()}
                         </Grid>
                     )
                 }
