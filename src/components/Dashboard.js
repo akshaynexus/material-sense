@@ -73,8 +73,7 @@ const Stats = (props) => {
         localStorage.getItem('address') || ''
     );
 
-    const [performanceSamples, setPerformanceSamples] = useState([]);
-
+    const [workers, setWorkers] = useState([]);
 
     const poolid = localStorage.getItem("poolid");
     const [poolHashrates, setPoolHashrates] = useState([]);
@@ -135,8 +134,8 @@ const Stats = (props) => {
         } else {
 
             // await axios.get("https://mineit.io/api/pools/indexchain/miners/i8X3tekuobxm8fW6TtAssUCKRBBEFJ2TeZ")
-            console.log(poolid)
-            console.log(config.poolapiurl + `pools/${poolid}/miners/${address}`)
+            // console.log(poolid)
+            // console.log(config.poolapiurl + `pools/${poolid}/miners/${address}`)
             await axios.get(config.poolapiurl + `pools/${poolid}/miners/${address}`)
                 .then(function (response) {
                     // handle success
@@ -152,7 +151,20 @@ const Stats = (props) => {
                         lifetimeBalance: data.totalPaid
                     })
 
-                    setPerformanceSamples(data.performanceSamples);
+                    const objectArray = Object.entries(data.performance.workers);
+
+                    objectArray.forEach(([key, value]) => {
+                        console.log("key : " + key);
+                        console.log("value : " + value.hashrate + value.sharesPerSecond);
+
+                        setWorkers(workers => [...workers, {
+                            key: key,
+                            hashrate: value.hashrate,
+                            sharesPerSecond: value.sharesPerSecond,
+                        }]);
+
+                    });
+
 
                     props.enqueueSnackbar('Successfully fetched the wallet data', {
                         variant: 'success',
@@ -186,7 +198,6 @@ const Stats = (props) => {
             await axios.get(config.poolapiurl + `pools/${poolid}/performance`)
                 .then(function (response) {
                     // handle success
-                    console.log(response.data);
                     data = response.data;
 
                     data.stats.map((stats) => {
@@ -220,8 +231,6 @@ const Stats = (props) => {
             await axios.get(config.poolapiurl + `pools/${poolid}`)
                 .then(function (response) {
                     // handle success
-                    console.log(response);
-                    console.log(response.data);
                     let data = response.data;
                     setPoolData({
                         poolHashRate: data.pool.poolStats.poolHashrate,
@@ -327,7 +336,7 @@ const Stats = (props) => {
                 <Grid item xs={12}>
                     <Card className={classes.tableHeader} style={{ width: "100%" }} >
                         <CardHeader
-                            title={"10 miners"}
+                            title={"Workers : " + workers.length}
                             subheader={"List of miners working for you"}
                         />
                     </Card>
@@ -345,14 +354,29 @@ const Stats = (props) => {
                             </TableHead>
                             <TableBody>
 
-                                {performanceSamples.map((performanceSample, index) => (
+                                {/* {performanceSamples.map((performanceSample, index) => (
                                     <TableRow key={index}>
                                         <TableCell align="center">{index + 1}</TableCell>
                                         <TableCell align="center">370mh</TableCell>
                                         <TableCell align="center">{performanceSample.workers["370mh"].hashrate}</TableCell>
                                         <TableCell align="center">{performanceSample.workers["370mh"].sharesPerSecond}</TableCell>
                                     </TableRow>
+                                ))} */}
+
+                                {workers.map((worker, index) => (
+
+                                    <TableRow key={index}>
+                                        <TableCell align="center">{index + 1}</TableCell>
+                                        <TableCell align="center">{worker.key === "" ? 'No Name' : worker.key}</TableCell>
+                                        <TableCell align="center">{hashformat(worker.hashrate, 2, "H/s")}</TableCell>
+
+                                        <TableCell align="center">{worker.sharesPerSecond}</TableCell>
+                                    </TableRow>
                                 ))}
+
+
+
+
 
 
                             </TableBody>
