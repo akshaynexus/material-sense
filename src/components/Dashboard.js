@@ -83,6 +83,7 @@ const Stats = (props) => {
     const [workers, setWorkers] = useState([]);
 
     const [minersHashrates, setMinersHashrates] = useState([]);
+    const [minerHashrateTotal, setMinerHashrateTotal] = useState("");
 
     const poolid = localStorage.getItem("poolid");
     const [poolHashrates, setPoolHashrates] = useState([]);
@@ -195,10 +196,13 @@ const Stats = (props) => {
                     try {
                         if (data.performance.workers) {
                             const objectArray = Object.entries(data.performance.workers);
+                            var totalHashrate = 0;
 
                             objectArray.forEach(([key, value]) => {
                                 console.log("key : " + key);
                                 console.log("value : " + value.hashrate + value.sharesPerSecond);
+
+                                totalHashrate += value.hashrate;
 
                                 setWorkers(workers => [...workers, {
                                     key: key,
@@ -207,6 +211,9 @@ const Stats = (props) => {
                                 }]);
 
                             });
+
+                            setMinerHashrateTotal(totalHashrate)
+
                         }
                     } catch (e) {
                         console.log("error with performance data");
@@ -550,7 +557,7 @@ const Stats = (props) => {
                         <Grid container spacing={2} direction="row">
                             {WalletCard()}
                             {InfoCard()}
-                            {CardChart(minersHashrates, "Miners Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
+                            {CardChart(minersHashrates, "Miners Hashrate", hashformat(minerHashrateTotal, 2, "H/s"))}
                             {WorkersTable()}
                         </Grid>
                     )
