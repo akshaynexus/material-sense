@@ -75,8 +75,11 @@ const Stats = (props) => {
 
     const [workers, setWorkers] = useState([]);
 
+    const [minersHashrates, setMinersHashrates] = useState([]);
+
     const poolid = localStorage.getItem("poolid");
     const [poolHashrates, setPoolHashrates] = useState([]);
+
 
 
 
@@ -165,6 +168,26 @@ const Stats = (props) => {
 
                     });
 
+                    // Get miners hashrates from performance samples. 
+
+                    // setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
+                    // {CardChart(poolHashrates, "Miners Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))} 
+
+                    data.performanceSamples.map(performanceSample => {
+                        const performanceSampleWorkersObjectArray = Object.entries(performanceSample.workers);
+                        var minersHashrateComputed = 0;
+                        const date = performanceSample.created.substring(11, 16);
+
+                        performanceSampleWorkersObjectArray.forEach(([key, value]) => {
+                            // console.log("key : " + key);
+                            // console.log("value : " + value.hashrate + value.sharesPerSecond);
+
+                            minersHashrateComputed += value.hashrate;
+
+                        })
+
+                        setMinersHashrates(minersHashrate => [...minersHashrate, { value: (minersHashrateComputed / 1000000000), name: date }]);
+                    });
 
                     props.enqueueSnackbar('Successfully fetched the wallet data', {
                         variant: 'success',
@@ -357,7 +380,6 @@ const Stats = (props) => {
                                         <TableCell align="center">{index + 1}</TableCell>
                                         <TableCell align="center">{worker.key === "" ? 'No Name' : worker.key}</TableCell>
                                         <TableCell align="center">{hashformat(worker.hashrate, 2, "H/s")}</TableCell>
-
                                         <TableCell align="center">{worker.sharesPerSecond}</TableCell>
                                     </TableRow>
                                 ))}
@@ -411,6 +433,48 @@ const Stats = (props) => {
             </Grid></Grid>
     }
 
+    // const CardChart = (data, CardSubtitle, CardLateststat) => {
+    //     return <Grid item xs={12} sm={12} md={6}>
+    //         <Grid
+    //             container
+    //             direction="column"
+    //             justify="center"
+    //             alignItems="center"
+    //             spacing={1}
+    //         >
+    //             <Card className={classes.root} style={{ width: "100%" }}>
+    //                 <CardContent>
+    //                     <div style={{ width: "100%", height: 400 }}>
+    //                         <ResponsiveContainer >
+    //                             <AreaChart data={data}
+    //                                 margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+    //                                 <defs>
+    //                                     <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+    //                                         <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
+    //                                         <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
+    //                                     </linearGradient>
+    //                                 </defs>
+    //                                 <XAxis dataKey="name" />
+    //                                 <YAxis />
+    //                                 <Tooltip
+    //                                     contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+    //                                     labelStyle={{ fontWeight: 'bold', color: '#666666' }} />
+    //                                 <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
+    //                             </AreaChart>
+    //                         </ResponsiveContainer>
+    //                     </div>
+    //                     <Typography variant="h5" component="h5">
+    //                         {CardLateststat}
+    //                     </Typography>
+    //                     <Typography variant="h6" component="h6">
+    //                         {CardSubtitle}
+    //                     </Typography>
+
+    //                 </CardContent>
+    //             </Card>
+    //         </Grid></Grid>
+    // }
+
     const GetCardAvatar = (title) => {
         if (title.includes("Pending Shares")) {
             return <SettingsEthernetIcon />
@@ -457,7 +521,7 @@ const Stats = (props) => {
                         <Grid container spacing={2} direction="row">
                             {WalletCard()}
                             {InfoCard()}
-                            {CardChart(poolHashrates, "Pool Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
+                            {CardChart(minersHashrates, "Miners Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
                             {WorkersTable()}
                         </Grid>
                     )
