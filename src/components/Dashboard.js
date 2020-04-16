@@ -185,21 +185,27 @@ const Stats = (props) => {
                         setMinersHashrates(minersHashrate => [...minersHashrate, { value: (minersHashrateComputed / 1000000000), name: date }]);
                     });
 
-                    if (data.performance.workers) {
-                        const objectArray = Object.entries(data.performance.workers);
+                    try {
+                        if (data.performance.workers) {
+                            const objectArray = Object.entries(data.performance.workers);
 
-                        objectArray.forEach(([key, value]) => {
-                            console.log("key : " + key);
-                            console.log("value : " + value.hashrate + value.sharesPerSecond);
+                            objectArray.forEach(([key, value]) => {
+                                console.log("key : " + key);
+                                console.log("value : " + value.hashrate + value.sharesPerSecond);
 
-                            setWorkers(workers => [...workers, {
-                                key: key,
-                                hashrate: value.hashrate,
-                                sharesPerSecond: value.sharesPerSecond,
-                            }]);
+                                setWorkers(workers => [...workers, {
+                                    key: key,
+                                    hashrate: value.hashrate,
+                                    sharesPerSecond: value.sharesPerSecond,
+                                }]);
 
-                        });
+                            });
+                        }
+                    } catch (e) {
+                        console.log("error with performance data");
                     }
+
+
 
                     props.enqueueSnackbar('Successfully fetched the wallet data', {
                         variant: 'success',
