@@ -129,6 +129,16 @@ const Stats = (props) => {
 
     const loadWalletData = async () => {
 
+        setWalletData({
+            pendingShares: 0,
+            pendingBalance: 0,
+            paidBalanceToday: 0,
+            lifetimeBalance: 0
+        })
+
+        setWorkers([]);
+        setMinersHashrates([]);
+
         let data;
         if (address === '') {
             props.enqueueSnackbar('Please enter address', {
@@ -154,20 +164,6 @@ const Stats = (props) => {
                         lifetimeBalance: data.totalPaid
                     })
 
-                    const objectArray = Object.entries(data.performance.workers);
-
-                    objectArray.forEach(([key, value]) => {
-                        console.log("key : " + key);
-                        console.log("value : " + value.hashrate + value.sharesPerSecond);
-
-                        setWorkers(workers => [...workers, {
-                            key: key,
-                            hashrate: value.hashrate,
-                            sharesPerSecond: value.sharesPerSecond,
-                        }]);
-
-                    });
-
                     // Get miners hashrates from performance samples. 
 
                     // setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
@@ -188,6 +184,22 @@ const Stats = (props) => {
 
                         setMinersHashrates(minersHashrate => [...minersHashrate, { value: (minersHashrateComputed / 1000000000), name: date }]);
                     });
+
+                    if (data.performance.workers) {
+                        const objectArray = Object.entries(data.performance.workers);
+
+                        objectArray.forEach(([key, value]) => {
+                            console.log("key : " + key);
+                            console.log("value : " + value.hashrate + value.sharesPerSecond);
+
+                            setWorkers(workers => [...workers, {
+                                key: key,
+                                hashrate: value.hashrate,
+                                sharesPerSecond: value.sharesPerSecond,
+                            }]);
+
+                        });
+                    }
 
                     props.enqueueSnackbar('Successfully fetched the wallet data', {
                         variant: 'success',
