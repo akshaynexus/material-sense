@@ -57,13 +57,20 @@ const useStyles = makeStyles({
         width: 275,
         marginTop: 0,
         marginBottom: 1,
+        borderWidth: "0px",
+        marginTop: "6px"
     },
     title: {
         fontSize: 16,
     },
     pos: {
         marginBottom: 12,
+    },
+    table: {
+        border: "0px",
+        marginTop: "15px",
     }
+
 });
 const Stats = (props) => {
 
@@ -371,42 +378,46 @@ const Stats = (props) => {
                 container
             >
 
-                <Grid item xs={12}>
-                    <Card className={classes.tableHeader} style={{ width: "100%" }} >
-                        <CardHeader
-                            title={"Workers : " + workers.length}
-                            subheader={"List of miners working for you"}
-                        />
-                    </Card>
-                </Grid>
-                <Grid item xs={12} container>
-                    <TableContainer component={Paper}>
-                        <Table className={classes.table} aria-label="table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="center">Index</TableCell>
-                                    <TableCell align="center">Name</TableCell>
-                                    <TableCell align="center">Hashrate</TableCell>
-                                    <TableCell align="center">Share Rate</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
+                <Card className={classes.root} style={{ width: "100%" }}>
+                    <CardContent>
+                        <Typography variant="h5" component="h5">
+                            {"Workers : " + workers.length}
+                        </Typography>
+                        <Typography variant="h6" component="h6">
+                            List of miners working for you
+                        </Typography>
+                        <br />
+                        <div style={{ width: "100%", border: "0px" }}>
+                            <TableContainer component={Paper}>
+                                <Table className={classes.table} aria-label="table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell align="center">Index</TableCell>
+                                            <TableCell align="center">Name</TableCell>
+                                            <TableCell align="center">Hashrate</TableCell>
+                                            <TableCell align="center">Share Rate</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
 
-                                {workers.map((worker, index) => (
+                                        {workers.map((worker, index) => (
 
-                                    <TableRow key={index}>
-                                        <TableCell align="center">{index + 1}</TableCell>
-                                        <TableCell align="center">{worker.key === "" ? 'No Name' : worker.key}</TableCell>
-                                        <TableCell align="center">{hashformat(worker.hashrate, 2, "H/s")}</TableCell>
-                                        <TableCell align="center">{worker.sharesPerSecond}</TableCell>
-                                    </TableRow>
-                                ))}
+                                            <TableRow key={index}>
+                                                <TableCell align="center">{index + 1}</TableCell>
+                                                <TableCell align="center">{worker.key === "" ? 'No Name' : worker.key}</TableCell>
+                                                <TableCell align="center">{hashformat(worker.hashrate, 2, "H/s")}</TableCell>
+                                                <TableCell align="center">{worker.sharesPerSecond}</TableCell>
+                                            </TableRow>
+                                        ))}
 
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Grid>
-            </Grid></Grid >
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </div>
+                    </CardContent>
+                </Card>
+            </Grid>
+        </Grid>
     }
     //Wrapper for Charts in a Card
     const CardChart = (data, CardSubtitle, CardLateststat) => {
