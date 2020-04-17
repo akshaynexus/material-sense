@@ -5,6 +5,7 @@ import Wizard from './components/Wizard'
 import Cards from './components/Cards'
 import Signup from './components/Signup'
 import Stats from './components/Stats'
+import Blocks from './components/Blocks';
 import ScrollToTop from './components/ScrollTop'
 
 export default props => (
@@ -12,11 +13,12 @@ export default props => (
     <ScrollToTop>
       <Switch>
         <Route exact path='/' component={Cards} />
-        <Route exact path='/dashboard/' component={Dashboard} />
+        <Route exact path='/dashboard' component={Dashboard} />
+        <Route exact path='/blocks' component={Blocks} />
         <Route exact path='/signup' component={Signup} />
         <Route exact path='/wizard' component={Wizard} />
         <Route exact path='/cards' component={Cards} />
-        <Route exact path='/stats/' component={Stats} />
+        <Route exact path='/stats' component={Stats} />
       </Switch>
     </ScrollToTop>
   </HashRouter>

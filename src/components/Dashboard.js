@@ -72,7 +72,7 @@ const useStyles = makeStyles({
     }
 
 });
-const Stats = (props) => {
+const Dashboard = (props) => {
 
     // Name of the chain, getting the value from the router parameter.
 
@@ -567,4 +567,4 @@ const Stats = (props) => {
     )
 }
 
-export default withSnackbar(Stats);
+export default withSnackbar(Dashboard);
