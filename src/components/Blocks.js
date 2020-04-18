@@ -15,6 +15,11 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import DoneIcon from '@material-ui/icons/Done';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableFooter from '@material-ui/core/TableFooter';
+
 import "./Stats.css";
 
 import config from "../config.js";
@@ -59,7 +64,10 @@ const useStyles = makeStyles({
         marginTop: "15px",
     },
     tableHeader: {
-        background: "#4d4c4b"
+        fontSize: 24,
+        padding: 5,
+        border: 3,
+        borderWidth: 5
     }
 
 });
@@ -78,11 +86,67 @@ const Blocks = (props) => {
         miner: ""
     }]);
 
+    const [totalPosts, setTotalPosts] = useState();
+    const [totalPages, setTotalPages] = useState(0);
+
+
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(15);
+
+
     const [loading, setLoading] = useState({
         loading: true,
         loadingtext: "Loading Table Data",
         error: 'NoError'
     });
+
+    const handleChangePage = (event, newPage) => {
+        console.log("Page Number : " + newPage);
+        if (page <= newPage) {
+            setPage(newPage);
+            loadPage();
+        }
+
+    };
+
+    const loadPage = async () => {
+
+        await axios.get(config.poolapiurl + `pools/${poolid}/blocks?pagesize=${rowsPerPage}&page=${page}&order=ASC&sort=id`)
+            .then(function (response) {
+                // handle success
+                const data = response.data;
+
+                data.map((d) => {
+
+                    setBlockTableRows(blockTableRow => [...blockTableRow, {
+                        found: formatDate(d.created),
+                        height: d.blockHeight,
+                        effort: Math.round(d.effort * 100),
+                        status: d.status,
+                        reward: (Math.round(d.reward * 100) / 100).toFixed(2),
+                        confirmation: Math.round(d.confirmationProgress * 100),
+                        miner: d.miner
+                    }]);
+
+                });
+
+                props.enqueueSnackbar('Successfully fetched the table data.', {
+                    variant: 'success',
+                })
+
+                setLoading({ loading: false, loadingtext: "" });
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+
+                props.enqueueSnackbar('Error loading table data, please try again later.', {
+                    variant: 'error',
+                })
+                setLoading({ loading: false, loadingtext: "" });
+            })
+
+    }
 
     useEffect(() => {
 
@@ -94,14 +158,27 @@ const Blocks = (props) => {
 
             setBlockTableRows([]);
 
-            await axios.get(config.poolapiurl + `pools/${poolid}/blocks`)
+            // pagesize=15&page=2&order=ASC&sort=id
+            // https://mineit.io/api/pools/indexchain/blocks?pagesize=15&page=2&order=ASC&sort=id
+            await axios.get(config.poolapiurl + `pools/${poolid}/blocks?pagesize=${rowsPerPage}&page=${page}&order=ASC&sort=id`)
                 .then(function (response) {
                     // handle success
                     data = response.data;
 
+                    // Get total posts value from the header. 
+                    // console.log("headers : " + JSON.stringify(response.headers))
+                    const jsonString = JSON.stringify(response.headers);
+
+                    JSON.parse(jsonString, (key, value) => {
+                        if (key === 'x-total-count') {
+                            setTotalPosts(value);
+                            setTotalPages(Math.round(value / rowsPerPage) + 1);
+                        }
+                    });
+
                     data.map((d) => {
 
-                        console.log(d.id);
+                        // console.log(d.id);
 
                         setBlockTableRows(blockTableRow => [...blockTableRow, {
                             found: formatDate(d.created),
@@ -187,12 +264,26 @@ const Blocks = (props) => {
                                                 <TableCell align="center">{blockTableRow.effort}%</TableCell>
                                                 <TableCell align="center">{blockTableRow.status}</TableCell>
                                                 <TableCell align="center">{blockTableRow.reward}</TableCell>
-                                                <TableCell align="center">{blockTableRow.confirmation}%</TableCell>
+                                                <TableCell align="center">{blockTableRow.confirmation === 100 ? <DoneIcon /> : <CircularProgress variant="static" value={blockTableRow.confirmation} color="inherit" />}</TableCell>
                                                 <TableCell align="center">{blockTableRow.miner}</TableCell>
                                             </TableRow>
                                         ))}
-
                                     </TableBody>
+                                    <TableFooter>
+                                        <TableRow>
+                                            <TablePagination
+                                                rowsPerPageOptions={[15]}
+                                                count={totalPages}
+                                                rowsPerPage={rowsPerPage}
+                                                page={page}
+                                                SelectProps={{
+                                                    inputProps: { 'aria-label': 'rows per page' },
+                                                    native: true,
+                                                }}
+                                                onChangePage={handleChangePage}
+                                            />
+                                        </TableRow>
+                                    </TableFooter>
                                 </Table>
                             </TableContainer>
                         </div>

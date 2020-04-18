@@ -13,12 +13,12 @@ export default props => (
     <ScrollToTop>
       <Switch>
         <Route exact path='/' component={Cards} />
+        <Route exact path='/stats' component={Stats} />
         <Route exact path='/dashboard' component={Dashboard} />
         <Route exact path='/blocks' component={Blocks} />
         <Route exact path='/signup' component={Signup} />
         <Route exact path='/wizard' component={Wizard} />
         <Route exact path='/cards' component={Cards} />
-        <Route exact path='/stats' component={Stats} />
       </Switch>
     </ScrollToTop>
   </HashRouter>

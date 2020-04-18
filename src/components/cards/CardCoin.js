@@ -1,3 +1,6 @@
+
+
+
 import React, { Component } from 'react';
 import withStyles from '@material-ui/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
@@ -69,15 +72,36 @@ const styles = theme => ({
 
 class CardCoin extends Component {
 
+  state = {
+    redirect: false
+  }
+
   render() {
+
     const { classes } = this.props;
+    const { redirect } = this.state;
+
+
     const setPoolID = () => {
+      console.log("clicked card");
       localStorage.setItem("poolid", this.props.poolid)
-      return ReDirtoStats();
+      localStorage.setItem("address", "");
+      console.log(localStorage.getItem("poolid"));
+      this.setState({ redirect: true })
+      // reDirectToStats();
+      //return ReDirtoStats();
     }
-    const ReDirtoStats = () => {
-      return <Redirect to='/stats' />
+
+    // const reDirectToStats = () => {
+    //   return <Redirect to='/stats' />
+    // }
+
+    if (redirect) {
+      return <Redirect to='/stats' />;
     }
+
+
+
     return (
       <div className={classes.root}>
         <CardActionArea
