@@ -103,11 +103,9 @@ const Blocks = (props) => {
 
     const handleChangePage = (event, newPage) => {
         console.log("Page Number : " + newPage);
-        if (page <= newPage) {
-            setPage(newPage);
-            loadPage();
-        }
 
+        setPage(newPage);
+        loadPage();
     };
 
     const loadPage = async () => {
