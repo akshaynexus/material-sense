@@ -49,7 +49,6 @@ const useStyles = makeStyles({
     },
     tableHeader: {
         width: 275,
-        marginTop: 0,
         marginBottom: 1,
         borderWidth: "0px",
         marginTop: "6px"
@@ -63,12 +62,6 @@ const useStyles = makeStyles({
     table: {
         border: "0px",
         marginTop: "15px",
-    },
-    tableHeader: {
-        fontSize: 24,
-        padding: 5,
-        border: 3,
-        borderWidth: 5
     }
 
 });
@@ -87,12 +80,11 @@ const Blocks = (props) => {
         miner: ""
     }]);
 
-    const [totalPosts, setTotalPosts] = useState();
     const [totalPages, setTotalPages] = useState(0);
 
 
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(15);
+    const rowsPerPage = 15;
 
 
     const [loading, setLoading] = useState({
@@ -102,7 +94,6 @@ const Blocks = (props) => {
     });
 
     const handleChangePage = (event, newPage) => {
-        console.log("Page Number : " + newPage);
 
         setPage(newPage);
         loadPage();
@@ -126,7 +117,7 @@ const Blocks = (props) => {
                         confirmation: Math.round(d.confirmationProgress * 100),
                         miner: d.miner
                     }]);
-
+                    return true;
                 });
 
                 props.enqueueSnackbar('Successfully fetched the table data.', {
@@ -137,9 +128,7 @@ const Blocks = (props) => {
             })
             .catch(function (error) {
                 // handle error
-                console.log(error);
-
-                props.enqueueSnackbar('Error loading table data, please try again later.', {
+                props.enqueueSnackbar('Error : ' + error, {
                     variant: 'error',
                 })
                 setLoading({ loading: false, loadingtext: "" });
@@ -165,19 +154,16 @@ const Blocks = (props) => {
                     data = response.data;
 
                     // Get total posts value from the header. 
-                    // console.log("headers : " + JSON.stringify(response.headers))
                     const jsonString = JSON.stringify(response.headers);
 
                     JSON.parse(jsonString, (key, value) => {
                         if (key === 'x-total-count') {
-                            setTotalPosts(value);
                             setTotalPages(Math.round(value / rowsPerPage) + 1);
                         }
                     });
 
                     data.map((d) => {
 
-                        // console.log(d.id);
 
                         setBlockTableRows(blockTableRow => [...blockTableRow, {
                             found: formatDate(d.created),
@@ -188,7 +174,7 @@ const Blocks = (props) => {
                             confirmation: Math.round(d.confirmationProgress * 100),
                             miner: d.miner
                         }]);
-
+                        return true;
                     });
 
                     props.enqueueSnackbar('Successfully fetched the table data.', {
@@ -196,12 +182,10 @@ const Blocks = (props) => {
                     })
 
                     setLoading({ loading: false, loadingtext: "" });
+                    return true;
                 })
                 .catch(function (error) {
-                    // handle error
-                    console.log(error);
-
-                    props.enqueueSnackbar('Error loading table data, please try again later.', {
+                    props.enqueueSnackbar('Error loading table data : ' + error, {
                         variant: 'error',
                     })
                     setLoading({ loading: false, loadingtext: "" });
@@ -211,7 +195,7 @@ const Blocks = (props) => {
 
         loadTableData();
 
-    }, [props, poolid]);
+    }, [props, poolid,page]);
 
     const formatDate = (dateString) => {
         var options = {};

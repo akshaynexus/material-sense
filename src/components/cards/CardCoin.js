@@ -83,19 +83,11 @@ class CardCoin extends Component {
 
 
     const setPoolID = () => {
-      console.log("clicked card");
       localStorage.setItem("poolid", this.props.poolid)
       localStorage.setItem("address", "");
-      console.log(localStorage.getItem("poolid"));
       this.setState({ redirect: true })
-      // reDirectToStats();
-      //return ReDirtoStats();
     }
-
-    // const reDirectToStats = () => {
-    //   return <Redirect to='/stats' />
-    // }
-
+    
     if (redirect) {
       return <Redirect to='/stats' />;
     }

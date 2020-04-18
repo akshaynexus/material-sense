@@ -55,7 +55,6 @@ const useStyles = makeStyles({
     },
     tableHeader: {
         width: 275,
-        marginTop: 0,
         marginBottom: 1,
         borderWidth: "0px",
         marginTop: "6px"
@@ -86,23 +85,6 @@ const Dashboard = (props) => {
     const [minerHashrateTotal, setMinerHashrateTotal] = useState("");
 
     const poolid = localStorage.getItem("poolid");
-    const [poolHashrates, setPoolHashrates] = useState([]);
-
-
-
-
-
-    const [poolData, setPoolData] = useState({
-        poolHashRate: 0,
-        miners: 0,
-        networkHashrate: 0,
-        networkDifficulty: 0,
-        poolFee: 0,
-        paymentThreshold: "",
-        paymentScheme: "",
-        blockchainHeight: 0,
-        connectedPeers: 0
-    });
 
     const [walletData, setWalletData] = useState({
         pendingShares: 0,
@@ -112,27 +94,10 @@ const Dashboard = (props) => {
     });
 
     const [loading, setLoading] = useState({
-        loading: true,
-        loadingtext: "Loading Graph data",
+        loading: false,
+        loadingtext: "",
         error: 'NoError'
     });
-
-
-
-    useEffect(() => {
-
-        // TODO : Make api call for dashboard, pass address. 
-        // API : https://mineit.io/api/pools/indexchain/miners/i8X3tekuobxm8fW6TtAssUCKRBBEFJ2TeZ
-        // https://mineit.io/api/pools/indexchain/miners/{Address} 
-
-        // Make api call if api if address is not empty, the first time the app loads. 
-        console.log("Address is : " + address);
-
-        if (address !== '') {
-            loadWalletData();
-        }
-
-    }, [])
 
 
     const loadWalletData = async () => {
@@ -153,14 +118,9 @@ const Dashboard = (props) => {
                 variant: 'error',
             })
         } else {
-
-            // await axios.get("https://mineit.io/api/pools/indexchain/miners/i8X3tekuobxm8fW6TtAssUCKRBBEFJ2TeZ")
-            // console.log(poolid)
-            // console.log(config.poolapiurl + `pools/${poolid}/miners/${address}`)
             await axios.get(config.poolapiurl + `pools/${poolid}/miners/${address}`)
                 .then(function (response) {
                     // handle success
-                    console.log(response.data);
                     data = response.data;
 
                     localStorage.setItem("address", address);
@@ -174,23 +134,17 @@ const Dashboard = (props) => {
 
                     // Get miners hashrates from performance samples. 
 
-                    // setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
-                    // {CardChart(poolHashrates, "Miners Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))} 
-
                     data.performanceSamples.map(performanceSample => {
                         const performanceSampleWorkersObjectArray = Object.entries(performanceSample.workers);
                         var minersHashrateComputed = 0;
                         const date = performanceSample.created.substring(11, 16);
 
                         performanceSampleWorkersObjectArray.forEach(([key, value]) => {
-                            // console.log("key : " + key);
-                            // console.log("value : " + value.hashrate + value.sharesPerSecond);
-
                             minersHashrateComputed += value.hashrate;
-
                         })
 
                         setMinersHashrates(minersHashrate => [...minersHashrate, { value: (minersHashrateComputed / 1000000000), name: date }]);
+                        return true;
                     });
 
                     try {
@@ -199,9 +153,6 @@ const Dashboard = (props) => {
                             var totalHashrate = 0;
 
                             objectArray.forEach(([key, value]) => {
-                                console.log("key : " + key);
-                                console.log("value : " + value.hashrate + value.sharesPerSecond);
-
                                 totalHashrate += value.hashrate;
 
                                 setWorkers(workers => [...workers, {
@@ -216,7 +167,7 @@ const Dashboard = (props) => {
 
                         }
                     } catch (e) {
-                        console.log("error with performance data");
+                        console.error("error with performance data");
                     }
 
 
@@ -224,105 +175,30 @@ const Dashboard = (props) => {
                     props.enqueueSnackbar('Successfully fetched the wallet data', {
                         variant: 'success',
                     })
+                    setLoading({ loading: false, loadingtext: "" });
+
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
-
-                    props.enqueueSnackbar('Error loading wallet data, please try again.', {
+                    props.enqueueSnackbar('Error loading wallet data : ' + error, {
                         variant: 'error',
                     })
                     setLoading({ loading: false, loadingtext: "" });
                 })
-                .then(function () {
-                    // always executed
-                    // console.log(ex);
-                    // setLoading({ loading: false, loadingtext: "" });
-                });
+                .then(function () {});
 
         }
     }
-
     useEffect(() => {
-        const getGraphData = async () => {
-            let data;
-
-
-            setPoolHashrates([]);
-            setLoading({ loading: true, loadingtext: "Loading Pool data" });
-            await axios.get(config.poolapiurl + `pools/${poolid}/performance`)
-                .then(function (response) {
-                    // handle success
-                    data = response.data;
-
-                    data.stats.map((stats) => {
-                        setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
-                        return true;
-                    });
-                    props.enqueueSnackbar('Successfully fetched the graph data.', {
-                        variant: 'success',
-                    })
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-
-                    props.enqueueSnackbar('Error loading graph data, please try again later.', {
-                        variant: 'error',
-                    })
-                    setLoading({ loading: false, loadingtext: "" });
-                })
-                .then(function () {
-                    // always executed
-                    // console.log(ex);
-                    // setLoading({ loading: false, loadingtext: "" });
-                });
-
-
-        };
-
-        const getPoolData = async () => {
-
-            await axios.get(config.poolapiurl + `pools/${poolid}`)
-                .then(function (response) {
-                    // handle success
-                    let data = response.data;
-                    setPoolData({
-                        poolHashRate: data.pool.poolStats.poolHashrate,
-                        miners: data.pool.poolStats.connectedMiners,
-                        networkHashrate: data.pool.networkStats.networkHashrate,
-                        networkDifficulty: data.pool.networkStats.networkDifficulty,
-                        poolFee: data.pool.poolFeePercent,
-                        paymentThreshold: data.pool.paymentProcessing.minimumPayment + " " + data.pool.coin.type,
-                        paymentScheme: data.pool.paymentProcessing.payoutScheme,
-                        blockchainHeight: data.pool.networkStats.blockHeight,
-                        connectedPeers: data.pool.networkStats.connectedPeers
-                    })
-                    props.enqueueSnackbar('Successfully fetched the pool data.', {
-                        variant: 'success',
-                    })
-                    setLoading({ loading: false, loadingtext: "" });
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                    props.enqueueSnackbar('Error loading pool data, please try again later.', {
-                        variant: 'error',
-                    })
-                    setLoading({ loading: false, loadingtext: "" });
-                })
-                .then(function () {
-                    // always executed
-                    // console.log(ex);
-                    // setLoading({ loading: false, loadingtext: "" });
-                });
-
+        // Make api call if api if address is not empty, the first time the app loads. 
+        if (address !== '') {
+            setLoading({ loading: true, loadingtext: "Loading wallet data" });
+            loadWalletData();
         }
 
-
-        getGraphData();
-        getPoolData();
-
+    }, [address])
+    useEffect(() => {
+    // setLoading({ loading: false, loadingtext: "" });
     }, [props, poolid])
 
     const WalletCard = () => {

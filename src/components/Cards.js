@@ -12,7 +12,7 @@ import hashformat from './common/hashutil.js'
 const styles = theme => ({
   grid: {
     width: 1100
-  }
+}
 });
 
 class Cards extends Component {
@@ -65,6 +65,7 @@ class Cards extends Component {
                   title="Coins"
                   subtitle="Available coins to mine"
                   val={selectedindex}
+                  style={{padding:"10px"}}
                 />
                 {this.state.loading || !this.state.pooldata ? (
                   <Loading overlay={true} loading={this.state.loading} loadingtext={"Loading coin data"} />

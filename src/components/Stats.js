@@ -83,23 +83,6 @@ const Stats = (props) => {
     useEffect(() => {
         const getGraphData = async () => {
             let data;
-            // try {
-            //     response = await fetch(config.poolapiurl + `pools/${poolid}/performance`);
-            //     data = await response.json();
-            //     props.enqueueSnackbar('Successfully fetched the data.')
-            //     setLoading({ loading: true, loadingtext: "Loading Pool data" });
-            //     data.stats.map((stats) => {
-            //         setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
-            //         setConnectedMiners(connectedMiners => [...connectedMiners, { value: stats.connectedMiners, name: stats.created.substring(11, 16) }]);
-            //         setNetworkHashrates(networkHashRates => [...networkHashRates, { value: (stats.networkHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
-            //         setNetworkDifficulty(networkDifficulty => [...networkDifficulty, { value: stats.networkDifficulty, name: stats.created.substring(11, 16) }]);
-
-            //         return true;
-            //     });
-            // } catch (ex) {
-            //     return console.log(ex);
-            // }
-
             setPoolHashrates([]);
             setConnectedMiners([]);
             setNetworkHashrates([]);
@@ -109,7 +92,6 @@ const Stats = (props) => {
             await axios.get(config.poolapiurl + `pools/${poolid}/performance`)
                 .then(function (response) {
                     // handle success
-                    console.log(response.data);
                     data = response.data;
 
                     data.stats.map((stats) => {
@@ -126,50 +108,20 @@ const Stats = (props) => {
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
+                    console.error(error);
 
-                    props.enqueueSnackbar('Error loading graph data, please try again later.', {
+                    props.enqueueSnackbar('Error loading graph data : ' + error, {
                         variant: 'error',
                     })
                     setLoading({ loading: false, loadingtext: "" });
                 })
-                .then(function () {
-                    // always executed
-                    // console.log(ex);
-                    // setLoading({ loading: false, loadingtext: "" });
-                });
-
-
+                .then(function () {});
         };
 
         const getPoolData = async () => {
-            // try {
-            //     response = await fetch(config.poolapiurl + `pools/${poolid}`);
-            //     data = await response.json();
-            //     setPoolData({
-            //         poolHashRate: data.pool.poolStats.poolHashrate,
-            //         miners: data.pool.poolStats.connectedMiners,
-            //         networkHashrate: data.pool.networkStats.networkHashrate,
-            //         networkDifficulty: data.pool.networkStats.networkDifficulty,
-            //         poolFee: data.pool.poolFeePercent,
-            //         paymentThreshold: data.pool.paymentProcessing.minimumPayment + " " + data.pool.coin.type,
-            //         paymentScheme: data.pool.paymentProcessing.payoutScheme,
-            //         blockchainHeight: data.pool.networkStats.blockHeight,
-            //         connectedPeers: data.pool.networkStats.connectedPeers
-            //     })
-            //     props.enqueueSnackbar('Successfully fetched the data.')
-            //     setLoading({ loading: false, loadingtext: "" });
-
-            //     return true;
-            // } catch (ex) {
-            //     return console.log(ex);
-            // }
-
             await axios.get(config.poolapiurl + `pools/${poolid}`)
                 .then(function (response) {
                     // handle success
-                    console.log(response);
-                    console.log(response.data);
                     let data = response.data;
                     setPoolData({
                         poolHashRate: data.pool.poolStats.poolHashrate,
@@ -189,17 +141,12 @@ const Stats = (props) => {
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
-                    props.enqueueSnackbar('Error loading pool data, please try again later.', {
+                    props.enqueueSnackbar('Error loading pool data: '+ error, {
                         variant: 'error',
                     })
                     setLoading({ loading: false, loadingtext: "" });
                 })
-                .then(function () {
-                    // always executed
-                    // console.log(ex);
-                    // setLoading({ loading: false, loadingtext: "" });
-                });
+                .then(function () {});
 
         }
 
