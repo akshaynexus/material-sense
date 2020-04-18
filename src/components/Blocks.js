@@ -19,6 +19,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import DoneIcon from '@material-ui/icons/Done';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableFooter from '@material-ui/core/TableFooter';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import "./Stats.css";
 
@@ -256,18 +257,31 @@ const Blocks = (props) => {
                                     </TableHead>
                                     <TableBody >
 
-                                        {blockTableRows.map((blockTableRow, index) => (
+                                        {blockTableRows
+                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            .map((blockTableRow, index) => (
 
-                                            <TableRow key={index}>
-                                                <TableCell align="center">{blockTableRow.found}</TableCell>
-                                                <TableCell align="center">{blockTableRow.height}</TableCell>
-                                                <TableCell align="center">{blockTableRow.effort}%</TableCell>
-                                                <TableCell align="center">{blockTableRow.status}</TableCell>
-                                                <TableCell align="center">{blockTableRow.reward}</TableCell>
-                                                <TableCell align="center">{blockTableRow.confirmation === 100 ? <DoneIcon /> : <CircularProgress variant="static" value={blockTableRow.confirmation} color="inherit" />}</TableCell>
-                                                <TableCell align="center">{blockTableRow.miner}</TableCell>
-                                            </TableRow>
-                                        ))}
+                                                <TableRow key={index}>
+                                                    <TableCell align="center">{blockTableRow.found}</TableCell>
+                                                    <TableCell align="center">{blockTableRow.height}</TableCell>
+                                                    <TableCell align="center">{blockTableRow.effort}%</TableCell>
+                                                    <TableCell align="center">{blockTableRow.status}</TableCell>
+                                                    <TableCell align="center">{blockTableRow.reward}</TableCell>
+                                                    <TableCell align="center">{
+                                                        blockTableRow.confirmation === 100 || blockTableRow.confirmation === 0 ? blockTableRow.confirmation === 100 ? <DoneIcon /> : blockTableRow.confirmation + "%" :
+                                                            <Tooltip title={blockTableRow.confirmation + "%"} placement="right">
+                                                                <CircularProgress variant="static" value={blockTableRow.confirmation} color="inherit" />
+                                                            </Tooltip>
+                                                    }</TableCell>
+                                                    {/* <TableCell align="center">{
+                                                    blockTableRow.confirmation === 100 || blockTableRow.confirmation === 0 ? <DoneIcon /> :
+                                                        <Tooltip title={blockTableRow.confirmation + "%"} placement="right">
+                                                            <CircularProgress variant="static" value={blockTableRow.confirmation} color="inherit" />
+                                                        </Tooltip>
+                                                }</TableCell> */}
+                                                    <TableCell align="center">{blockTableRow.miner}</TableCell>
+                                                </TableRow>
+                                            ))}
                                     </TableBody>
                                     <TableFooter>
                                         <TableRow>
