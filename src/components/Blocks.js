@@ -140,19 +140,13 @@ const Blocks = (props) => {
 
         const loadTableData = async () => {
             let data;
-
-            // setPoolHashrates([]);
-            // setLoading({ loading: true, loadingtext: "Loading Pool data" });
-
             setBlockTableRows([]);
-
             // pagesize=15&page=2&order=ASC&sort=id
             // https://mineit.io/api/pools/indexchain/blocks?pagesize=15&page=2&order=ASC&sort=id
             await axios.get(config.poolapiurl + `pools/${poolid}/blocks?pagesize=${rowsPerPage}&page=${page}&order=ASC&sort=id`)
                 .then(function (response) {
                     // handle success
                     data = response.data;
-
                     // Get total posts value from the header. 
                     const jsonString = JSON.stringify(response.headers);
 
@@ -255,12 +249,6 @@ const Blocks = (props) => {
                                                                 <CircularProgress variant="static" value={blockTableRow.confirmation} color="inherit" />
                                                             </Tooltip>
                                                     }</TableCell>
-                                                    {/* <TableCell align="center">{
-                                                    blockTableRow.confirmation === 100 || blockTableRow.confirmation === 0 ? <DoneIcon /> :
-                                                        <Tooltip title={blockTableRow.confirmation + "%"} placement="right">
-                                                            <CircularProgress variant="static" value={blockTableRow.confirmation} color="inherit" />
-                                                        </Tooltip>
-                                                }</TableCell> */}
                                                     <TableCell align="center">{blockTableRow.miner}</TableCell>
                                                 </TableRow>
                                             ))}

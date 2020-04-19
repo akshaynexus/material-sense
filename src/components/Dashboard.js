@@ -96,12 +96,11 @@ const Dashboard = (props) => {
     const [loading, setLoading] = useState({
         loading: false,
         loadingtext: "",
-        error: 'NoError'
+        error: ''
     });
 
 
     const loadWalletData = async () => {
-
         setWalletData({
             pendingShares: 0,
             pendingBalance: 0,
@@ -114,10 +113,9 @@ const Dashboard = (props) => {
 
         let data;
         if (address === '') {
-            props.enqueueSnackbar('Please enter address', {
-                variant: 'error',
-            })
+
         } else {
+            setLoading({ loading: true, loadingtext: "Loading wallet data" });
             await axios.get(config.poolapiurl + `pools/${poolid}/miners/${address}`)
                 .then(function (response) {
                     // handle success
@@ -180,6 +178,8 @@ const Dashboard = (props) => {
                 })
                 .catch(function (error) {
                     // handle error
+                    console.log(error);
+
                     props.enqueueSnackbar('Error loading wallet data : ' + error, {
                         variant: 'error',
                     })
@@ -189,17 +189,8 @@ const Dashboard = (props) => {
 
         }
     }
-    useEffect(() => {
-        // Make api call if api if address is not empty, the first time the app loads. 
-        if (address !== '') {
-            setLoading({ loading: true, loadingtext: "Loading wallet data" });
-            loadWalletData();
-        }
-
-    }, [address])
-    useEffect(() => {
-    // setLoading({ loading: false, loadingtext: "" });
-    }, [props, poolid])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {loadWalletData()},[])
 
     const WalletCard = () => {
         return <Grid item xs={12} >
