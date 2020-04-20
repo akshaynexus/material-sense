@@ -272,7 +272,7 @@ const Stats = (props) => {
                             <CardChart data={poolHashrates} CardSubtitle="Pool Hashrate" CardLateststat={hashformat(poolData.poolHashRate, 2, "H/s")} />
                             <CardChart data={connectedMiners} CardSubtitle="Miners" CardLateststat={poolData.miners} />
                             {InfoCard()}
-                            <CardChart data={networkHashRates} CardSubtitle="Network Hashrate" CardLateststat={poolData.networkDifficulty} />
+                            <CardChart data={networkHashRates} CardSubtitle="Network Hashrate" CardLateststat={hashformat(poolData.networkHashrate, 2, "H/s")} />
                             <CardChart data={networkDifficulty} CardSubtitle="Network Difficulty" CardLateststat={poolData.networkDifficulty} />
                         </Grid>
                     )
