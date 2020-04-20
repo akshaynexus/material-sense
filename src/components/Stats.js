@@ -13,7 +13,6 @@ import PieChartIcon from '@material-ui/icons/PieChart';
 import SendIcon from '@material-ui/icons/Send';
 import axios from "axios";
 
-import useSWR from "swr";
 
 import CardChart from "./CardChart";
 import "./Stats.css";

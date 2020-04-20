@@ -81,11 +81,9 @@ const Blocks = (props) => {
     }]);
 
     const [totalPages, setTotalPages] = useState(0);
+    const [page, setPage] = useState(0);
 
-
-    const [page, setPage] = React.useState(0);
-    const rowsPerPage = 15;
-
+    const [rowsPerPage, setRowsPerPage] = useState(15);
 
     const [loading, setLoading] = useState({
         loading: true,
@@ -93,15 +91,15 @@ const Blocks = (props) => {
         error: 'NoError'
     });
 
-    const handleChangePage = (event, newPage) => {
+    const handleChangePage = async (event, newPage) => {
 
+        console.log("New Page : " + newPage)
         setPage(newPage);
-        loadPage();
-    };
 
-    const loadPage = async () => {
+        // console.log(page);
+        // console.log(config.poolapiurl + `pools/${poolid}/blocks?pageSize=${rowsPerPage}&page=${page}`)
 
-        await axios.get(config.poolapiurl + `pools/${poolid}/blocks?pagesize=${rowsPerPage}&page=${page}&order=ASC&sort=id`)
+        await axios.get(config.poolapiurl + `pools/${poolid}/blocks?pageSize=${rowsPerPage}&page=${newPage}`)
             .then(function (response) {
                 // handle success
                 const data = response.data;
@@ -134,7 +132,10 @@ const Blocks = (props) => {
                 setLoading({ loading: false, loadingtext: "" });
             })
 
-    }
+    };
+
+
+    // useEffect(() => { console.log("Total Pages is " + totalPages) }, [totalPages])
 
     useEffect(() => {
 
@@ -143,7 +144,7 @@ const Blocks = (props) => {
             setBlockTableRows([]);
             // pagesize=15&page=2&order=ASC&sort=id
             // https://mineit.io/api/pools/indexchain/blocks?pagesize=15&page=2&order=ASC&sort=id
-            await axios.get(config.poolapiurl + `pools/${poolid}/blocks?pagesize=${rowsPerPage}&page=${page}&order=ASC&sort=id`)
+            await axios.get(config.poolapiurl + `pools/${poolid}/blocks?pageSize=${rowsPerPage}&page=${page}`)
                 .then(function (response) {
                     // handle success
                     data = response.data;
@@ -152,12 +153,16 @@ const Blocks = (props) => {
 
                     JSON.parse(jsonString, (key, value) => {
                         if (key === 'x-total-count') {
+                            console.log(key)
+                            console.log(value)
+                            console.log(rowsPerPage)
                             setTotalPages(Math.round(value / rowsPerPage) + 1);
                         }
                     });
 
-                    data.map((d) => {
+                    console.log("Total Pages : " + totalPages);
 
+                    data.map((d) => {
 
                         setBlockTableRows(blockTableRow => [...blockTableRow, {
                             found: formatDate(d.created),
@@ -189,7 +194,7 @@ const Blocks = (props) => {
 
         loadTableData();
 
-    }, [props, poolid,page]);
+    }, [props, poolid]);
 
     const formatDate = (dateString) => {
         var options = {};
