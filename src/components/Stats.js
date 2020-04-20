@@ -7,14 +7,14 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import hashformat from './common/hashutil.js'
 import Grid from '@material-ui/core/Grid';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import MenuIcon from '@material-ui/icons/Menu';
 import PieChartIcon from '@material-ui/icons/PieChart';
 import SendIcon from '@material-ui/icons/Send';
 import axios from "axios";
 
+
+import CardChart from "./CardChart";
 import "./Stats.css";
 
 import {
@@ -52,10 +52,19 @@ const useStyles = makeStyles({
         marginBottom: 12,
     },
 });
+
+// const fetcher = (...args) => fetch(...args).then(res => res.json());
+
 const Stats = (props) => {
 
     // Name of the chain, getting the value from the router parameter.
     const poolid = localStorage.getItem("poolid");
+
+    // const swrUrl = config.poolapiurl + `pools/${poolid}`;
+    // const { data, error } = useSWR(swrUrl, fetcher)
+
+    // console.log(data);
+
     const [poolHashrates, setPoolHashrates] = useState([]);
     const [connectedMiners, setConnectedMiners] = useState([]);
     const [networkHashRates, setNetworkHashrates] = useState([]);
@@ -83,23 +92,6 @@ const Stats = (props) => {
     useEffect(() => {
         const getGraphData = async () => {
             let data;
-            // try {
-            //     response = await fetch(config.poolapiurl + `pools/${poolid}/performance`);
-            //     data = await response.json();
-            //     props.enqueueSnackbar('Successfully fetched the data.')
-            //     setLoading({ loading: true, loadingtext: "Loading Pool data" });
-            //     data.stats.map((stats) => {
-            //         setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
-            //         setConnectedMiners(connectedMiners => [...connectedMiners, { value: stats.connectedMiners, name: stats.created.substring(11, 16) }]);
-            //         setNetworkHashrates(networkHashRates => [...networkHashRates, { value: (stats.networkHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
-            //         setNetworkDifficulty(networkDifficulty => [...networkDifficulty, { value: stats.networkDifficulty, name: stats.created.substring(11, 16) }]);
-
-            //         return true;
-            //     });
-            // } catch (ex) {
-            //     return console.log(ex);
-            // }
-
             setPoolHashrates([]);
             setConnectedMiners([]);
             setNetworkHashrates([]);
@@ -109,7 +101,6 @@ const Stats = (props) => {
             await axios.get(config.poolapiurl + `pools/${poolid}/performance`)
                 .then(function (response) {
                     // handle success
-                    console.log(response.data);
                     data = response.data;
 
                     data.stats.map((stats) => {
@@ -126,50 +117,20 @@ const Stats = (props) => {
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
+                    console.error(error);
 
-                    props.enqueueSnackbar('Error loading graph data, please try again later.', {
+                    props.enqueueSnackbar('Error loading graph data : ' + error, {
                         variant: 'error',
                     })
                     setLoading({ loading: false, loadingtext: "" });
                 })
-                .then(function () {
-                    // always executed
-                    // console.log(ex);
-                    // setLoading({ loading: false, loadingtext: "" });
-                });
-
-
+                .then(function () { });
         };
 
         const getPoolData = async () => {
-            // try {
-            //     response = await fetch(config.poolapiurl + `pools/${poolid}`);
-            //     data = await response.json();
-            //     setPoolData({
-            //         poolHashRate: data.pool.poolStats.poolHashrate,
-            //         miners: data.pool.poolStats.connectedMiners,
-            //         networkHashrate: data.pool.networkStats.networkHashrate,
-            //         networkDifficulty: data.pool.networkStats.networkDifficulty,
-            //         poolFee: data.pool.poolFeePercent,
-            //         paymentThreshold: data.pool.paymentProcessing.minimumPayment + " " + data.pool.coin.type,
-            //         paymentScheme: data.pool.paymentProcessing.payoutScheme,
-            //         blockchainHeight: data.pool.networkStats.blockHeight,
-            //         connectedPeers: data.pool.networkStats.connectedPeers
-            //     })
-            //     props.enqueueSnackbar('Successfully fetched the data.')
-            //     setLoading({ loading: false, loadingtext: "" });
-
-            //     return true;
-            // } catch (ex) {
-            //     return console.log(ex);
-            // }
-
             await axios.get(config.poolapiurl + `pools/${poolid}`)
                 .then(function (response) {
                     // handle success
-                    console.log(response);
-                    console.log(response.data);
                     let data = response.data;
                     setPoolData({
                         poolHashRate: data.pool.poolStats.poolHashrate,
@@ -189,17 +150,12 @@ const Stats = (props) => {
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
-                    props.enqueueSnackbar('Error loading pool data, please try again later.', {
+                    props.enqueueSnackbar('Error loading pool data: ' + error, {
                         variant: 'error',
                     })
                     setLoading({ loading: false, loadingtext: "" });
                 })
-                .then(function () {
-                    // always executed
-                    // console.log(ex);
-                    // setLoading({ loading: false, loadingtext: "" });
-                });
+                .then(function () { });
 
         }
 
@@ -225,47 +181,47 @@ const Stats = (props) => {
         </Grid>
     }
     //Wrapper for Charts in a Card
-    const CardChart = (data, CardSubtitle, CardLateststat) => {
-        return <Grid item xs={12} sm={12} md={6}>
-            <Grid
-                container
-                direction="column"
-                justify="center"
-                alignItems="center"
-                spacing={1}
-            >
-                <Card className={classes.root} style={{ width: "90%" }}>
-                    <CardContent>
-                        <div style={{ width: "100%", height: 400 }}>
-                            <ResponsiveContainer >
-                                <AreaChart data={data}
-                                    margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                                    <defs>
-                                        <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
-                                            <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip
-                                        contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-                                        labelStyle={{ fontWeight: 'bold', color: '#666666' }} />
-                                    <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
-                        <Typography variant="h5" component="h5">
-                            {CardLateststat}
-                        </Typography>
-                        <Typography variant="h6" component="h6">
-                            {CardSubtitle}
-                        </Typography>
+    // const CardChart = (data, CardSubtitle, CardLateststat) => {
+    //     return <Grid item xs={12} sm={12} md={6}>
+    //         <Grid
+    //             container
+    //             direction="column"
+    //             justify="center"
+    //             alignItems="center"
+    //             spacing={1}
+    //         >
+    //             <Card className={classes.root} style={{ width: "90%" }}>
+    //                 <CardContent>
+    //                     <div style={{ width: "100%", height: 400 }}>
+    //                         <ResponsiveContainer >
+    //                             <AreaChart data={data}
+    //                                 margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+    //                                 <defs>
+    //                                     <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+    //                                         <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
+    //                                         <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
+    //                                     </linearGradient>
+    //                                 </defs>
+    //                                 <XAxis dataKey="name" />
+    //                                 <YAxis />
+    //                                 <Tooltip
+    //                                     contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+    //                                     labelStyle={{ fontWeight: 'bold', color: '#666666' }} />
+    //                                 <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
+    //                             </AreaChart>
+    //                         </ResponsiveContainer>
+    //                     </div>
+    //                     <Typography variant="h5" component="h5">
+    //                         {CardLateststat}
+    //                     </Typography>
+    //                     <Typography variant="h6" component="h6">
+    //                         {CardSubtitle}
+    //                     </Typography>
 
-                    </CardContent>
-                </Card>
-            </Grid></Grid>
-    }
+    //                 </CardContent>
+    //             </Card>
+    //         </Grid></Grid>
+    // }
 
     const GetCardAvatar = (title) => {
         if (title.includes("Peers")) {
@@ -307,11 +263,17 @@ const Stats = (props) => {
                     (<Loading overlay={true} loading={loading.loading} loadingtext={loading.loadingtext} />)
                     : (
                         <Grid container spacing={2} direction="row">
-                            {CardChart(poolHashrates, "Pool Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
+                            {/* {CardChart(poolHashrates, "Pool Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
                             {CardChart(connectedMiners, "Miners", poolData.miners)}
                             {InfoCard()}
                             {CardChart(networkHashRates, "Network Hashrate", hashformat(poolData.networkHashrate, 2, "H/s"))}
-                            {CardChart(networkDifficulty, "Network Difficulty", poolData.networkDifficulty)}
+                            {CardChart(networkDifficulty, "Network Difficulty", poolData.networkDifficulty)} */}
+
+                            <CardChart data={poolHashrates} CardSubtitle="Pool Hashrate" CardLateststat={hashformat(poolData.poolHashRate, 2, "H/s")} />
+                            <CardChart data={connectedMiners} CardSubtitle="Miners" CardLateststat={poolData.miners} />
+                            {InfoCard()}
+                            <CardChart data={networkHashRates} CardSubtitle="Network Hashrate" CardLateststat={hashformat(poolData.networkHashrate, 2, "H/s")} />
+                            <CardChart data={networkDifficulty} CardSubtitle="Network Difficulty" CardLateststat={poolData.networkDifficulty} />
                         </Grid>
                     )
                 }
