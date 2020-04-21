@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
@@ -9,9 +9,6 @@ import Typography from '@material-ui/core/Typography';
 import {
     XAxis, YAxis, Tooltip, AreaChart, Area, ResponsiveContainer
 } from 'recharts';
-import config from "../config.js";
-import { withSnackbar } from 'notistack';
-import Loading from "./common/Loading";
 
 const useStyles = makeStyles({
     root: {

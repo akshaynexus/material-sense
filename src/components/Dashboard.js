@@ -26,9 +26,7 @@ import Paper from '@material-ui/core/Paper';
 import CardChart from "./CardChart";
 import "./Stats.css";
 
-import {
-    XAxis, YAxis, Tooltip, AreaChart, Area, ResponsiveContainer
-} from 'recharts';
+
 import config from "../config.js";
 import { withSnackbar } from 'notistack';
 import Loading from "./common/Loading";
@@ -185,6 +183,7 @@ const Dashboard = (props) => {
 
         }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { loadWalletData() }, [])
 

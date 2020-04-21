@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import withStyles from "@material-ui/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
@@ -9,25 +9,30 @@ import Loading from "./common/Loading";
 import config from "../config.js";
 import hashformat from './common/hashutil.js'
 
+import useSWR from "swr";
+import axios from "axios";
+
 const styles = theme => ({
   grid: {
     width: 1100
-}
+  }
 });
 
-class Cards extends Component {
-  state = {
+const Cards = (props) => {
+
+  const swrUrl = config.poolapiurl + "pools";
+  const { data, error } = useSWR(swrUrl, (url) => axios(url).then(r => r.data));
+
+  const [loading, setLoading] = useState({
     loading: true,
-    pooldata: null
-  };
-  async componentDidMount() {
-    const APIPath = config.poolapiurl;
-    const response = await fetch(APIPath + "pools");
-    const data = await response.json();
-    this.setState({ pooldata: data.pools, loading: false });
-  }
-  buildCoinCards() {
-    return this.state.pooldata.map((coin, index) => (
+    loadingtext: "Loading Graph data",
+    error: 'NoError'
+  });
+
+  const pooldata = data?.pools;
+
+  const buildCoinCards = () => {
+    return pooldata.map((coin, index) => (
       <div key={index}>
         <CardCoin
           coin={coin.coin.name}
@@ -43,42 +48,43 @@ class Cards extends Component {
       </div>
     ));
   }
-  render() {
-    const { classes } = this.props;
-    const currentPath = this.props.location.pathname;
-    var selectedindex = 1;
-    return (
-      <React.Fragment>
-        <CssBaseline />
-        <Topbar currentPath={currentPath} />
-        <div>
-          <Grid container justify="center">
-            <Grid
-              spacing={10}
-              alignItems="center"
-              justify="center"
-              container
-              className={classes.grid}
-            >
-              <Grid item xs={12}>
-                <SectionHeader
-                  title="Coins"
-                  subtitle="Available coins to mine"
-                  val={selectedindex}
-                  style={{padding:"10px"}}
-                />
-                {this.state.loading || !this.state.pooldata ? (
-                  <Loading overlay={true} loading={this.state.loading} loadingtext={"Loading coin data"} />
-                ) : (
-                    this.buildCoinCards()
-                  )}
-              </Grid>
+
+  const { classes } = props;
+  const currentPath = props.location.pathname;
+  var selectedindex = 1;
+
+  return (
+    <React.Fragment>
+      <CssBaseline />
+      <Topbar currentPath={currentPath} />
+      <div>
+        <Grid container justify="center">
+          <Grid
+            spacing={10}
+            alignItems="center"
+            justify="center"
+            container
+            className={classes.grid}
+          >
+            <Grid item xs={12}>
+              <SectionHeader
+                title="Coins"
+                subtitle="Available coins to mine"
+                val={selectedindex}
+                style={{ padding: "10px" }}
+              />
+              {!data ? (
+                <Loading overlay={true} loading={loading.loading} loadingtext={"Loading coin data"} />
+              ) : (
+                  buildCoinCards()
+                )}
             </Grid>
           </Grid>
-        </div>
-      </React.Fragment>
-    );
-  }
+        </Grid>
+      </div>
+    </React.Fragment>
+  );
+
 }
 
 export default withStyles(styles)(Cards);

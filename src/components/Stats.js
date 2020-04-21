@@ -12,17 +12,14 @@ import MenuIcon from '@material-ui/icons/Menu';
 import PieChartIcon from '@material-ui/icons/PieChart';
 import SendIcon from '@material-ui/icons/Send';
 import axios from "axios";
-
+import Loading from "./common/Loading";
+import useSWR from "swr";
 
 import CardChart from "./CardChart";
 import "./Stats.css";
 
-import {
-    XAxis, YAxis, Tooltip, AreaChart, Area, ResponsiveContainer
-} from 'recharts';
 import config from "../config.js";
 import { withSnackbar } from 'notistack';
-import Loading from "./common/Loading";
 
 const useStyles = makeStyles({
     root: {
@@ -60,27 +57,33 @@ const Stats = (props) => {
     // Name of the chain, getting the value from the router parameter.
     const poolid = localStorage.getItem("poolid");
 
-    // const swrUrl = config.poolapiurl + `pools/${poolid}`;
+    const swrUrl = config.poolapiurl + `pools/${poolid}`;
+    const swrUrl2 = config.poolapiurl + `pools/${poolid}/performance`;
+
     // const { data, error } = useSWR(swrUrl, fetcher)
+    const { data2, error2 } = useSWR(swrUrl2, (url2) => axios(url2).then(r2 => r2.data));
+
+    const { data, error } = useSWR(swrUrl, (url) => axios(url).then(r => r.data));
+
 
     // console.log(data);
+    // console.log(data2);
 
-    const [poolHashrates, setPoolHashrates] = useState([]);
+    // const [poolHashrates, setPoolHashrates] = useState([]);
     const [connectedMiners, setConnectedMiners] = useState([]);
     const [networkHashRates, setNetworkHashrates] = useState([]);
     const [networkDifficulty, setNetworkDifficulty] = useState([]);
 
-    const [poolData, setPoolData] = useState({
-        poolHashRate: 0,
-        miners: 0,
-        networkHashrate: 0,
-        networkDifficulty: 0,
-        poolFee: 0,
-        paymentThreshold: "",
-        paymentScheme: "",
-        blockchainHeight: 0,
-        connectedPeers: 0
-    });
+
+    const poolHashRate = data?.pool.poolStats.poolHashrate;
+    const miners = data?.pool.poolStats.connectedMiners;
+    const networkHashrate = data?.pool.networkStats.networkHashrate;
+    const networkDifficultyValue = data?.pool.networkStats.networkDifficulty;
+    const poolFee = data?.pool.poolFeePercent;
+    const paymentThreshold = data?.pool.paymentProcessing.minimumPayment + " " + data?.pool.coin.type;
+    const blockchainHeight = data?.pool.networkStats.blockHeight;
+    const connectedPeers = data?.pool.networkStats.connectedPeers;
+
     const [loading, setLoading] = useState({
         loading: true,
         loadingtext: "Loading Graph data",
@@ -88,32 +91,84 @@ const Stats = (props) => {
     });
 
 
+    const poolHashrates = data2?.stats.map(stats => { return [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }] });
+    // console.log(poolHas)
+
+    // const mapData = data2?.stats.map(stats => {
+    //     console.log(stats)
+    //     return (
+    //         setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]),
+    //         setConnectedMiners(connectedMiners => [...connectedMiners, { value: stats.connectedMiners, name: stats.created.substring(11, 16) }]),
+    //         setNetworkHashrates(networkHashRates => [...networkHashRates, { value: (stats.networkHashrate / 1000000000), name: stats.created.substring(11, 16) }]),
+    //         setNetworkDifficulty(networkDifficulty => [...networkDifficulty, { value: stats.networkDifficulty, name: stats.created.substring(11, 16) }])
+    //     );
+    // });
+
+    // if (data2) {
+    //     console.log(data2)
+    // }
+
+
+    // const loadCacheData = () => {
+
+    //     const mapData = data?.stats.map(stats => {
+    //         return (
+    //             setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]),
+    //             setConnectedMiners(connectedMiners => [...connectedMiners, { value: stats.connectedMiners, name: stats.created.substring(11, 16) }]),
+    //             setNetworkHashrates(networkHashRates => [...networkHashRates, { value: (stats.networkHashrate / 1000000000), name: stats.created.substring(11, 16) }]),
+    //             setNetworkDifficulty(networkDifficulty => [...networkDifficulty, { value: stats.networkDifficulty, name: stats.created.substring(11, 16) }])
+    //         );
+    //     });
+    // }
+
+    // useEffect(() => { loadCacheData() }, [])
+
+    // setPoolData({
+    //     poolHashRate: data2?.pool.poolStats.poolHashrate,
+    //     miners: data2?.pool.poolStats.connectedMiners,
+    //     networkHashrate: data2?.pool.networkStats.networkHashrate,
+    //     networkDifficulty: data2?.pool.networkStats.networkDifficulty,
+    //     poolFee: data2?.pool.poolFeePercent,
+    //     paymentThreshold: data2?.pool.paymentProcessing.minimumPayment + " " + data2?.pool.coin.type,
+    //     paymentScheme: data2?.pool.paymentProcessing.payoutScheme,
+    //     blockchainHeight: data2?.pool.networkStats.blockHeight,
+    //     connectedPeers: data2?.pool.networkStats.connectedPeers
+    // })
+
+    // data?.stats.map((stats) => {
+    //     setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
+    //     setConnectedMiners(connectedMiners => [...connectedMiners, { value: stats.connectedMiners, name: stats.created.substring(11, 16) }]);
+    //     setNetworkHashrates(networkHashRates => [...networkHashRates, { value: (stats.networkHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
+    //     setNetworkDifficulty(networkDifficulty => [...networkDifficulty, { value: stats.networkDifficulty, name: stats.created.substring(11, 16) }]);
+
+    //     return true;
+    // })
+
 
     useEffect(() => {
         const getGraphData = async () => {
             let data;
-            setPoolHashrates([]);
+            // setPoolHashrates([]);
             setConnectedMiners([]);
             setNetworkHashrates([]);
             setNetworkDifficulty([]);
 
-            setLoading({ loading: true, loadingtext: "Loading Pool data" });
             await axios.get(config.poolapiurl + `pools/${poolid}/performance`)
                 .then(function (response) {
                     // handle success
                     data = response.data;
 
                     data.stats.map((stats) => {
-                        setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
+                        // setPoolHashrates(poolHashrates => [...poolHashrates, { value: (stats.poolHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
                         setConnectedMiners(connectedMiners => [...connectedMiners, { value: stats.connectedMiners, name: stats.created.substring(11, 16) }]);
                         setNetworkHashrates(networkHashRates => [...networkHashRates, { value: (stats.networkHashrate / 1000000000), name: stats.created.substring(11, 16) }]);
                         setNetworkDifficulty(networkDifficulty => [...networkDifficulty, { value: stats.networkDifficulty, name: stats.created.substring(11, 16) }]);
 
                         return true;
                     });
-                    props.enqueueSnackbar('Successfully fetched the graph data.', {
-                        variant: 'success',
-                    })
+                    // props.enqueueSnackbar('Successfully fetched the graph data.', {
+                    //     variant: 'success',
+                    // })
                 })
                 .catch(function (error) {
                     // handle error
@@ -122,46 +177,42 @@ const Stats = (props) => {
                     props.enqueueSnackbar('Error loading graph data : ' + error, {
                         variant: 'error',
                     })
-                    setLoading({ loading: false, loadingtext: "" });
                 })
                 .then(function () { });
         };
 
-        const getPoolData = async () => {
-            await axios.get(config.poolapiurl + `pools/${poolid}`)
-                .then(function (response) {
-                    // handle success
-                    let data = response.data;
-                    setPoolData({
-                        poolHashRate: data.pool.poolStats.poolHashrate,
-                        miners: data.pool.poolStats.connectedMiners,
-                        networkHashrate: data.pool.networkStats.networkHashrate,
-                        networkDifficulty: data.pool.networkStats.networkDifficulty,
-                        poolFee: data.pool.poolFeePercent,
-                        paymentThreshold: data.pool.paymentProcessing.minimumPayment + " " + data.pool.coin.type,
-                        paymentScheme: data.pool.paymentProcessing.payoutScheme,
-                        blockchainHeight: data.pool.networkStats.blockHeight,
-                        connectedPeers: data.pool.networkStats.connectedPeers
-                    })
-                    props.enqueueSnackbar('Successfully fetched the pool data.', {
-                        variant: 'success',
-                    })
-                    setLoading({ loading: false, loadingtext: "" });
-                })
-                .catch(function (error) {
-                    // handle error
-                    props.enqueueSnackbar('Error loading pool data: ' + error, {
-                        variant: 'error',
-                    })
-                    setLoading({ loading: false, loadingtext: "" });
-                })
-                .then(function () { });
+        // const getPoolData = async () => {
+        //     await axios.get(config.poolapiurl + `pools/${poolid}`)
+        //         .then(function (response) {
+        //             // handle success
+        //             let data = response.data;
+        //             setPoolData({
+        //                 poolHashRate: data.pool.poolStats.poolHashrate,
+        //                 miners: data.pool.poolStats.connectedMiners,
+        //                 networkHashrate: data.pool.networkStats.networkHashrate,
+        //                 networkDifficulty: data.pool.networkStats.networkDifficulty,
+        //                 poolFee: data.pool.poolFeePercent,
+        //                 paymentThreshold: data.pool.paymentProcessing.minimumPayment + " " + data.pool.coin.type,
+        //                 paymentScheme: data.pool.paymentProcessing.payoutScheme,
+        //                 blockchainHeight: data.pool.networkStats.blockHeight,
+        //                 connectedPeers: data.pool.networkStats.connectedPeers
+        //             })
+        //             props.enqueueSnackbar('Successfully fetched the pool data.', {
+        //                 variant: 'success',
+        //             })
+        //         })
+        //         .catch(function (error) {
+        //             // handle error
+        //             props.enqueueSnackbar('Error loading pool data: ' + error, {
+        //                 variant: 'error',
+        //             })
+        //         })
+        //         .then(function () { });
 
-        }
+        // }
 
-
+        // getPoolData();
         getGraphData();
-        getPoolData();
 
     }, [props, poolid])
 
@@ -173,10 +224,10 @@ const Stats = (props) => {
                 direction="row"
                 justify="space-evenly"
                 alignItems="center">
-                {CardInfo(poolData.blockchainHeight, "Blockchain Height")}
-                {CardInfo(poolData.connectedPeers, "Connected Peers")}
-                {CardInfo(poolData.paymentThreshold, "Payment Threshold")}
-                {CardInfo(poolData.poolFee + "%", "Pool Fee")}
+                {CardInfo(blockchainHeight, "Blockchain Height")}
+                {CardInfo(connectedPeers, "Connected Peers")}
+                {CardInfo(paymentThreshold, "Payment Threshold")}
+                {CardInfo(poolFee + "%", "Pool Fee")}
             </Grid>
         </Grid>
     }
@@ -254,12 +305,14 @@ const Stats = (props) => {
     }
 
     const classes = useStyles();
+
     return (
-        <React.Fragment>
+        < React.Fragment >
             <CssBaseline />
+
             <Topbar currentPath={"/stats"} />
             <div className="container_main">
-                {loading.loading ?
+                {!data ?
                     (<Loading overlay={true} loading={loading.loading} loadingtext={loading.loadingtext} />)
                     : (
                         <Grid container spacing={2} direction="row">
@@ -269,15 +322,16 @@ const Stats = (props) => {
                             {CardChart(networkHashRates, "Network Hashrate", hashformat(poolData.networkHashrate, 2, "H/s"))}
                             {CardChart(networkDifficulty, "Network Difficulty", poolData.networkDifficulty)} */}
 
-                            <CardChart data={poolHashrates} CardSubtitle="Pool Hashrate" CardLateststat={hashformat(poolData.poolHashRate, 2, "H/s")} />
-                            <CardChart data={connectedMiners} CardSubtitle="Miners" CardLateststat={poolData.miners} />
+                            <CardChart data={poolHashrates} CardSubtitle="Pool Hashrate" CardLateststat={hashformat(poolHashRate, 2, "H/s")} />
+                            <CardChart data={connectedMiners} CardSubtitle="Miners" CardLateststat={miners} />
                             {InfoCard()}
-                            <CardChart data={networkHashRates} CardSubtitle="Network Hashrate" CardLateststat={hashformat(poolData.networkHashrate, 2, "H/s")} />
-                            <CardChart data={networkDifficulty} CardSubtitle="Network Difficulty" CardLateststat={poolData.networkDifficulty} />
+                            <CardChart data={networkHashRates} CardSubtitle="Network Hashrate" CardLateststat={hashformat(networkHashrate, 2, "H/s")} />
+                            <CardChart data={networkDifficulty} CardSubtitle="Network Difficulty" CardLateststat={networkDifficultyValue} />
                         </Grid>
                     )
                 }
             </div>
+
         </React.Fragment>
     )
 }
