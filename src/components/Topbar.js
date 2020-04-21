@@ -18,23 +18,23 @@ import Menu from "./Menu";
 
 const logo = require("../images/logo.svg");
 
-const styles = theme => ({
+const styles = (theme) => ({
   appBar: {
     position: "relative",
   },
   inline: {
-    display: "inline"
+    display: "inline",
   },
   flex: {
     display: "flex",
     [theme.breakpoints.down("sm")]: {
       display: "flex",
-      alignItems: "center"
-    }
+      alignItems: "center",
+    },
   },
   link: {
     textDecoration: "none",
-    color: "inherit"
+    color: "inherit",
   },
   productLogo: {
     display: "inline-block",
@@ -42,53 +42,53 @@ const styles = theme => ({
     marginLeft: 32,
     paddingLeft: 24,
     [theme.breakpoints.up("md")]: {
-      paddingTop: "1.5em"
-    }
+      paddingTop: "1.5em",
+    },
   },
   tagline: {
     display: "inline-block",
     marginLeft: 10,
     [theme.breakpoints.up("md")]: {
-      paddingTop: "0.8em"
-    }
+      paddingTop: "0.8em",
+    },
   },
   iconContainer: {
     display: "none",
     [theme.breakpoints.down("sm")]: {
-      display: "block"
-    }
+      display: "block",
+    },
   },
   iconButton: {
-    float: "right"
+    float: "right",
   },
   tabContainer: {
     marginLeft: 32,
     [theme.breakpoints.down("sm")]: {
-      display: "none"
-    }
+      display: "none",
+    },
   },
   tabItem: {
     paddingTop: 20,
     paddingBottom: 20,
-    minWidth: "auto"
-  }
+    minWidth: "auto",
+  },
 });
 
 class Topbar extends Component {
   state = {
     value: 0,
-    menuDrawer: false
+    menuDrawer: false,
   };
 
   handleChange = (event, value) => {
     this.setState({ value });
   };
 
-  mobileMenuOpen = event => {
+  mobileMenuOpen = (event) => {
     this.setState({ menuDrawer: true });
   };
 
-  mobileMenuClose = event => {
+  mobileMenuClose = (event) => {
     this.setState({ menuDrawer: false });
   };
 
@@ -118,8 +118,6 @@ class Topbar extends Component {
     if (this.props.currentPath === "/cards") {
       return 6;
     }
-
-
   };
 
   render() {
@@ -171,9 +169,9 @@ class Topbar extends Component {
                               item.external
                                 ? null
                                 : {
-                                  pathname: item.pathname,
-                                  search: this.props.location.search
-                                }
+                                    pathname: item.pathname,
+                                    search: this.props.location.search,
+                                  }
                             }
                             button
                             key={item.label}
@@ -198,9 +196,9 @@ class Topbar extends Component {
                             item.external
                               ? null
                               : {
-                                pathname: item.pathname,
-                                search: this.props.location.search
-                              }
+                                  pathname: item.pathname,
+                                  search: this.props.location.search,
+                                }
                           }
                           classes={{ root: classes.tabItem }}
                           label={item.label}

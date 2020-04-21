@@ -22,13 +22,12 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Fade from "@material-ui/core/Fade";
 import Back from "./common/Back";
 
-
 const logo = require("../images/logo.svg");
 
 const numeral = require("numeral");
 numeral.defaultFormat("0");
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.secondary["A100"],
@@ -37,65 +36,65 @@ const styles = theme => ({
     backgroundPosition: "0 400px",
     marginTop: 10,
     padding: 20,
-    paddingBottom: 500
+    paddingBottom: 500,
   },
   grid: {
-    margin: `0 ${theme.spacing(2)}px`
+    margin: `0 ${theme.spacing(2)}px`,
   },
   smallContainer: {
-    width: "60%"
+    width: "60%",
   },
   bigContainer: {
-    width: "80%"
+    width: "80%",
   },
   logo: {
     marginBottom: 24,
     display: "flex",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   stepContainer: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
   },
   stepGrid: {
-    width: "80%"
+    width: "80%",
   },
   buttonBar: {
     marginTop: 32,
     display: "flex",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   button: {
-    backgroundColor: theme.palette.primary["A100"]
+    backgroundColor: theme.palette.primary["A100"],
   },
   backButton: {
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
   },
   outlinedButtom: {
     textTransform: "uppercase",
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   stepper: {
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   paper: {
     padding: theme.spacing(3),
     textAlign: "left",
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
   },
   topInfo: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 42
+    marginBottom: 42,
   },
   formControl: {
-    width: "100%"
+    width: "100%",
   },
   selectEmpty: {
-    marginTop: theme.spacing(2)
-  }
+    marginTop: theme.spacing(2),
+  },
 });
 
 const getSteps = () => {
@@ -108,12 +107,12 @@ class Signup extends Component {
     receivingAccount: "",
     termsChecked: false,
     loading: true,
-    labelWidth: 0
+    labelWidth: 0,
   };
 
   handleNext = () => {
-    this.setState(state => ({
-      activeStep: state.activeStep + 1
+    this.setState((state) => ({
+      activeStep: state.activeStep + 1,
     }));
     if (this.state.activeStep === 2) {
       setTimeout(() => this.props.history.push("/dashboard"), 5000);
@@ -121,22 +120,22 @@ class Signup extends Component {
   };
 
   handleBack = () => {
-    this.setState(state => ({
-      activeStep: state.activeStep - 1
+    this.setState((state) => ({
+      activeStep: state.activeStep - 1,
     }));
   };
 
   handleReset = () => {
     this.setState({
-      activeStep: 0
+      activeStep: 0,
     });
   };
 
-  handleChange = event => {
+  handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleTerms = event => {
+  handleTerms = (event) => {
     this.setState({ termsChecked: event.target.checked });
   };
 
@@ -182,7 +181,7 @@ class Signup extends Component {
                       activeStep={activeStep}
                       alternativeLabel
                     >
-                      {steps.map(label => {
+                      {steps.map((label) => {
                         return (
                           <Step key={label}>
                             <StepLabel>{label}</StepLabel>
@@ -211,7 +210,7 @@ class Signup extends Component {
                             <Typography
                               style={{
                                 textTransform: "uppercase",
-                                marginBottom: 20
+                                marginBottom: 20,
                               }}
                               color="secondary"
                               gutterBottom
@@ -329,7 +328,7 @@ class Signup extends Component {
                               <Fade
                                 in={loading}
                                 style={{
-                                  transitionDelay: loading ? "800ms" : "0ms"
+                                  transitionDelay: loading ? "800ms" : "0ms",
                                 }}
                                 unmountOnExit
                               >
@@ -337,7 +336,7 @@ class Signup extends Component {
                                   style={{
                                     marginBottom: 32,
                                     width: 100,
-                                    height: 100
+                                    height: 100,
                                   }}
                                 />
                               </Fade>

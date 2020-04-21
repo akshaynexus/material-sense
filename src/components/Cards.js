@@ -7,26 +7,27 @@ import Topbar from "./Topbar";
 import SectionHeader from "./typo/SectionHeader";
 import Loading from "./common/Loading";
 import config from "../config.js";
-import hashformat from './common/hashutil.js'
+import hashformat from "./common/hashutil.js";
 
 import useSWR from "swr";
 import axios from "axios";
 
-const styles = theme => ({
+const styles = (theme) => ({
   grid: {
-    width: 1100
-  }
+    width: 1100,
+  },
 });
 
 const Cards = (props) => {
-
   const swrUrl = config.poolapiurl + "pools";
-  const { data, error } = useSWR(swrUrl, (url) => axios(url).then(r => r.data));
+  const { data, error } = useSWR(swrUrl, (url) =>
+    axios(url).then((r) => r.data)
+  );
 
   const [loading, setLoading] = useState({
     loading: true,
     loadingtext: "Loading Graph data",
-    error: 'NoError'
+    error: "NoError",
   });
 
   const pooldata = data?.pools;
@@ -47,7 +48,7 @@ const Cards = (props) => {
         <br />
       </div>
     ));
-  }
+  };
 
   const { classes } = props;
   const currentPath = props.location.pathname;
@@ -74,17 +75,20 @@ const Cards = (props) => {
                 style={{ padding: "10px" }}
               />
               {!data ? (
-                <Loading overlay={true} loading={loading.loading} loadingtext={"Loading coin data"} />
+                <Loading
+                  overlay={true}
+                  loading={loading.loading}
+                  loadingtext={"Loading coin data"}
+                />
               ) : (
-                  buildCoinCards()
-                )}
+                buildCoinCards()
+              )}
             </Grid>
           </Grid>
         </Grid>
       </div>
     </React.Fragment>
   );
-
-}
+};
 
 export default withStyles(styles)(Cards);

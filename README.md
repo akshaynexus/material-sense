@@ -1,16 +1,19 @@
 ### If you're using this template, please add below your project and send a PR:
 
 ### Help to fund this project
+
 https://opencollective.com/material-sense
 
 #### Projects using this template:
+
 - Ahorta Client: https://github.com/worknenjoy/ahorta-client
 
-
 # React Material UI template - Material Sense
+
 A full simple application for react [material ui](https://material-ui.com/)
 
 ## Features
+
 - Responsive
 - Include a Graph using [recharts](https://github.com/recharts/recharts)
 - With [Router](https://github.com/ReactTraining/react-router) included
@@ -77,9 +80,11 @@ Then:
 _the 2222 port intend to make work on Azure websites as container for default, cause is the port they use to expose the server_
 
 ### Publish at Github pages
+
 `yarn deploy`
 
 ## Screenshots
+
 ![Dashboard](screenshot-dashboard.png)
 ![Signup](screenshot-signup.png)
 ![Wizard](screenshot-wizard.png)

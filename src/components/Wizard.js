@@ -23,7 +23,7 @@ const qs = require("query-string");
 const numeral = require("numeral");
 numeral.defaultFormat("0,000");
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.primary["A100"],
@@ -32,62 +32,62 @@ const styles = theme => ({
     backgroundPosition: "0 400px",
     marginTop: 10,
     padding: 20,
-    paddingBottom: 200
+    paddingBottom: 200,
   },
   grid: {
-    margin: `0 ${theme.spacing(2)}px`
+    margin: `0 ${theme.spacing(2)}px`,
   },
   smallContainer: {
-    width: "60%"
+    width: "60%",
   },
   bigContainer: {
-    width: "80%"
+    width: "80%",
   },
   stepContainer: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
   },
   stepGrid: {
-    width: "80%"
+    width: "80%",
   },
   backButton: {
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
   },
   outlinedButtom: {
     textTransform: "uppercase",
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   stepper: {
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   paper: {
     padding: theme.spacing(3),
     textAlign: "left",
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
   },
   topInfo: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 42
+    marginBottom: 42,
   },
   formControl: {
-    width: "100%"
+    width: "100%",
   },
   selectEmpty: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   borderColumn: {
     borderBottom: `1px solid ${theme.palette.grey["100"]}`,
     paddingBottom: 24,
-    marginBottom: 24
+    marginBottom: 24,
   },
   flexBar: {
     marginTop: 32,
     display: "flex",
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 });
 
 const getSteps = () => {
@@ -100,34 +100,34 @@ class Wizard extends Component {
     receivingAccount: "Home Account",
     repaimentAccount: "Saving Account",
     termsChecked: false,
-    labelWidth: 0
+    labelWidth: 0,
   };
 
   componentDidMount() {}
 
   handleNext = () => {
-    this.setState(state => ({
-      activeStep: state.activeStep + 1
+    this.setState((state) => ({
+      activeStep: state.activeStep + 1,
     }));
   };
 
   handleBack = () => {
-    this.setState(state => ({
-      activeStep: state.activeStep - 1
+    this.setState((state) => ({
+      activeStep: state.activeStep - 1,
     }));
   };
 
   handleReset = () => {
     this.setState({
-      activeStep: 0
+      activeStep: 0,
     });
   };
 
-  handleChange = event => {
+  handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleTerms = event => {
+  handleTerms = (event) => {
     this.setState({ termsChecked: event.target.checked });
   };
 
@@ -144,12 +144,12 @@ class Wizard extends Component {
     return "Next";
   }
 
-  goToDashboard = event => {
+  goToDashboard = (event) => {
     const queryString = this.props.location.search;
 
     this.props.history.push({
       pathname: "/dashboard",
-      search: queryString
+      search: queryString,
     });
   };
 
@@ -181,7 +181,7 @@ class Wizard extends Component {
                       activeStep={activeStep}
                       alternativeLabel
                     >
-                      {steps.map(label => {
+                      {steps.map((label) => {
                         return (
                           <Step key={label}>
                             <StepLabel>{label}</StepLabel>
@@ -277,7 +277,7 @@ class Wizard extends Component {
                             <Typography
                               style={{
                                 textTransform: "uppercase",
-                                marginBottom: 20
+                                marginBottom: 20,
                               }}
                               color="secondary"
                               gutterBottom
@@ -461,7 +461,7 @@ class Wizard extends Component {
                             <Typography
                               style={{
                                 textTransform: "uppercase",
-                                marginBottom: 20
+                                marginBottom: 20,
                               }}
                               color="secondary"
                               gutterBottom
@@ -523,7 +523,7 @@ class Wizard extends Component {
                             padding: 16,
                             border: "2px solid #ccc",
                             borderRadius: "3px",
-                            overflowY: "scroll"
+                            overflowY: "scroll",
                           }}
                         >
                           <Typography
