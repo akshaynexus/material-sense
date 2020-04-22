@@ -142,7 +142,7 @@ const Stats = (props) => {
           });
           setLoading({ loading: false, loadingtext: "" });
         })
-        .then(function () {});
+        .then(function () { });
     };
 
     const getPoolData = async () => {
@@ -177,7 +177,7 @@ const Stats = (props) => {
           });
           setLoading({ loading: false, loadingtext: "" });
         })
-        .then(function () {});
+        .then(function () { });
     };
 
     getGraphData();
@@ -246,36 +246,38 @@ const Stats = (props) => {
             loadingtext={loading.loadingtext}
           />
         ) : (
-          <Grid container spacing={2} direction="row">
-            {/* {CardChart(poolHashrates, "Pool Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
+            <Grid container spacing={2} direction="row">
+              {/* {CardChart(poolHashrates, "Pool Hashrate", hashformat(poolData.poolHashRate, 2, "H/s"))}
                             {CardChart(connectedMiners, "Miners", poolData.miners)}
                             {InfoCard()}
                             {CardChart(networkHashRates, "Network Hashrate", hashformat(poolData.networkHashrate, 2, "H/s"))}
                             {CardChart(networkDifficulty, "Network Difficulty", poolData.networkDifficulty)} */}
 
-            <CardChart
-              data={poolHashrates}
-              CardSubtitle="Pool Hashrate"
-              CardLateststat={hashformat(poolData.poolHashRate, 2, "H/s")}
-            />
-            <CardChart
-              data={connectedMiners}
-              CardSubtitle="Miners"
-              CardLateststat={poolData.miners}
-            />
-            {InfoCard()}
-            <CardChart
-              data={networkHashRates}
-              CardSubtitle="Network Hashrate"
-              CardLateststat={hashformat(poolData.networkHashrate, 2, "H/s")}
-            />
-            <CardChart
-              data={networkDifficulty}
-              CardSubtitle="Network Difficulty"
-              CardLateststat={poolData.networkDifficulty}
-            />
-          </Grid>
-        )}
+              <CardChart
+                data={poolHashrates}
+                CardSubtitle="Pool Hashrate"
+                CardLateststat={hashformat(poolData.poolHashRate, 2, "H/s")}
+                hasSymbol={true}
+              />
+              <CardChart
+                data={connectedMiners}
+                CardSubtitle="Miners"
+                CardLateststat={poolData.miners}
+              />
+              {InfoCard()}
+              <CardChart
+                data={networkHashRates}
+                CardSubtitle="Network Hashrate"
+                CardLateststat={hashformat(poolData.networkHashrate, 2, "H/s")}
+                hasSymbol={true}
+              />
+              <CardChart
+                data={networkDifficulty}
+                CardSubtitle="Network Difficulty"
+                CardLateststat={poolData.networkDifficulty}
+              />
+            </Grid>
+          )}
       </div>
     </React.Fragment>
   );

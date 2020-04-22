@@ -65,25 +65,22 @@ const useStyles = makeStyles({
     },
 });
 
-const Blocks = (props) => {
+const Payments = (props) => {
     const poolid = localStorage.getItem("poolid");
 
-    const [blockTableRows, setBlockTableRows] = useState([
+    const [paymentTableRows, setPaymentTableRows] = useState([
         {
-            found: "",
-            height: 0,
-            effort: "",
-            status: "",
-            reward: 0.0,
-            confirmation: 0,
-            miner: "",
+            sent: "",
+            address: "",
+            amount: 0,
+            confirmation: ""
         },
     ]);
 
-    const [totalPages, setTotalPages] = useState(0);
-    const [page, setPage] = useState(0);
+    // const [totalPages, setTotalPages] = useState(0);
+    // const [page, setPage] = useState(0);
 
-    const [rowsPerPage, setRowsPerPage] = useState(15);
+    // const [rowsPerPage, setRowsPerPage] = useState(500);
 
     const [loading, setLoading] = useState({
         loading: true,
@@ -91,65 +88,61 @@ const Blocks = (props) => {
         error: "NoError",
     });
 
-    const handleChangePage = async (event, newPage) => {
-        console.log("New Page : " + newPage);
-        setPage(newPage);
+    // const handleChangePage = async (event, newPage) => {
+    //     console.log("New Page : " + newPage);
+    //     setPage(newPage);
 
-        // console.log(page);
-        // console.log(config.poolapiurl + `pools/${poolid}/blocks?pageSize=${rowsPerPage}&page=${page}`)
+    //     // console.log(page);
+    //     // https://mineit.io/api/pools/indexchain/payments?page=0&pageSize=500 
 
-        await axios
-            .get(
-                config.poolapiurl +
-                `pools/${poolid}/blocks?pageSize=${rowsPerPage}&page=${newPage}`
-            )
-            .then(function (response) {
-                // handle success
-                const data = response.data;
+    //     await axios
+    //         .get(
+    //             config.poolapiurl +
+    //             `pools/${poolid}/payments?pageSize=?page=0&pageSize=500`
+    //         )
+    //         .then(function (response) {
+    //             // handle success
+    //             const data = response.data;
 
-                data.map((d) => {
-                    setBlockTableRows((blockTableRow) => [
-                        ...blockTableRow,
-                        {
-                            found: formatDate(d.created),
-                            height: d.blockHeight,
-                            effort: Math.round(d.effort * 100),
-                            status: d.status,
-                            reward: (Math.round(d.reward * 100) / 100).toFixed(2),
-                            confirmation: Math.round(d.confirmationProgress * 100),
-                            miner: d.miner,
-                        },
-                    ]);
-                    return true;
-                });
+    //             data.map((d) => {
+    //                 setPaymentTableRows((paymentTableRow) => [
+    //                     ...paymentTableRow,
+    //                     {
+    //                         sent: formatDate(d.created),
+    //                         address: d.address,
+    //                         amount: d.amount,
+    //                         confirmation: d.transactionConfirmationData
+    //                     },
+    //                 ]);
+    //                 return true;
+    //             });
 
-                props.enqueueSnackbar("Successfully fetched the table data.", {
-                    variant: "success",
-                });
+    //             props.enqueueSnackbar("Successfully fetched the table data.", {
+    //                 variant: "success",
+    //             });
 
-                setLoading({ loading: false, loadingtext: "" });
-            })
-            .catch(function (error) {
-                // handle error
-                props.enqueueSnackbar("Error : " + error, {
-                    variant: "error",
-                });
-                setLoading({ loading: false, loadingtext: "" });
-            });
-    };
+    //             setLoading({ loading: false, loadingtext: "" });
+    //         })
+    //         .catch(function (error) {
+    //             // handle error
+    //             props.enqueueSnackbar("Error : " + error, {
+    //                 variant: "error",
+    //             });
+    //             setLoading({ loading: false, loadingtext: "" });
+    //         });
+    // };
 
     // useEffect(() => { console.log("Total Pages is " + totalPages) }, [totalPages])
 
     useEffect(() => {
         const loadTableData = async () => {
             let data;
-            setBlockTableRows([]);
-            // pagesize=15&page=2&order=ASC&sort=id
-            // https://mineit.io/api/pools/indexchain/blocks?pagesize=15&page=2&order=ASC&sort=id
+            setPaymentTableRows([]);
+
             await axios
                 .get(
                     config.poolapiurl +
-                    `pools/${poolid}/blocks?pageSize=${rowsPerPage}&page=${page}`
+                    `pools/${poolid}/payments?page=0&pageSize=500`
                 )
                 .then(function (response) {
                     // handle success
@@ -157,28 +150,25 @@ const Blocks = (props) => {
                     // Get total posts value from the header.
                     const jsonString = JSON.stringify(response.headers);
 
-                    JSON.parse(jsonString, (key, value) => {
-                        if (key === "x-total-count") {
-                            console.log(key);
-                            console.log(value);
-                            console.log(rowsPerPage);
-                            setTotalPages(Math.round(value / rowsPerPage) + 1);
-                        }
-                    });
+                    // JSON.parse(jsonString, (key, value) => {
+                    //     if (key === "x-total-count") {
+                    //         console.log(key);
+                    //         console.log(value);
+                    //         console.log(rowsPerPage);
+                    //         setTotalPages(Math.round(value / rowsPerPage) + 1);
+                    //     }
+                    // });
 
-                    console.log("Total Pages : " + totalPages);
+                    // console.log("Total Pages : " + totalPages);
 
                     data.map((d) => {
-                        setBlockTableRows((blockTableRow) => [
-                            ...blockTableRow,
+                        setPaymentTableRows((paymentTableRow) => [
+                            ...paymentTableRow,
                             {
-                                found: formatDate(d.created),
-                                height: d.blockHeight,
-                                effort: Math.round(d.effort * 100),
-                                status: d.status,
-                                reward: (Math.round(d.reward * 100) / 100).toFixed(2),
-                                confirmation: Math.round(d.confirmationProgress * 100),
-                                miner: d.miner,
+                                sent: formatDate(d.created),
+                                address: d.address,
+                                amount: d.amount,
+                                confirmation: d.transactionConfirmationData
                             },
                         ]);
                         return true;
@@ -200,7 +190,7 @@ const Blocks = (props) => {
         };
 
         loadTableData();
-    }, [props, poolid]);
+    }, []);
 
     const formatDate = (dateString) => {
         var options = {};
@@ -221,10 +211,10 @@ const Blocks = (props) => {
                     <Card className={classes.root} style={{ width: "100%" }}>
                         <CardContent>
                             <Typography variant="h5" component="h5">
-                                Blocks Mined
+                                Payments Rewarded
               </Typography>
                             <Typography variant="h6" component="h6">
-                                Last 15 Blocks
+                                Last 500 Payments
               </Typography>
                             <br />
                             <div style={{ width: "100%", border: "0px" }}>
@@ -235,69 +225,40 @@ const Blocks = (props) => {
                                     <Table className={classes.table} aria-label="table">
                                         <TableHead className={classes.tableHeader}>
                                             <TableRow>
-                                                <TableCell align="center">Found</TableCell>
-                                                <TableCell align="center">Height</TableCell>
-                                                <TableCell align="center">Effort</TableCell>
-                                                <TableCell align="center">Status</TableCell>
-                                                <TableCell align="center">Reward</TableCell>
+                                                <TableCell align="center">Sent</TableCell>
+                                                <TableCell align="center">Address</TableCell>
+                                                <TableCell align="center">Amount</TableCell>
                                                 <TableCell align="center">Confirmation</TableCell>
-                                                <TableCell align="center">Miner</TableCell>
+
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {blockTableRows
-                                                .slice(
-                                                    page * rowsPerPage,
-                                                    page * rowsPerPage + rowsPerPage
-                                                )
-                                                .map((blockTableRow, index) => (
+                                            {paymentTableRows
+                                                // .slice(
+                                                //     page * rowsPerPage,
+                                                //     page * rowsPerPage + rowsPerPage
+                                                // )
+                                                .map((paymentTableRow, index) => (
                                                     <TableRow key={index}>
                                                         <TableCell align="center">
-                                                            {blockTableRow.found}
+                                                            {paymentTableRow.sent}
                                                         </TableCell>
                                                         <TableCell align="center">
-                                                            {blockTableRow.height}
+                                                            {paymentTableRow.address}
                                                         </TableCell>
                                                         <TableCell align="center">
-                                                            {blockTableRow.effort}%
-                            </TableCell>
-                                                        <TableCell align="center">
-                                                            {blockTableRow.status}
+                                                            {paymentTableRow.amount}
                                                         </TableCell>
                                                         <TableCell align="center">
-                                                            {blockTableRow.reward}
-                                                        </TableCell>
-                                                        <TableCell align="center">
-                                                            {blockTableRow.confirmation === 100 ||
-                                                                blockTableRow.confirmation === 0 ? (
-                                                                    blockTableRow.confirmation === 100 ? (
-                                                                        <DoneIcon />
-                                                                    ) : (
-                                                                            blockTableRow.confirmation + "%"
-                                                                        )
-                                                                ) : (
-                                                                    <Tooltip
-                                                                        title={blockTableRow.confirmation + "%"}
-                                                                        placement="right"
-                                                                    >
-                                                                        <CircularProgress
-                                                                            variant="static"
-                                                                            value={blockTableRow.confirmation}
-                                                                            color="inherit"
-                                                                        />
-                                                                    </Tooltip>
-                                                                )}
-                                                        </TableCell>
-                                                        <TableCell align="center">
-                                                            {blockTableRow.miner}
+                                                            {paymentTableRow.confirmation}
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}
                                         </TableBody>
                                         <TableFooter>
-                                            <TableRow>
+                                            {/* <TableRow>
                                                 <TablePagination
-                                                    rowsPerPageOptions={[15]}
+                                                    
                                                     count={totalPages}
                                                     rowsPerPage={rowsPerPage}
                                                     page={page}
@@ -307,7 +268,7 @@ const Blocks = (props) => {
                                                     }}
                                                     onChangePage={handleChangePage}
                                                 />
-                                            </TableRow>
+                                            </TableRow> */}
                                         </TableFooter>
                                     </Table>
                                 </TableContainer>
@@ -323,7 +284,7 @@ const Blocks = (props) => {
     return (
         <React.Fragment>
             <CssBaseline />
-            <Topbar currentPath={"/blocks"} />
+            <Topbar currentPath={"/payments"} />
             <div className="container_main">
                 {loading.loading ? (
                     <Loading
@@ -341,4 +302,4 @@ const Blocks = (props) => {
     );
 };
 
-export default withSnackbar(Blocks);
+export default withSnackbar(Payments);

@@ -16,6 +16,10 @@ const Menu = [
     pathname: "/blocks",
   },
   {
+    label: "Payments",
+    pathname: "/payments",
+  },
+  {
     label: "Signup",
     pathname: "/signup",
   },

@@ -109,14 +109,17 @@ class Topbar extends Component {
     if (this.props.currentPath === "/blocks") {
       return 3;
     }
-    if (this.props.currentPath === "/signup") {
+    if (this.props.currentPath === "/payments") {
       return 4;
     }
-    if (this.props.currentPath === "/wizard") {
+    if (this.props.currentPath === "/signup") {
       return 5;
     }
-    if (this.props.currentPath === "/cards") {
+    if (this.props.currentPath === "/wizard") {
       return 6;
+    }
+    if (this.props.currentPath === "/cards") {
+      return 7;
     }
   };
 
@@ -169,9 +172,9 @@ class Topbar extends Component {
                               item.external
                                 ? null
                                 : {
-                                    pathname: item.pathname,
-                                    search: this.props.location.search,
-                                  }
+                                  pathname: item.pathname,
+                                  search: this.props.location.search,
+                                }
                             }
                             button
                             key={item.label}
@@ -196,9 +199,9 @@ class Topbar extends Component {
                             item.external
                               ? null
                               : {
-                                  pathname: item.pathname,
-                                  search: this.props.location.search,
-                                }
+                                pathname: item.pathname,
+                                search: this.props.location.search,
+                              }
                           }
                           classes={{ root: classes.tabItem }}
                           label={item.label}
