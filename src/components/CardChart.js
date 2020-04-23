@@ -58,6 +58,7 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false }) =>
 
         console.log("Number " + number)
 
+        // number = number * 1000000000;
         number = number * 1000000000;
 
         var s1 = [

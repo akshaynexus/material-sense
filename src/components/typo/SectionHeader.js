@@ -43,9 +43,10 @@ const SectionHeader = ({ classes, title, subtitle, val, getAlgoIndex }) => {
               value={val}
               onChange={getAlgoIndex}
             >
-              <MenuItem value={0}>ASIC/FGPA</MenuItem>
-              <MenuItem value={1}>GPU</MenuItem>
-              <MenuItem value={2}>CPU</MenuItem>
+              <MenuItem value={0}>All</MenuItem>
+              <MenuItem value={1}>ASIC/FGPA</MenuItem>
+              <MenuItem value={2}>GPU</MenuItem>
+              <MenuItem value={3}>CPU</MenuItem>
             </Select>
           </FormControl>
         </div>

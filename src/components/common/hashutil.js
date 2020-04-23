@@ -20,14 +20,14 @@ const hashformat = (value, decimal, unit, fsymbol = true) => {
     }
     return fsymbol
       ? (value / si[i].value)
-          .toFixed(decimal)
-          .replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1") +
-          " " +
-          si[i].symbol +
-          unit
+        .toFixed(decimal)
+        .replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1") +
+      " " +
+      si[i].symbol +
+      unit
       : (value / si[i].value)
-          .toFixed(decimal)
-          .replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1");
+        .toFixed(decimal)
+        .replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1");
   }
 };
 export default hashformat;

@@ -69,6 +69,41 @@ const Cards = (props) => {
     console.log("Algo Length : " + algorithms.length);
 
     try {
+
+      if (selectedIndex === 0) {
+        return filteredPoolData.map((coin, index) => (
+          <div key={index}>
+            <CardCoin
+              coin={coin.coin.name}
+              ticker={coin.coin.type}
+              algo={coin.coin.algorithm}
+              minercount={coin.poolStats.connectedMiners}
+              poolhashrate={hashformat(coin.poolStats.poolHashrate, 2, "H/s")}
+              diff={hashformat(coin.networkStats.networkDifficulty, 2, "")}
+              fee={coin.poolFeePercent + "%"}
+              poolid={coin.id}
+            />
+            <br />
+          </div>
+        ));
+      } else {
+        return filteredPoolData.filter(coin => algorithms[selectedIndex - 1].indexOf(coin.coin.algorithm.toLowerCase()) !== -1).map((coin, index) => (
+          <div key={index}>
+            <CardCoin
+              coin={coin.coin.name}
+              ticker={coin.coin.type}
+              algo={coin.coin.algorithm}
+              minercount={coin.poolStats.connectedMiners}
+              poolhashrate={hashformat(coin.poolStats.poolHashrate, 2, "H/s")}
+              diff={hashformat(coin.networkStats.networkDifficulty, 2, "")}
+              fee={coin.poolFeePercent + "%"}
+              poolid={coin.id}
+            />
+            <br />
+          </div>
+        ));
+      }
+
       return filteredPoolData.filter(coin => algorithms[selectedIndex].indexOf(coin.coin.algorithm.toLowerCase()) !== -1).map((coin, index) => (
         <div key={index}>
           <CardCoin
