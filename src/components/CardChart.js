@@ -41,7 +41,7 @@ const useStyles = makeStyles({
 
 
 
-const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false }) => {
+const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasRate = true }) => {
     const classes = useStyles();
 
     const valueFormatter = (number, hasSymbol) => {
@@ -78,7 +78,12 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false }) =>
                 // console.log("i : " + i + " value : " + s1[i].value + " symbol " + s1[i].symbol)
                 if (number >= s1[i].value) {
                     // console.log("Returned value : " + (Math.round((number / s1[i].value) * 100) / 100).toFixed(2));
-                    return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol + "H/s";
+                    if (hasRate) {
+                        return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol + "H/s";
+                    } else {
+                        return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol;
+                    }
+
                 }
             }
 
