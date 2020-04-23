@@ -44,7 +44,52 @@ const useStyles = makeStyles({
 const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false }) => {
     const classes = useStyles();
 
-    const NumberFOrmatter = (number) => {
+    const valueFormatter = (number, hasSymbol) => {
+
+        if (hasSymbol) {
+
+            // if (number > 1000000000) {
+            //     return (number / 1000000000).toString() + 'B';
+            // } else if (number > 1000000) {
+            //     return (number / 1000000).toString() + 'M';
+            // } else if (number > 1000) {
+            //     return (number / 1000).toString() + 'K';
+            // } else {
+            //     return number.toString() + 'Z';
+            // }
+
+            console.log("Number is :  " + number)
+
+            number = number * 1000000000;
+
+            var s1 = [
+                { value: 0, symbol: "" },
+                { value: 1, symbol: "" },
+                { value: 1e3, symbol: "k" },
+                { value: 1e6, symbol: "M" },
+                { value: 1e9, symbol: "G" },
+                { value: 1e12, symbol: "T" },
+                { value: 1e15, symbol: "P" },
+                { value: 1e18, symbol: "E" },
+                { value: 1e21, symbol: "Z" },
+                { value: 1e24, symbol: "Y" },
+            ];
+            for (var i = s1.length - 1; i > 0; i--) {
+                // console.log("i : " + i + " value : " + s1[i].value + " symbol " + s1[i].symbol)
+                if (number >= s1[i].value) {
+                    // console.log("Returned value : " + (Math.round((number / s1[i].value) * 100) / 100).toFixed(2));
+                    return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol + "H/s";
+                }
+            }
+
+        } else {
+            return number;
+        }
+
+
+    }
+
+    const NumberFormatter = (number) => {
         // if (number > 1000000000) {
         //     return (number / 1000000000).toString() + 'B';
         // } else if (number > 1000000) {
@@ -55,10 +100,11 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false }) =>
         //     return number.toString() + 'Z';
         // }
 
-        console.log("Number " + number)
+        console.log("Number formatter in card chart : " + number)
 
-        // number = number * 1000000000;
         number = number * 1000000000;
+        // number = number; // * 1000000000;
+
 
         var s1 = [
             { value: 0, symbol: "" },
@@ -73,13 +119,14 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false }) =>
             { value: 1e24, symbol: "Y" },
         ];
         for (var i = s1.length - 1; i > 0; i--) {
-            console.log("i : " + i + " value : " + s1[i].value + " symbol " + s1[i].symbol)
+            // console.log("i : " + i + " value : " + s1[i].value + " symbol " + s1[i].symbol)
             if (number >= s1[i].value) {
                 return (number / s1[i].value) + " " + s1[i].symbol;
             }
         }
 
     }
+
 
     return (
         <Grid item xs={12} sm={12} md={6}>
@@ -107,11 +154,12 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false }) =>
                                     <XAxis dataKey="name" />
                                     {/* {hasSymbol ? <YAxis tickFormatter={(tickValue) => `${tickValue} M`} /> : <YAxis />} */}
 
-                                    {hasSymbol ? <YAxis domain={['dataMin', 'auto']} tickFormatter={NumberFOrmatter} /> : <YAxis />}
+                                    {hasSymbol ? <YAxis domain={['dataMin', 'auto']} tickFormatter={NumberFormatter} /> : <YAxis />}
 
                                     <Tooltip
                                         contentStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
                                         labelStyle={{ fontWeight: "bold", color: "#666666" }}
+                                        formatter={(value) => valueFormatter(value, hasSymbol)}
                                     />
                                     <Area
                                         type="monotone"

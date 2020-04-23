@@ -93,9 +93,9 @@ const Stats = (props) => {
     //     return number.toString() + 'Z';
     // }
 
-    console.log("Number " + number)
+    console.log("Number is :  " + number)
 
-    number = number * 1000000000;
+    // number = number * 1000000000;
 
     var s1 = [
       { value: 0, symbol: "" },
@@ -110,13 +110,16 @@ const Stats = (props) => {
       { value: 1e24, symbol: "Y" },
     ];
     for (var i = s1.length - 1; i > 0; i--) {
-      console.log("i : " + i + " value : " + s1[i].value + " symbol " + s1[i].symbol)
+      // console.log("i : " + i + " value : " + s1[i].value + " symbol " + s1[i].symbol)
       if (number >= s1[i].value) {
-        return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2);;
+        console.log("Returned value : " + (Math.round((number / s1[i].value) * 100) / 100).toFixed(2));
+        return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2);
       }
     }
 
   }
+
+
   useEffect(() => {
     const getGraphData = async () => {
       let data;
@@ -136,7 +139,7 @@ const Stats = (props) => {
             setPoolHashrates((poolHashrates) => [
               ...poolHashrates,
               {
-                value: NumberFormatter(stats.poolHashrate), //  / 1000000000,
+                value: stats.poolHashrate / 1000000000, // NumberFormatter(stats.poolHashrate), //  / 1000000000,
                 name: stats.created.substring(11, 16),
               },
             ]);
@@ -150,7 +153,7 @@ const Stats = (props) => {
             setNetworkHashrates((networkHashRates) => [
               ...networkHashRates,
               {
-                value: stats.networkHashrate / 1000000000,
+                value: stats.networkHashrate / 1000000000, //  / 1000000000,value: stats.networkHashrate / 1000000000,
                 name: stats.created.substring(11, 16),
               },
             ]);
