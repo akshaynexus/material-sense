@@ -83,7 +83,7 @@ const Blocks = (props) => {
     const [totalPages, setTotalPages] = useState(0);
     const [page, setPage] = useState(0);
 
-    const [rowsPerPage, setRowsPerPage] = useState(15);
+    const [rowsPerPage] = useState(15);
 
     const [loading, setLoading] = useState({
         loading: true,
@@ -200,7 +200,7 @@ const Blocks = (props) => {
         };
 
         loadTableData();
-    }, [props, poolid]);
+    }, [props, poolid,page,rowsPerPage,totalPages]);
 
     const formatDate = (dateString) => {
         var options = {};

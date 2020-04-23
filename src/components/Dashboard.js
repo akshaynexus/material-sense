@@ -187,6 +187,7 @@ const Dashboard = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         loadWalletData();
+        // eslint-disable-next-line
     }, []);
 
     const WalletCard = () => {

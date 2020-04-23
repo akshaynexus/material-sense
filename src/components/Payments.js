@@ -15,11 +15,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import DoneIcon from "@material-ui/icons/Done";
-import TablePagination from "@material-ui/core/TablePagination";
 import TableFooter from "@material-ui/core/TableFooter";
-import Tooltip from "@material-ui/core/Tooltip";
 
 import "./Stats.css";
 
@@ -77,62 +73,11 @@ const Payments = (props) => {
         },
     ]);
 
-    // const [totalPages, setTotalPages] = useState(0);
-    // const [page, setPage] = useState(0);
-
-    // const [rowsPerPage, setRowsPerPage] = useState(500);
-
     const [loading, setLoading] = useState({
         loading: true,
         loadingtext: "Loading Table Data",
         error: "NoError",
     });
-
-    // const handleChangePage = async (event, newPage) => {
-    //     console.log("New Page : " + newPage);
-    //     setPage(newPage);
-
-    //     // console.log(page);
-    //     // https://mineit.io/api/pools/indexchain/payments?page=0&pageSize=500 
-
-    //     await axios
-    //         .get(
-    //             config.poolapiurl +
-    //             `pools/${poolid}/payments?pageSize=?page=0&pageSize=500`
-    //         )
-    //         .then(function (response) {
-    //             // handle success
-    //             const data = response.data;
-
-    //             data.map((d) => {
-    //                 setPaymentTableRows((paymentTableRow) => [
-    //                     ...paymentTableRow,
-    //                     {
-    //                         sent: formatDate(d.created),
-    //                         address: d.address,
-    //                         amount: d.amount,
-    //                         confirmation: d.transactionConfirmationData
-    //                     },
-    //                 ]);
-    //                 return true;
-    //             });
-
-    //             props.enqueueSnackbar("Successfully fetched the table data.", {
-    //                 variant: "success",
-    //             });
-
-    //             setLoading({ loading: false, loadingtext: "" });
-    //         })
-    //         .catch(function (error) {
-    //             // handle error
-    //             props.enqueueSnackbar("Error : " + error, {
-    //                 variant: "error",
-    //             });
-    //             setLoading({ loading: false, loadingtext: "" });
-    //         });
-    // };
-
-    // useEffect(() => { console.log("Total Pages is " + totalPages) }, [totalPages])
 
     useEffect(() => {
         const loadTableData = async () => {
@@ -148,18 +93,6 @@ const Payments = (props) => {
                     // handle success
                     data = response.data;
                     // Get total posts value from the header.
-                    const jsonString = JSON.stringify(response.headers);
-
-                    // JSON.parse(jsonString, (key, value) => {
-                    //     if (key === "x-total-count") {
-                    //         console.log(key);
-                    //         console.log(value);
-                    //         console.log(rowsPerPage);
-                    //         setTotalPages(Math.round(value / rowsPerPage) + 1);
-                    //     }
-                    // });
-
-                    // console.log("Total Pages : " + totalPages);
 
                     data.map((d) => {
                         setPaymentTableRows((paymentTableRow) => [
@@ -190,7 +123,7 @@ const Payments = (props) => {
         };
 
         loadTableData();
-    }, []);
+    }, [poolid,props]);
 
     const formatDate = (dateString) => {
         var options = {};
@@ -234,10 +167,6 @@ const Payments = (props) => {
                                         </TableHead>
                                         <TableBody>
                                             {paymentTableRows
-                                                // .slice(
-                                                //     page * rowsPerPage,
-                                                //     page * rowsPerPage + rowsPerPage
-                                                // )
                                                 .map((paymentTableRow, index) => (
                                                     <TableRow key={index}>
                                                         <TableCell align="center">
@@ -256,19 +185,6 @@ const Payments = (props) => {
                                                 ))}
                                         </TableBody>
                                         <TableFooter>
-                                            {/* <TableRow>
-                                                <TablePagination
-                                                    
-                                                    count={totalPages}
-                                                    rowsPerPage={rowsPerPage}
-                                                    page={page}
-                                                    SelectProps={{
-                                                        inputProps: { "aria-label": "rows per page" },
-                                                        native: true,
-                                                    }}
-                                                    onChangePage={handleChangePage}
-                                                />
-                                            </TableRow> */}
                                         </TableFooter>
                                     </Table>
                                 </TableContainer>

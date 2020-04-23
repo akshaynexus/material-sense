@@ -21,11 +21,11 @@ const styles = (theme) => ({
 const Cards = (props) => {
 
   const swrUrl = config.poolapiurl + "pools/";
-  const { data, error } = useSWR(swrUrl, (url) =>
+  const { data } = useSWR(swrUrl, (url) =>
     axios(url).then((r) => r.data)
   );
 
-  const [loading, setLoading] = useState({
+  const [loading] = useState({
     loading: true,
     loadingtext: "Loading Graph data",
     error: "NoError",
@@ -33,15 +33,9 @@ const Cards = (props) => {
 
   const [algorithms, setAlgorithms] = useState([]);
 
-  // const [algorithmsLS, setAlgorithmsLS] = React.useState(
-  //   localStorage.getItem("algorithms") || []
-  // );
-
-  let arrayOfCurrentAlgorithms = []
 
   const [selectedIndex, setSelectedIndex] = useState();
 
-  const pooldata = data?.pools;
   let filteredPoolData = data?.pools;
 
   const handleChange = (e) => {
@@ -105,21 +99,6 @@ const Cards = (props) => {
 
 
   };
-
-
-
-  // useEffect(() => {
-
-
-  //   // console.log("current index : " + selectedIndex);
-  //   // const currentAlgorithms = algorithms[selectedIndex];
-  //   // // console.log(String(arrayOfCurrentAlgorithms).split(","));
-  //   // arrayOfCurrentAlgorithms = String(currentAlgorithms).split(",")
-  //   // console.log(arrayOfCurrentAlgorithms);
-
-  //   localStorage.setItem("algorithms", algorithms[selectedIndex]);
-
-  // }, [selectedIndex])
 
   const { classes } = props;
   const currentPath = props.location.pathname;
