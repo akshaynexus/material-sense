@@ -142,12 +142,11 @@ const Stats = (props) => {
       // console.log("i : " + i + " value : " + s1[i].value + " symbol " + s1[i].symbol)
       if (number >= s1[i].value) {
         // console.log("Returned value : " + (Math.round((number / s1[i].value) * 100) / 100).toFixed(2));
-        return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol;
+        // return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol;
+        return (number / s1[i].value) + s1[i].symbol;
       }
     }
-
   }
-
 
   useEffect(() => {
     const getGraphData = async () => {
@@ -341,7 +340,7 @@ const Stats = (props) => {
               <CardChart
                 data={networkDifficulty}
                 CardSubtitle="Network Difficulty"
-                CardLateststat={valueFormatter(poolData.networkDifficulty)}
+                CardLateststat={(poolData.networkDifficulty * 1000000 / 1000000).toFixed(6)}
                 hasSymbol={true}
                 hasRate={false}
               />

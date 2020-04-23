@@ -44,23 +44,17 @@ const useStyles = makeStyles({
 const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasRate = true }) => {
     const classes = useStyles();
 
-    const valueFormatter = (number, hasSymbol) => {
+    const valueFormatter = (number) => {
 
         if (hasSymbol) {
-
-            // if (number > 1000000000) {
-            //     return (number / 1000000000).toString() + 'B';
-            // } else if (number > 1000000) {
-            //     return (number / 1000000).toString() + 'M';
-            // } else if (number > 1000) {
-            //     return (number / 1000).toString() + 'K';
-            // } else {
-            //     return number.toString() + 'Z';
-            // }
 
             console.log("Number is :  " + number)
 
             if (hasRate) number = number * 1000000000;
+
+            if (number < 1) {
+                return (number * 1000000 / 1000000).toFixed(6)
+            }
 
             var s1 = [
                 { value: 0, symbol: "" },
@@ -79,17 +73,22 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasR
                 if (number >= s1[i].value) {
                     // console.log("Returned value : " + (Math.round((number / s1[i].value) * 100) / 100).toFixed(2));
                     if (hasRate) {
+
+                        //return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol + "H/s";
                         return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol + "H/s";
+                        // return (number / s1[i].value) + s1[i].symbol;
                     } else {
-                        return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol;
+                        //console.log("network difficulty value " + (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol + "H/s")
+                        //return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol;
+
+                        return ((number / s1[i].value * 1000000) / 1000000).toFixed(6) + " " + s1[i].symbol;
+                        // /return (number / s1[i].value) + s1[i].symbol;
                     }
                 }
             }
-
         } else {
             return number;
         }
-
 
     }
 
@@ -104,10 +103,14 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasR
         //     return number.toString() + 'Z';
         // }
 
-        console.log("Number formatter in card chart : " + number)
+        // console.log("Number formatter in card chart : " + number)
 
         if (hasRate) {
             number = number * 1000000000;
+        }
+
+        if (number < 1) {
+            return (number * 1000000 / 1000000).toFixed(6)
         }
 
 
@@ -165,7 +168,7 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasR
                                     <Tooltip
                                         contentStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
                                         labelStyle={{ fontWeight: "bold", color: "#666666" }}
-                                        formatter={(value) => valueFormatter(value, hasSymbol)}
+                                        formatter={valueFormatter}
                                     />
 
                                     <Area
