@@ -123,7 +123,7 @@ const Stats = (props) => {
 
     console.log("Number is :  " + number)
 
-    number = number * 1000000000;
+    // number = number * 1000000000;
 
     var s1 = [
       { value: 0, symbol: "" },
@@ -137,6 +137,7 @@ const Stats = (props) => {
       { value: 1e21, symbol: "Z" },
       { value: 1e24, symbol: "Y" },
     ];
+
     for (var i = s1.length - 1; i > 0; i--) {
       // console.log("i : " + i + " value : " + s1[i].value + " symbol " + s1[i].symbol)
       if (number >= s1[i].value) {

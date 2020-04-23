@@ -60,7 +60,7 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasR
 
             console.log("Number is :  " + number)
 
-            number = number * 1000000000;
+            if (hasRate) number = number * 1000000000;
 
             var s1 = [
                 { value: 0, symbol: "" },
@@ -83,7 +83,6 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasR
                     } else {
                         return (Math.round((number / s1[i].value) * 100) / 100).toFixed(2) + " " + s1[i].symbol;
                     }
-
                 }
             }
 
@@ -107,8 +106,9 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasR
 
         console.log("Number formatter in card chart : " + number)
 
-        number = number * 1000000000;
-        // number = number; // * 1000000000;
+        if (hasRate) {
+            number = number * 1000000000;
+        }
 
 
         var s1 = [
@@ -126,6 +126,7 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasR
         for (var i = s1.length - 1; i > 0; i--) {
             // console.log("i : " + i + " value : " + s1[i].value + " symbol " + s1[i].symbol)
             if (number >= s1[i].value) {
+
                 return (number / s1[i].value) + " " + s1[i].symbol;
             }
         }
@@ -166,12 +167,14 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasR
                                         labelStyle={{ fontWeight: "bold", color: "#666666" }}
                                         formatter={(value) => valueFormatter(value, hasSymbol)}
                                     />
+
                                     <Area
                                         type="monotone"
                                         dataKey="value"
                                         stroke="#b5ceeb"
                                         fill="url(#colorPv)"
                                     />
+
                                 </AreaChart>
                             </ResponsiveContainer>
                         </div>
