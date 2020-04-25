@@ -17,11 +17,18 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+
 import "./Stats.css";
 
 import config from "../config.js";
 import { withSnackbar } from "notistack";
 import Loading from "./common/Loading";
+import { withTheme } from "@material-ui/styles";
 
 const useStyles = makeStyles({
     root: {
@@ -192,45 +199,49 @@ const Payments = (props) => {
                                                 <Divider />
                                                 <ListItem key={index} button={true} onClick={({ item }) => handleClick(index, item)}/* component="a" href={thread.data.url}*/ >
                                                     <ListItemText primary={transactionConfirmation} />
-                                                    {/* {[index] ? <ExpandLess /> : <ExpandMore />} */}
+                                                    {indexes[index] ? <ExpandLess /> : <ExpandMore />}
                                                 </ListItem>
                                                 <Collapse in={indexes[index]} timeout="auto" unmountOnExit={true}>
                                                     <Divider />
                                                     <>
                                                         <br />
-                                                        <Typography variant="h6" component="h6">
+                                                        <Typography variant="h6" align="left" style={{ marginLeft: '100px', padding: '5px' }} >
                                                             Total Paid : {amounts[index]}
                                                         </Typography>
 
-                                                        <TableRow>
-                                                            <TableCell align="center">
-                                                                Date
-                                                        </TableCell>
-                                                            <TableCell align="center">
-                                                                Address
-                                                        </TableCell>
-                                                            <TableCell align="center">
-                                                                Paid Amount
-                                                        </TableCell>
-                                                        </TableRow>
-                                                    </>
-                                                    {paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
-                                                        .map((paymentTableRow, i) => (
-                                                            <>
-                                                                <TableRow key={i}>
-                                                                    <TableCell align="center">
-                                                                        {paymentTableRow.sent}
-                                                                    </TableCell>
-                                                                    <TableCell align="center">
-                                                                        {paymentTableRow.address}
-                                                                    </TableCell>
-                                                                    <TableCell align="center">
-                                                                        {paymentTableRow.amount}
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                            </>
-                                                        ))}
 
+                                                        <Table className={classes.table} aria-label="table" >
+                                                            <TableHead className={classes.tableHeader} align="center" style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                                                                <TableRow align="center">
+                                                                    <TableCell align="center">
+                                                                        Date
+                                                                            </TableCell>
+                                                                    <TableCell align="center">
+                                                                        Address
+                                                                            </TableCell>
+                                                                    <TableCell align="center">
+                                                                        Paid Amount
+                                                                            </TableCell>
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            {paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
+                                                                .map((paymentTableRow, i) => (
+                                                                    <>
+                                                                        <TableRow key={i}>
+                                                                            <TableCell align="center">
+                                                                                {paymentTableRow.sent}
+                                                                            </TableCell>
+                                                                            <TableCell align="center">
+                                                                                {paymentTableRow.address}
+                                                                            </TableCell>
+                                                                            <TableCell align="center">
+                                                                                {paymentTableRow.amount}
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    </>
+                                                                ))}
+                                                        </Table>
+                                                    </>
                                                 </Collapse>
                                                 <Divider />
                                             </>
@@ -296,3 +307,4 @@ const Payments = (props) => {
 };
 
 export default withSnackbar(Payments);
+
