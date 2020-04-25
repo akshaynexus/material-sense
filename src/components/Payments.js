@@ -8,14 +8,14 @@ import Grid from "@material-ui/core/Grid";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import axios from "axios";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
+
 import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import TableFooter from "@material-ui/core/TableFooter";
+import Collapse from '@material-ui/core/Collapse';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 import "./Stats.css";
 
@@ -47,7 +47,7 @@ const useStyles = makeStyles({
         width: 275,
         marginBottom: 1,
         borderWidth: "0px",
-        marginTop: "6px",
+        marginTop: "6px"
     },
     title: {
         fontSize: 16,
@@ -57,7 +57,7 @@ const useStyles = makeStyles({
     },
     table: {
         border: "0px",
-        marginTop: "15px",
+        marginTop: "15px"
     },
 });
 
@@ -73,11 +73,37 @@ const Payments = (props) => {
         },
     ]);
 
+    const [transactionConfirmations, setTransactionConfirmations] = useState([]);
+
     const [loading, setLoading] = useState({
         loading: true,
         loadingtext: "Loading Table Data",
         error: "NoError",
     });
+
+    const [amounts, setAmounts] = useState([]);
+
+    const [indexes, setIndexes] = useState([]);
+
+    const handleClick = (index, item) => {
+        // this.setState({ [index]: true });
+        // setIndexs(...setIndexs, index[index] = true); 
+
+        const tempIndexes = [...indexes];
+        // tempIndexes[index] = true;
+        if (tempIndexes[index]) {
+            tempIndexes[index] = !tempIndexes[index];
+        } else {
+            tempIndexes[index] = true;
+        }
+
+        setIndexes(tempIndexes)
+        //console.log(tempIndexes);
+
+    }
+
+
+
 
     useEffect(() => {
         const loadTableData = async () => {
@@ -104,6 +130,8 @@ const Payments = (props) => {
                                 confirmation: d.transactionConfirmationData
                             },
                         ]);
+                        setTransactionConfirmations((transactionConfirmation) => [...new Set([...transactionConfirmation, d.transactionConfirmationData])]);
+                        setAmounts(amount => [...amount, d.amount])
                         return true;
                     });
 
@@ -123,7 +151,7 @@ const Payments = (props) => {
         };
 
         loadTableData();
-    }, [poolid,props]);
+    }, [poolid, props]);
 
     const formatDate = (dateString) => {
         var options = {};
@@ -145,30 +173,81 @@ const Payments = (props) => {
                         <CardContent>
                             <Typography variant="h5" component="h5">
                                 Payments Rewarded
-              </Typography>
+                            </Typography>
                             <Typography variant="h6" component="h6">
-                                Last 500 Payments
-              </Typography>
+                                Last 500 Payments for {poolid}
+                            </Typography>
                             <br />
                             <div style={{ width: "100%", border: "0px" }}>
-                                <TableContainer
-                                    component={Paper}
-                                    style={{ width: "100%", border: "0px" }}
-                                >
-                                    <Table className={classes.table} aria-label="table">
-                                        <TableHead className={classes.tableHeader}>
-                                            <TableRow>
-                                                <TableCell align="center">Sent</TableCell>
-                                                <TableCell align="center">Address</TableCell>
-                                                <TableCell align="center">Amount</TableCell>
-                                                <TableCell align="center">Confirmation</TableCell>
+                                <Typography variant="h4" component="h4">
+                                    Confirmation
+                            </Typography>
+                            </div>
+                            {!loading ?
+                                "No Data"
+                                : <List>
+                                    {transactionConfirmations
+                                        .map((transactionConfirmation, index) =>
+                                            <>
+                                                <Divider />
+                                                <ListItem key={index} button={true} onClick={({ item }) => handleClick(index, item)}/* component="a" href={thread.data.url}*/ >
+                                                    <ListItemText primary={transactionConfirmation} />
+                                                    {/* {[index] ? <ExpandLess /> : <ExpandMore />} */}
+                                                </ListItem>
+                                                <Collapse in={indexes[index]} timeout="auto" unmountOnExit={true}>
+                                                    <Divider />
+                                                    <>
+                                                        <br />
+                                                        <Typography variant="h6" component="h6">
+                                                            Total Paid : {amounts[index]}
+                                                        </Typography>
 
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {paymentTableRows
-                                                .map((paymentTableRow, index) => (
-                                                    <TableRow key={index}>
+                                                        <TableRow>
+                                                            <TableCell align="center">
+                                                                Date
+                                                        </TableCell>
+                                                            <TableCell align="center">
+                                                                Address
+                                                        </TableCell>
+                                                            <TableCell align="center">
+                                                                Paid Amount
+                                                        </TableCell>
+                                                        </TableRow>
+                                                    </>
+                                                    {paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
+                                                        .map((paymentTableRow, i) => (
+                                                            <>
+                                                                <TableRow key={i}>
+                                                                    <TableCell align="center">
+                                                                        {paymentTableRow.sent}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {paymentTableRow.address}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {paymentTableRow.amount}
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            </>
+                                                        ))}
+
+                                                </Collapse>
+                                                <Divider />
+                                            </>
+                                        )}
+                                </List>}
+
+                            {/* {transactionConfirmations
+                                    .map((transactionConfirmation, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell align="center">
+                                                {transactionConfirmation}
+                                            </TableCell>
+
+                                            {paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
+                                                .map((paymentTableRow, i) => (
+
+                                                    <TableRow key={i}>
                                                         <TableCell align="center">
                                                             {paymentTableRow.sent}
                                                         </TableCell>
@@ -178,21 +257,19 @@ const Payments = (props) => {
                                                         <TableCell align="center">
                                                             {paymentTableRow.amount}
                                                         </TableCell>
-                                                        <TableCell align="center">
-                                                            {paymentTableRow.confirmation}
-                                                        </TableCell>
                                                     </TableRow>
                                                 ))}
-                                        </TableBody>
-                                        <TableFooter>
-                                        </TableFooter>
-                                    </Table>
-                                </TableContainer>
-                            </div>
+
+                                        </TableRow>
+                                    ))} */}
+
+
+
+
                         </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
+                    </Card >
+                </Grid >
+            </Grid >
         );
     };
 
