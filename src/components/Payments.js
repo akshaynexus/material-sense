@@ -19,7 +19,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ExpandLess from '@material-ui/icons/ExpandLess';
-
+import clsx from 'clsx';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 
@@ -28,7 +28,11 @@ import "./Stats.css";
 import config from "../config.js";
 import { withSnackbar } from "notistack";
 import Loading from "./common/Loading";
-import { withTheme } from "@material-ui/styles";
+
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const useStyles = makeStyles({
     root: {
@@ -66,6 +70,10 @@ const useStyles = makeStyles({
         border: "0px",
         marginTop: "15px"
     },
+    detailsview: {
+        display: "flex",
+        flexDirection: "column"
+    }
 });
 
 const Payments = (props) => {
@@ -109,8 +117,7 @@ const Payments = (props) => {
 
     }
 
-
-
+    const [dataFetched, setDataFetched] = useState(false);
 
     useEffect(() => {
         const loadTableData = async () => {
@@ -127,7 +134,12 @@ const Payments = (props) => {
                     data = response.data;
                     // Get total posts value from the header.
 
-                    data.map((d) => {
+                    // let lastTransactionData = "";
+                    // let amount = 0.0;
+
+
+
+                    data.map((d, index) => {
                         setPaymentTableRows((paymentTableRow) => [
                             ...paymentTableRow,
                             {
@@ -138,15 +150,27 @@ const Payments = (props) => {
                             },
                         ]);
                         setTransactionConfirmations((transactionConfirmation) => [...new Set([...transactionConfirmation, d.transactionConfirmationData])]);
-                        setAmounts(amount => [...amount, d.amount])
+                        // setAmounts(amount => [...amount, d.amount])
+                        // if (index === 0) lastTransactionData = d.transactionConfirmationData
+                        // console.log("Last transaction data : " + lastTransactionData + "Amount : " + amount + "index :" + index)
+                        // if (lastTransactionData === d.transactionConfirmationData) {
+                        //     amount += d.amount;
+                        // } else {
+                        //     setAmounts(amounts => [...amounts, amount])
+                        //     amount = 0.0;
+                        // }
+                        // lastTransactionData = d.transactionConfirmationData;
+
                         return true;
                     });
+
+                    setDataFetched(true);
 
                     props.enqueueSnackbar("Successfully fetched the table data.", {
                         variant: "success",
                     });
 
-                    setLoading({ loading: false, loadingtext: "" });
+
                     return true;
                 })
                 .catch(function (error) {
@@ -159,6 +183,36 @@ const Payments = (props) => {
 
         loadTableData();
     }, [poolid, props]);
+
+    useEffect(() => {
+
+        if (dataFetched) {
+
+            transactionConfirmations
+                .map((transactionConfirmation) => {
+                    let tempAmount = 0.0;
+                    console.log("pre temporary amount " + tempAmount)
+                    paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
+                        .map((paymentTableRow) => {
+                            tempAmount += paymentTableRow.amount
+                            // console.log(index)
+                            // if ((index - 1) === index.length) {
+
+                            // }
+                            return true;
+                        })
+                    console.log("post temporary amount " + tempAmount)
+                    // setAmounts((amounts) => [...amounts, tempAmount]);
+                    setAmounts((amounts) => ([...amounts, tempAmount]));
+                    // console.log(amounts)
+                    return true;
+                });
+            setLoading({ loading: false, loadingtext: "" });
+        }
+
+
+
+    }, [dataFetched])
 
     const formatDate = (dateString) => {
         var options = {};
@@ -197,53 +251,60 @@ const Payments = (props) => {
                                         .map((transactionConfirmation, index) =>
                                             <>
                                                 <Divider />
-                                                <ListItem key={index} button={true} onClick={({ item }) => handleClick(index, item)}/* component="a" href={thread.data.url}*/ >
-                                                    <ListItemText primary={transactionConfirmation} />
-                                                    {indexes[index] ? <ExpandLess /> : <ExpandMore />}
-                                                </ListItem>
-                                                <Collapse in={indexes[index]} timeout="auto" unmountOnExit={true}>
-                                                    <Divider />
-                                                    <>
-                                                        <br />
-                                                        <Typography variant="h6" align="left" style={{ marginLeft: '100px', padding: '5px' }} >
-                                                            Total Paid : {amounts[index]}
-                                                        </Typography>
+
+                                                <ExpansionPanel >
+                                                    <ExpansionPanelSummary
+                                                        expandIcon={<ExpandMoreIcon />}
+                                                        aria-controls="panel1c-content"
+                                                        id="panel1c-header"
+                                                    >
+                                                        <div>
+                                                            <Typography className={classes.heading}>{transactionConfirmation}</Typography>
+                                                        </div>
+                                                    </ExpansionPanelSummary>
+                                                    <ExpansionPanelDetails className={classes.detailsview}>
+                                                        <div>
+                                                            <Typography variant="h6" align="left" style={{ marginLeft: '100px', padding: '5px' }} >
+                                                                Total Paid : {amounts[index]}
+                                                            </Typography>
+                                                        </div>
+                                                        <div className={clsx(classes.column, classes.helper)}>
+                                                            <Table className={classes.table} aria-label="table" >
+                                                                <TableHead className={classes.tableHeader} align="center" style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                                                                    <TableRow align="center">
+                                                                        <TableCell align="center">
+                                                                            Date
+                                                                            </TableCell>
+                                                                        <TableCell align="center">
+                                                                            Address
+                                                                            </TableCell>
+                                                                        <TableCell align="center">
+                                                                            Paid Amount
+                                                                            </TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                {paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
+                                                                    .map((paymentTableRow, i) => (
+                                                                        <>
+                                                                            <TableRow key={i}>
+                                                                                <TableCell align="center">
+                                                                                    {paymentTableRow.sent}
+                                                                                </TableCell>
+                                                                                <TableCell align="center">
+                                                                                    {paymentTableRow.address}
+                                                                                </TableCell>
+                                                                                <TableCell align="center">
+                                                                                    {paymentTableRow.amount}
+                                                                                </TableCell>
+                                                                            </TableRow>
+                                                                        </>
+                                                                    ))}
+                                                            </Table>
+                                                        </div>
+                                                    </ExpansionPanelDetails>
+                                                </ExpansionPanel>
 
 
-                                                        <Table className={classes.table} aria-label="table" >
-                                                            <TableHead className={classes.tableHeader} align="center" style={{ fontSize: '20px', fontWeight: 'bold' }}>
-                                                                <TableRow align="center">
-                                                                    <TableCell align="center">
-                                                                        Date
-                                                                            </TableCell>
-                                                                    <TableCell align="center">
-                                                                        Address
-                                                                            </TableCell>
-                                                                    <TableCell align="center">
-                                                                        Paid Amount
-                                                                            </TableCell>
-                                                                </TableRow>
-                                                            </TableHead>
-                                                            {paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
-                                                                .map((paymentTableRow, i) => (
-                                                                    <>
-                                                                        <TableRow key={i}>
-                                                                            <TableCell align="center">
-                                                                                {paymentTableRow.sent}
-                                                                            </TableCell>
-                                                                            <TableCell align="center">
-                                                                                {paymentTableRow.address}
-                                                                            </TableCell>
-                                                                            <TableCell align="center">
-                                                                                {paymentTableRow.amount}
-                                                                            </TableCell>
-                                                                        </TableRow>
-                                                                    </>
-                                                                ))}
-                                                        </Table>
-                                                    </>
-                                                </Collapse>
-                                                <Divider />
                                             </>
                                         )}
                                 </List>}
@@ -307,4 +368,3 @@ const Payments = (props) => {
 };
 
 export default withSnackbar(Payments);
-
