@@ -1,154 +1,181 @@
+import React, { Component } from "react";
+import withStyles from "@material-ui/styles/withStyles";
+import Typography from "@material-ui/core/Typography";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import { Redirect } from "react-router-dom";
 
-
-
-import React, { Component } from 'react';
-import withStyles from '@material-ui/styles/withStyles';
-import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import { Redirect } from 'react-router-dom'
-
-const styles = theme => ({
+const styles = (theme) => ({
   paper: {
     padding: theme.spacing(3),
-    textAlign: 'left',
-    color: theme.palette.text.secondary
+    textAlign: "left",
+    color: theme.palette.text.secondary,
   },
   avatar: {
-    margin: 10
+    margin: 10,
   },
   avatarContainer: {
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down("sm")]: {
       marginLeft: 0,
-      marginBottom: theme.spacing(4)
-    }
+      marginBottom: theme.spacing(4),
+    },
   },
   itemContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center'
-    }
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    [theme.breakpoints.down("sm")]: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+    },
   },
   baseline: {
-    alignSelf: 'baseline',
+    alignSelf: "baseline",
     marginLeft: theme.spacing(4),
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      flexDirection: 'column',
-      textAlign: 'center',
-      alignItems: 'center',
-      width: '100%',
+    [theme.breakpoints.down("sm")]: {
+      display: "flex",
+      flexDirection: "column",
+      textAlign: "center",
+      alignItems: "center",
+      width: "100%",
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2),
-      marginLeft: 0
-    }
+      marginLeft: 0,
+    },
   },
   inline: {
-    display: 'inline-block',
+    display: "inline-block",
     marginLeft: theme.spacing(4),
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: 0
-    }
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 0,
+    },
   },
   inlineRight: {
-    width: '30%',
-    textAlign: 'right',
+    width: "30%",
+    textAlign: "right",
     marginLeft: 50,
-    alignSelf: 'flex-end',
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
+    alignSelf: "flex-end",
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
       margin: 0,
-      textAlign: 'center'
-    }
+      textAlign: "center",
+    },
   },
   backButton: {
-    marginRight: theme.spacing(2)
-  }
-})
+    marginRight: theme.spacing(2),
+  },
+});
 
 class CardCoin extends Component {
-
   state = {
-    redirect: false
-  }
+    redirect: false,
+  };
 
   render() {
-
     const { classes } = this.props;
     const { redirect } = this.state;
 
-
     const setPoolID = () => {
-      localStorage.setItem("poolid", this.props.poolid)
+      localStorage.setItem("poolid", this.props.poolid);
       localStorage.setItem("address", "");
-      this.setState({ redirect: true })
-    }
-    
+      this.setState({ redirect: true });
+    };
+
     if (redirect) {
-      return <Redirect to='/stats' />;
+      return <Redirect to="/stats" />;
     }
-
-
 
     return (
       <div className={classes.root}>
-        <CardActionArea
-          onClick={setPoolID}
-        >
+        <CardActionArea onClick={setPoolID}>
           <Card className={classes.paper}>
             <div className={classes.itemContainer}>
               <div className={classes.avatarContainer}>
-                <img className={classes.avatar} src={"http://mineit.io/img/coin/icon/" + this.props.ticker.toLowerCase() + ".png"} style={{ height: '50px', width: '50px', objectFit: 'contain' }} alt=""></img>
+                <img
+                  className={classes.avatar}
+                  src={
+                    "http://mineit.io/img/coin/icon/" +
+                    this.props.ticker.toLowerCase() +
+                    ".png"
+                  }
+                  style={{
+                    height: "50px",
+                    width: "50px",
+                    objectFit: "contain",
+                  }}
+                  alt=""
+                ></img>
               </div>
               <div className={classes.baseline}>
                 <div className={classes.inline}>
-                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                  <Typography
+                    style={{ textTransform: "uppercase" }}
+                    color="secondary"
+                    gutterBottom
+                  >
                     Coin
-                </Typography>
+                  </Typography>
                   <Typography variant="h6" gutterBottom>
                     {this.props.coin}
                   </Typography>
                 </div>
                 <div className={classes.inline}>
-                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                  <Typography
+                    style={{ textTransform: "uppercase" }}
+                    color="secondary"
+                    gutterBottom
+                  >
                     Algo
-                </Typography>
+                  </Typography>
                   <Typography variant="h6" gutterBottom>
                     {this.props.algo}
                   </Typography>
                 </div>
                 <div className={classes.inline}>
-                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                  <Typography
+                    style={{ textTransform: "uppercase" }}
+                    color="secondary"
+                    gutterBottom
+                  >
                     Miners
-                </Typography>
+                  </Typography>
                   <Typography variant="h6" gutterBottom>
                     {this.props.minercount}
                   </Typography>
                 </div>
                 <div className={classes.inline}>
-                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                  <Typography
+                    style={{ textTransform: "uppercase" }}
+                    color="secondary"
+                    gutterBottom
+                  >
                     Pool Hash
-                </Typography>
+                  </Typography>
                   <Typography variant="h6" gutterBottom>
                     {this.props.poolhashrate}
                   </Typography>
                 </div>
                 <div className={classes.inline}>
-                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                  <Typography
+                    style={{ textTransform: "uppercase" }}
+                    color="secondary"
+                    gutterBottom
+                  >
                     Fee
-                </Typography>
+                  </Typography>
                   <Typography variant="h6" gutterBottom>
                     {this.props.fee}
                   </Typography>
                 </div>
                 <div className={classes.inline}>
-                  <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                  <Typography
+                    style={{ textTransform: "uppercase" }}
+                    color="secondary"
+                    gutterBottom
+                  >
                     Diff
-                </Typography>
+                  </Typography>
                   <Typography variant="h6" gutterBottom>
                     {this.props.diff}
                   </Typography>
@@ -157,9 +184,8 @@ class CardCoin extends Component {
             </div>
           </Card>
         </CardActionArea>
-
       </div>
-    )
+    );
   }
 }
 

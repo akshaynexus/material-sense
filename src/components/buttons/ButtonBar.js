@@ -1,25 +1,25 @@
-import React, { Component } from 'react';
-import withStyles from '@material-ui/styles/withStyles';
-import Button from '@material-ui/core/Button';
-import { Link } from 'react-router-dom'
+import React, { Component } from "react";
+import withStyles from "@material-ui/styles/withStyles";
+import Button from "@material-ui/core/Button";
+import { Link } from "react-router-dom";
 
-const styles = theme => ({
+const styles = (theme) => ({
   primary: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   secondary: {
-    background: theme.palette.secondary['100'],
-    color: 'white'
+    background: theme.palette.secondary["100"],
+    color: "white",
   },
   spaceTop: {
-    marginTop: 20
-  }
-})
+    marginTop: 20,
+  },
+});
 
 class ButtonBar extends Component {
   render() {
     const { classes } = this.props;
-    const redirpath = "/dashboard/" + this.props.coinname
+    const redirpath = "/dashboard/" + this.props.coinname;
     return (
       <div className={classes.spaceTop}>
         <Button
@@ -32,7 +32,7 @@ class ButtonBar extends Component {
           Stats
         </Button>
       </div>
-    )
+    );
   }
 }
 
