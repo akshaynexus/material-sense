@@ -3,7 +3,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
-
+import debounce from "lodash.debounce";
 import Grid from "@material-ui/core/Grid";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
@@ -14,11 +14,8 @@ import TableRow from "@material-ui/core/TableRow";
 import Collapse from '@material-ui/core/Collapse';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import ExpandLess from '@material-ui/icons/ExpandLess';
+
 import clsx from 'clsx';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -77,6 +74,7 @@ const useStyles = makeStyles({
 });
 
 const Payments = (props) => {
+
     const poolid = localStorage.getItem("poolid");
 
     const [paymentTableRows, setPaymentTableRows] = useState([
@@ -100,22 +98,7 @@ const Payments = (props) => {
 
     const [indexes, setIndexes] = useState([]);
 
-    const handleClick = (index, item) => {
-        // this.setState({ [index]: true });
-        // setIndexs(...setIndexs, index[index] = true); 
-
-        const tempIndexes = [...indexes];
-        // tempIndexes[index] = true;
-        if (tempIndexes[index]) {
-            tempIndexes[index] = !tempIndexes[index];
-        } else {
-            tempIndexes[index] = true;
-        }
-
-        setIndexes(tempIndexes)
-        //console.log(tempIndexes);
-
-    }
+    const [page, setPage] = useState(0);
 
     const [dataFetched, setDataFetched] = useState(false);
 
@@ -127,7 +110,7 @@ const Payments = (props) => {
             await axios
                 .get(
                     config.poolapiurl +
-                    `pools/${poolid}/payments?page=0&pageSize=500`
+                    `pools/${poolid}/payments?page=${page}&pageSize=100`
                 )
                 .then(function (response) {
                     // handle success
@@ -164,11 +147,13 @@ const Payments = (props) => {
                         return true;
                     });
 
-                    setDataFetched(true);
-
                     props.enqueueSnackbar("Successfully fetched the table data.", {
                         variant: "success",
                     });
+
+                    setDataFetched(true);
+
+
 
 
                     return true;
@@ -184,34 +169,92 @@ const Payments = (props) => {
         loadTableData();
     }, [poolid, props]);
 
+    const loadNextPage = async () => {
+        let data;
+
+        // console.log("page number " + page);
+        const nextPage = page + 1;
+        console.log("page to load" + nextPage);
+        setPage(nextPage);
+
+        await axios
+            .get(
+                config.poolapiurl +
+                `pools/${poolid}/payments?page=${nextPage}&pageSize=100`
+            )
+            .then(function (response) {
+                // handle success
+                data = response.data;
+                // Get total posts value from the header.
+
+                // let lastTransactionData = "";
+                // let amount = 0.0;
+
+                data.map((d, index) => {
+                    setPaymentTableRows((paymentTableRow) => [
+                        ...paymentTableRow,
+                        {
+                            sent: formatDate(d.created),
+                            address: d.address,
+                            amount: d.amount,
+                            confirmation: d.transactionConfirmationData
+                        },
+                    ]);
+                    setTransactionConfirmations((transactionConfirmation) => [...new Set([...transactionConfirmation, d.transactionConfirmationData])]);
+
+                    return true;
+                });
+
+                setDataFetched(true);
+
+                // props.enqueueSnackbar("Successfully fetched the table data.", {
+                //     variant: "success",
+                // });
+
+                return true;
+            })
+            .catch(function (error) {
+                props.enqueueSnackbar("Error loading table data : " + error, {
+                    variant: "error",
+                });
+                setLoading({ loading: false, loadingtext: "" });
+            });
+    };
+
+    window.onscroll = debounce(() => {
+        if (
+            window.innerHeight + document.documentElement.scrollTop
+            === document.documentElement.offsetHeight
+        ) {
+            // Do awesome stuff like loading more content!
+            console.log("load new items");
+            setLoading({ loading: true, loadingtext: "Loading more data" });
+            loadNextPage()
+        }
+    }, 100);
+
     useEffect(() => {
 
         if (dataFetched) {
-
+            setAmounts([]);
             transactionConfirmations
                 .map((transactionConfirmation) => {
                     let tempAmount = 0.0;
-                    console.log("pre temporary amount " + tempAmount)
+                    // console.log("pre temporary amount " + tempAmount)
                     paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
                         .map((paymentTableRow) => {
                             tempAmount += paymentTableRow.amount
-                            // console.log(index)
-                            // if ((index - 1) === index.length) {
-
-                            // }
                             return true;
                         })
-                    console.log("post temporary amount " + tempAmount)
+                    // console.log("post temporary amount " + tempAmount)
                     // setAmounts((amounts) => [...amounts, tempAmount]);
                     setAmounts((amounts) => ([...amounts, tempAmount]));
                     // console.log(amounts)
                     return true;
                 });
+            setDataFetched(false)
             setLoading({ loading: false, loadingtext: "" });
         }
-
-
-
     }, [dataFetched])
 
     const formatDate = (dateString) => {
