@@ -6,6 +6,7 @@ import Cards from "./components/Cards";
 import Signup from "./components/Signup";
 import Stats from "./components/Stats";
 import Blocks from "./components/Blocks";
+import Miners from "./components/Miners";
 import Payments from "./components/Payments";
 import ScrollToTop from "./components/ScrollTop";
 
@@ -17,6 +18,7 @@ export default (props) => (
         <Route exact path="/stats" component={Stats} />
         <Route exact path="/dashboard" component={Dashboard} />
         <Route exact path="/blocks" component={Blocks} />
+        <Route exact path="/miners" component={Miners} />
         <Route exact path="/payments" component={Payments} />
         <Route exact path="/signup" component={Signup} />
         <Route exact path="/wizard" component={Wizard} />

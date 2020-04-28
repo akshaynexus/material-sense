@@ -3,7 +3,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
-import debounce from "lodash.debounce";
 import Grid from "@material-ui/core/Grid";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
@@ -30,6 +29,8 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const useStyles = makeStyles({
     root: {
@@ -94,9 +95,9 @@ const Payments = (props) => {
         error: "NoError",
     });
 
-    const [amounts, setAmounts] = useState([]);
+    const [hasMoreData, setHasMoreData] = useState(true);
 
-    const [indexes, setIndexes] = useState([]);
+    const [amounts, setAmounts] = useState([]);
 
     const [page, setPage] = useState(0);
 
@@ -110,7 +111,7 @@ const Payments = (props) => {
             await axios
                 .get(
                     config.poolapiurl +
-                    `pools/${poolid}/payments?page=${page}&pageSize=100`
+                    `pools/${poolid}/payments?page=${page}&pageSize=75`
                 )
                 .then(function (response) {
                     // handle success
@@ -120,7 +121,7 @@ const Payments = (props) => {
                     // let lastTransactionData = "";
                     // let amount = 0.0;
 
-
+                    if (data.length === 0) setHasMoreData(false);
 
                     data.map((d, index) => {
                         setPaymentTableRows((paymentTableRow) => [
@@ -133,6 +134,9 @@ const Payments = (props) => {
                             },
                         ]);
                         setTransactionConfirmations((transactionConfirmation) => [...new Set([...transactionConfirmation, d.transactionConfirmationData])]);
+
+
+
                         // setAmounts(amount => [...amount, d.amount])
                         // if (index === 0) lastTransactionData = d.transactionConfirmationData
                         // console.log("Last transaction data : " + lastTransactionData + "Amount : " + amount + "index :" + index)
@@ -153,7 +157,7 @@ const Payments = (props) => {
 
                     setDataFetched(true);
 
-
+                    setLoading({ loading: false, loadingtext: "" });
 
 
                     return true;
@@ -173,6 +177,7 @@ const Payments = (props) => {
         let data;
 
         // console.log("page number " + page);
+        setLoading({ loading: true, loadingtext: "Loading more rows" });
         const nextPage = page + 1;
         console.log("page to load" + nextPage);
         setPage(nextPage);
@@ -180,7 +185,7 @@ const Payments = (props) => {
         await axios
             .get(
                 config.poolapiurl +
-                `pools/${poolid}/payments?page=${nextPage}&pageSize=100`
+                `pools/${poolid}/payments?page=${nextPage}&pageSize=75`
             )
             .then(function (response) {
                 // handle success
@@ -189,6 +194,7 @@ const Payments = (props) => {
 
                 // let lastTransactionData = "";
                 // let amount = 0.0;
+                if (data.length === 0) setHasMoreData(false);
 
                 data.map((d, index) => {
                     setPaymentTableRows((paymentTableRow) => [
@@ -202,9 +208,13 @@ const Payments = (props) => {
                     ]);
                     setTransactionConfirmations((transactionConfirmation) => [...new Set([...transactionConfirmation, d.transactionConfirmationData])]);
 
+
+
                     return true;
                 });
 
+                if (paymentTableRows.length === 500) setHasMoreData(false);
+                setLoading({ loading: false, loadingtext: "" });
                 setDataFetched(true);
 
                 // props.enqueueSnackbar("Successfully fetched the table data.", {
@@ -221,17 +231,17 @@ const Payments = (props) => {
             });
     };
 
-    window.onscroll = debounce(() => {
-        if (
-            window.innerHeight + document.documentElement.scrollTop
-            === document.documentElement.offsetHeight
-        ) {
-            // Do awesome stuff like loading more content!
-            console.log("load new items");
-            setLoading({ loading: true, loadingtext: "Loading more data" });
-            loadNextPage()
-        }
-    }, 100);
+    // window.onscroll = debounce(() => {
+    //     if (
+    //         window.innerHeight + document.documentElement.scrollTop
+    //         === document.documentElement.offsetHeight
+    //     ) {
+    //         // Do awesome stuff like loading more content!
+    //         console.log("load new items");
+    //         setLoading({ loading: true, loadingtext: "Loading more data" });
+    //         loadNextPage()
+    //     }
+    // }, 100);
 
     useEffect(() => {
 
@@ -253,7 +263,6 @@ const Payments = (props) => {
                     return true;
                 });
             setDataFetched(false)
-            setLoading({ loading: false, loadingtext: "" });
         }
     }, [dataFetched])
 
@@ -270,7 +279,7 @@ const Payments = (props) => {
                     direction="column"
                     justify="center"
                     alignItems="center"
-                    spacing={0}
+                    spacing={1}
                     container
                 >
                     <Card className={classes.root} style={{ width: "100%" }}>
@@ -279,7 +288,7 @@ const Payments = (props) => {
                                 Payments Rewarded
                             </Typography>
                             <Typography variant="h6" component="h6">
-                                Last 500 Payments for {poolid}
+                                Last {paymentTableRows.length} Payments for {poolid}
                             </Typography>
                             <br />
                             <div style={{ width: "100%", border: "0px" }}>
@@ -393,21 +402,26 @@ const Payments = (props) => {
         <React.Fragment>
             <CssBaseline />
             <Topbar currentPath={"/payments"} />
-            <div className="container_main">
-                {loading.loading ? (
-                    <Loading
+            <div className="container_main" id="scrollableDiv" style={{ overflow: "auto" }}>
+                <InfiniteScroll
+                    dataLength={transactionConfirmations.length}
+                    next={loadNextPage}
+                    hasMore={hasMoreData}
+                    loader={<div><br /><Loading
                         overlay={true}
                         loading={loading.loading}
                         loadingtext={loading.loadingtext}
-                    />
-                ) : (
-                        <Grid container spacing={2} direction="row">
-                            {WorkersTable()}
-                        </Grid>
-                    )}
+                        scrollableTarget="scrollableDiv"
+                    /><br /></div>}
+                >
+                    <Grid container spacing={2} direction="row">
+                        {WorkersTable()}
+                    </Grid>
+                </InfiniteScroll>
             </div>
         </React.Fragment>
     );
 };
 
 export default withSnackbar(Payments);
+
