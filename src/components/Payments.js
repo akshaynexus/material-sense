@@ -155,7 +155,7 @@ const Payments = (props) => {
                         variant: "success",
                     });
 
-                    setDataFetched(true);
+                    // setDataFetched(true);
 
                     setLoading({ loading: false, loadingtext: "" });
 
@@ -174,61 +174,72 @@ const Payments = (props) => {
     }, [poolid, props]);
 
     const loadNextPage = async () => {
-        let data;
 
-        // console.log("page number " + page);
-        setLoading({ loading: true, loadingtext: "Loading more rows" });
-        const nextPage = page + 1;
-        console.log("page to load" + nextPage);
-        setPage(nextPage);
+        try {
+            let data;
 
-        await axios
-            .get(
-                config.poolapiurl +
-                `pools/${poolid}/payments?page=${nextPage}&pageSize=75`
-            )
-            .then(function (response) {
-                // handle success
-                data = response.data;
-                // Get total posts value from the header.
+            // console.log("page number " + page);
+            setLoading({ loading: true, loadingtext: "Loading more rows" });
+            const nextPage = page + 1;
+            console.log("page to load" + nextPage);
+            setPage(nextPage);
 
-                // let lastTransactionData = "";
-                // let amount = 0.0;
-                if (data.length === 0) setHasMoreData(false);
+            await axios
+                .get(
+                    config.poolapiurl +
+                    `pools/${poolid}/payments?page=${nextPage}&pageSize=75`
+                )
+                .then((response) => {
+                    // handle success
+                    data = response.data;
+                    // Get total posts value from the header.
 
-                data.map((d, index) => {
-                    setPaymentTableRows((paymentTableRow) => [
-                        ...paymentTableRow,
-                        {
-                            sent: formatDate(d.created),
-                            address: d.address,
-                            amount: d.amount,
-                            confirmation: d.transactionConfirmationData
-                        },
-                    ]);
-                    setTransactionConfirmations((transactionConfirmation) => [...new Set([...transactionConfirmation, d.transactionConfirmationData])]);
+                    // let lastTransactionData = "";
+                    // let amount = 0.0;
+                    if (data.length === 0) setHasMoreData(false);
+
+                    data.map((d, index) => {
 
 
+                        setTimeout(() => {
+                            setPaymentTableRows((paymentTableRow) => [
+                                ...paymentTableRow,
+                                {
+                                    sent: formatDate(d.created),
+                                    address: d.address,
+                                    amount: d.amount,
+                                    confirmation: d.transactionConfirmationData
+                                },
+                            ]);
+                            setTransactionConfirmations((transactionConfirmation) => [...new Set([...transactionConfirmation, d.transactionConfirmationData])]);
+
+                        })
+
+                        return true;
+                    });
+
+                    if (paymentTableRows.length === 500) setHasMoreData(false);
+                    setLoading({ loading: false, loadingtext: "" });
+                    setDataFetched(true);
+
+                    // props.enqueueSnackbar("Successfully fetched the table data.", {
+                    //     variant: "success",
+                    // });
 
                     return true;
+                })
+                .catch(function (error) {
+                    props.enqueueSnackbar("Error loading table data : " + error, {
+                        variant: "error",
+                    });
+                    setLoading({ loading: false, loadingtext: "" });
                 });
 
-                if (paymentTableRows.length === 500) setHasMoreData(false);
-                setLoading({ loading: false, loadingtext: "" });
-                setDataFetched(true);
+        } catch (e) {
 
-                // props.enqueueSnackbar("Successfully fetched the table data.", {
-                //     variant: "success",
-                // });
+        }
 
-                return true;
-            })
-            .catch(function (error) {
-                props.enqueueSnackbar("Error loading table data : " + error, {
-                    variant: "error",
-                });
-                setLoading({ loading: false, loadingtext: "" });
-            });
+
     };
 
     // window.onscroll = debounce(() => {
@@ -251,15 +262,21 @@ const Payments = (props) => {
                 .map((transactionConfirmation) => {
                     let tempAmount = 0.0;
                     // console.log("pre temporary amount " + tempAmount)
-                    paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
-                        .map((paymentTableRow) => {
-                            tempAmount += paymentTableRow.amount
-                            return true;
-                        })
-                    // console.log("post temporary amount " + tempAmount)
-                    // setAmounts((amounts) => [...amounts, tempAmount]);
-                    setAmounts((amounts) => ([...amounts, tempAmount]));
-                    // console.log(amounts)
+
+                    setTimeout(() => {
+                        paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
+                            .map((paymentTableRow) => {
+                                tempAmount += paymentTableRow.amount
+                                return true;
+                            })
+                        // console.log("post temporary amount " + tempAmount)
+                        // setAmounts((amounts) => [...amounts, tempAmount]);
+                        setAmounts((amounts) => ([...amounts, tempAmount]));
+                        // console.log(amounts)
+                    })
+
+
+
                     return true;
                 });
             setDataFetched(false)
@@ -407,6 +424,7 @@ const Payments = (props) => {
                     dataLength={transactionConfirmations.length}
                     next={loadNextPage}
                     hasMore={hasMoreData}
+                    style={{ overflowX: "hidden" }}
                     loader={<div><br /><Loading
                         overlay={true}
                         loading={loading.loading}
