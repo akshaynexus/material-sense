@@ -1,12 +1,12 @@
 
-
-
-import React, { Component } from 'react';
+import React from 'react';
+import clsx from 'clsx';
 import AppBarMUI from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+// import { withStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 
 
@@ -18,9 +18,23 @@ import { Link } from "react-router-dom";
 
 import TopbarSidedrawer from "./TopbarSidedrawer";
 
-const styles = theme => ({
-  root: {
-    width: '100%',
+const drawerWidth = 240;
+
+const useStyles = makeStyles((theme) => ({
+
+  appBar: {
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    marginLeft: drawerWidth,
   },
   grow: {
     flexGrow: 1,
@@ -42,62 +56,55 @@ const styles = theme => ({
   tagline: {
     marginLeft: 10,
     [theme.breakpoints.up("md")]: {
-      paddingTop: "0.em",
+      paddingTop: "0.2em",
     },
   },
-
-
-});
+}));
 
 const logo = require("../images/logo.svg");
 
-class AppBar extends Component {
+const Topbar = ({ isDrawerOpen, toggleDrawer }) => {
 
-  state = {
-    isDrawerOpen: false,
-  };
+  // const { classes } = this.props;
 
-  toggleDrawer = (open) => () => {
-    this.setState({
-      isDrawerOpen: open,
-    });
-  };
+  const classes = useStyles();
+  const theme = useTheme();
 
-  render() {
+  return (
 
-    const { classes } = this.props;
+    <>
+      <AppBarMUI
+        position="fixed"
+        className={clsx(classes.appBar, {
+          [classes.appBarShift]: isDrawerOpen,
+        })}
+        color="default">
+        <Toolbar >
+          <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={toggleDrawer}>
+            <MenuIcon />
+          </IconButton>
 
-    return (
-      <div className={classes.root}>
-        <AppBarMUI position="static" color="default">
-          <Toolbar >
-            <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={this.toggleDrawer(true)}>
-              <MenuIcon />
-
-            </IconButton>
-
-            <Typography variant="h6" color="inherit" className={classes.grow}>
-              <Link to="/" className={classes.link}>
-                <img width={20} src={logo} alt="" />
-                <span className={classes.tagline}>Mineit Pool</span>
-              </Link>
-            </Typography>
+          <Typography variant="h6" color="inherit" className={classes.grow}>
+            <Link to="/" className={classes.link}>
+              <img width={20} src={logo} alt="" />
+              <span className={classes.tagline}>Mineit Pool</span>
+            </Link>
+          </Typography>
 
 
-            <IconButton aria-label="delete">
-              <Brightness6Icon />
-            </IconButton>
+          <IconButton aria-label="delete">
+            <Brightness6Icon />
+          </IconButton>
 
 
-          </Toolbar>
-        </AppBarMUI>
-        <TopbarSidedrawer
-          isDrawerOpen={this.state.isDrawerOpen}
-          toggleDrawer={this.toggleDrawer}
-        />
-      </div>
-    );
-  }
+        </Toolbar>
+      </AppBarMUI>
+      <TopbarSidedrawer
+        isDrawerOpen={isDrawerOpen}
+        toggleDrawer={toggleDrawer}
+      />
+    </>
+  );
 }
 
-export default withStyles(styles)(AppBar);
+export default Topbar;

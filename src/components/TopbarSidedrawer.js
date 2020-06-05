@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
@@ -9,10 +9,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { NavLink } from 'react-router-dom';
 import { Link, withRouter } from "react-router-dom";
 import { Link as MaterialLink } from "@material-ui/core";
+import Drawer from '@material-ui/core/Drawer';
 
 import SvgIcon from "@material-ui/core/SvgIcon";
 
 import Menu from "./Menu";
+
+const drawerWidth = 240;
 
 const styles = {
     list: {
@@ -21,48 +24,55 @@ const styles = {
     fullList: {
         width: 'auto',
     },
+    drawer: {
+        width: drawerWidth,
+        flexShrink: 0,
+    },
+    drawerPaper: {
+        width: drawerWidth,
+    },
+
 };
 
-function CustomIcon(props) {
+function CustomIcon(data) {
     return (
-        <SvgIcon {...props}>
-            <path d={props.path} />
+        <SvgIcon {...data}>
+            <path d={data.path} />
         </SvgIcon>
     );
 }
 
-class TopbarSidedrawer extends Component {
-    render() {
+const TopbarSidedrawer = (props) => {
 
-        const { classes } = this.props;
-        const style_unset = { all: "unset" };
 
-        const sideList = (
-            <div className={classes.list}>
-                <List>
+    const { classes } = props;
+    const style_unset = { all: "unset" };
 
-                    {Menu.map((item, index) => (
-                        <ListItem
-                            component={item.external ? MaterialLink : Link}
-                            href={item.external ? item.pathname : null}
-                            // style={{ backgroundColor: '#999' }}
-                            to={
-                                item.external
-                                    ? null
-                                    : {
-                                        pathname: item.pathname
-                                    }
-                            }
-                            button
-                            key={item.label}
-                        >
-                            {/* <ListItemIcon><HomeIcon /></ListItemIcon> */}
-                            <ListItemIcon><CustomIcon path={item.icon} /></ListItemIcon>
-                            <ListItemText primary={item.label} />
-                        </ListItem>
-                    ))}
+    const sideList = (
+        <div className={classes.list}>
+            <List>
+                {Menu.map((item, index) => (
+                    <ListItem
+                        component={item.external ? MaterialLink : Link}
+                        href={item.external ? item.pathname : null}
+                        // style={{ backgroundColor: '#999' }}
+                        to={
+                            item.external
+                                ? null
+                                : {
+                                    pathname: item.pathname
+                                }
+                        }
+                        button
+                        key={item.label}
+                    >
+                        {/* <ListItemIcon><HomeIcon /></ListItemIcon> */}
+                        <ListItemIcon><CustomIcon path={item.icon} /></ListItemIcon>
+                        <ListItemText primary={item.label} />
+                    </ListItem>
+                ))}
 
-                    {/* <NavLink className={"unactivePage"} activeClassName="activePage" exact to="/" style={style_unset}>
+                {/* <NavLink className={"unactivePage"} activeClassName="activePage" exact to="/" style={style_unset}>
                         <ListItem button key={'Home'}>
                             <ListItemIcon><HomeIcon /></ListItemIcon>
                             <ListItemText primary={'Home'} />
@@ -70,27 +80,33 @@ class TopbarSidedrawer extends Component {
                     </NavLink> */}
 
 
-                </List>
+            </List>
 
-            </div >
-        );
+        </div >
+    );
 
-        return (
-            <div>
+    return (
+        <div>
 
-                <SwipeableDrawer open={this.props.isDrawerOpen} onClose={this.props.toggleDrawer(false)} onOpen={this.props.toggleDrawer(true)}>
-                    <div
-                        tabIndex={0}
-                        role="button"
-                        onClick={this.props.toggleDrawer(false)}
-                        onKeyDown={this.props.toggleDrawer(false)}
-                    >
-                        {sideList}
-                    </div>
-                </SwipeableDrawer>
-            </div>
-        );
-    }
+            <SwipeableDrawer
+                open={props.isDrawerOpen}
+                onClose={props.toggleDrawer}
+                onOpen={props.toggleDrawer}
+                className={classes.drawerPaper}
+                variant="persistent"
+                anchor="left">
+
+
+                <div
+                    tabIndex={0}
+                    role="button"
+                >
+                    {sideList}
+                </div>
+                {/* </Drawer> */}
+            </SwipeableDrawer>
+        </div >
+    );
 }
 
 export default withStyles(styles)(TopbarSidedrawer);

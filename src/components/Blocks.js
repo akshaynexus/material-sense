@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Topbar from "./Topbar";
+// import Topbar from "./Topbar";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 
@@ -200,7 +200,7 @@ const Blocks = (props) => {
         };
 
         loadTableData();
-    }, [props, poolid,page,rowsPerPage,totalPages]);
+    }, [props, poolid, page, rowsPerPage, totalPages]);
 
     const formatDate = (dateString) => {
         var options = {};
@@ -323,7 +323,7 @@ const Blocks = (props) => {
     return (
         <React.Fragment>
             <CssBaseline />
-            <Topbar currentPath={"/blocks"} />
+            {/* <Topbar currentPath={"/blocks"} /> */}
             <div className="container_main">
                 {loading.loading ? (
                     <Loading

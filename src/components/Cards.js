@@ -3,7 +3,6 @@ import withStyles from "@material-ui/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
 import CardCoin from "./cards/CardCoin";
-import Topbar from "./Topbar";
 import SectionHeader from "./typo/SectionHeader";
 import Loading from "./common/Loading";
 import config from "../config.js";
@@ -121,13 +120,12 @@ const Cards = (props) => {
 
   };
 
-  const { classes } = props;
-  const currentPath = props.location.pathname;
+  const classes = styles();
+  // const currentPath = props.location.pathname;
 
   return (
     <React.Fragment>
       <CssBaseline />
-      <Topbar currentPath={currentPath} />
       <div>
 
         <Grid container justify="center">
