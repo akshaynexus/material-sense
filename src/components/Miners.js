@@ -73,7 +73,7 @@ const Miners = (props) => {
         },
     ]);
 
-    const [page, setPage] = useState(0);
+    const page = 0;
 
     const [rowsPerPage] = useState(20);
 
