@@ -85,6 +85,15 @@ const Dashboard = (props) => {
         lifetimeBalance: 0,
     });
 
+    const [paymentRows, setPaymentRows] = useState([
+        {
+            date: "",
+            amount: 0,
+            confirmation: "",
+            addressInfoLink: ""
+        },
+    ]);
+
     const [loading, setLoading] = useState({
         loading: false,
         loadingtext: "",
@@ -186,15 +195,90 @@ const Dashboard = (props) => {
                 })
                 .then(function () { });
         }
+
     };
+
+    const loadPaymentData = async () => {
+        // https://mineit.io/api/pools/indexchain/miners/iBKhEDqxg1SxNgWu6S3sqxXhJ6Mu8bm5Ze/payments
+        //{poolId}/miners/{address}/payments")]
+        // config.poolapiurl +
+        //         `pools/${poolid}/{addr}/payments`
+
+
+
+        let data;
+        if (address === "") {
+        } else {
+            setPaymentRows([])
+            setLoading({ loading: true, loadingtext: "Loading payment data" });
+
+            https://mineit.io/api/pools/indexchain/miners/iBKhEDqxg1SxNgWu6S3sqxXhJ6Mu8bm5Ze/payments
+
+            await axios
+                .get(config.poolapiurl + `pools/${poolid}/miners/${address}/payments`)
+                .then(function (response) {
+                    // handle success
+                    data = response.data;
+                    console.log("payment data: " + data[0] + response);
+
+                    // {
+                    //   "id": 19530,
+                    //   "coin": "IDX",
+                    //   "address": "iBKhEDqxg1SxNgWu6S3sqxXhJ6Mu8bm5Ze",
+                    //   "addressInfoLink": "http://202.182.107.84/address/iBKhEDqxg1SxNgWu6S3sqxXhJ6Mu8bm5Ze",
+                    //   "amount": 0.204676153410,
+                    //   "transactionConfirmationData": "b130dc545561933e73283f650258fc162eaae352cc4a76c2c3da8e6369532e55",
+                    //   "transactionInfoLink": "http://202.182.107.84/tx/b130dc545561933e73283f650258fc162eaae352cc4a76c2c3da8e6369532e55",
+                    //   "created": "2020-06-07T14:59:34.312946"
+                    // },
+
+                    data.map((d, index) => {
+                        // console.log(d.id + " : " + index);
+                        setPaymentRows((paymentRow) => [
+                            ...paymentRow,
+                            {
+                                date: formatDate(d.created),
+                                amount: d.amount,
+                                confirmation: d.transactionConfirmationData,
+                                addressInfoLink: d.transactionInfoLink
+                            },
+                        ]);
+
+                        return true;
+                    });
+
+                    setLoading({ loading: false, loadingtext: "" });
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+
+                    props.enqueueSnackbar("Error loading payment data : " + error, {
+                        variant: "error",
+                    });
+                    setLoading({ loading: false, loadingtext: "" });
+                })
+                .then(function () { });
+        }
+
+
+
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         loadWalletData();
+        loadPaymentData();
         // eslint-disable-next-line
     }, []);
 
+    const formatDate = (dateString) => {
+        var options = {};
+        return new Date(dateString).toLocaleDateString([], options);
+    };
+
     const WalletCard = () => {
+
         return (
             <Grid item xs={12}>
                 <Grid
@@ -252,7 +336,7 @@ const Dashboard = (props) => {
 
     const WorkersTable = () => {
         return (
-            <Grid item md={6}>
+            <Grid item md={7} xs={12}>
                 <Grid
                     item
                     direction="column"
@@ -306,90 +390,63 @@ const Dashboard = (props) => {
             </Grid>
         );
     };
-    //Wrapper for Charts in a Card
-    // const CardChart = (data, CardSubtitle, CardLateststat) => {
-    //     return <Grid item xs={12} sm={12} md={6}>
-    //         <Grid
-    //             container
-    //             direction="column"
-    //             justify="center"
-    //             alignItems="center"
-    //             spacing={1}
-    //         >
-    //             <Card className={classes.root} style={{ width: "100%" }}>
-    //                 <CardContent>
-    //                     <div style={{ width: "100%", height: 400 }}>
-    //                         <ResponsiveContainer >
-    //                             <AreaChart data={data}
-    //                                 margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-    //                                 <defs>
-    //                                     <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-    //                                         <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
-    //                                         <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
-    //                                     </linearGradient>
-    //                                 </defs>
-    //                                 <XAxis dataKey="name" />
-    //                                 <YAxis />
-    //                                 <Tooltip
-    //                                     contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-    //                                     labelStyle={{ fontWeight: 'bold', color: '#666666' }} />
-    //                                 <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
-    //                             </AreaChart>
-    //                         </ResponsiveContainer>
-    //                     </div>
-    //                     <Typography variant="h5" component="h5">
-    //                         {CardLateststat}
-    //                     </Typography>
-    //                     <Typography variant="h6" component="h6">
-    //                         {CardSubtitle}
-    //                     </Typography>
 
-    //                 </CardContent>
-    //             </Card>
-    //         </Grid></Grid>
-    // }
+    const PaymentTable = () => {
+        return (
+            <Grid item md={5} xs={12}>
+                <Grid
+                    item
+                    direction="column"
+                    justify="center"
+                    alignItems="left"
+                    spacing={0}
+                    container
+                >
+                    <Card className={classes.root} style={{ width: "100%" }}>
+                        <CardContent>
+                            <Typography variant="h5" component="h5">
+                                Payments Rewarded
+                            </Typography>
 
-    // const CardChart = (data, CardSubtitle, CardLateststat) => {
-    //     return <Grid item xs={12} sm={12} md={6}>
-    //         <Grid
-    //             container
-    //             direction="column"
-    //             justify="center"
-    //             alignItems="center"
-    //             spacing={1}
-    //         >
-    //             <Card className={classes.root} style={{ width: "100%" }}>
-    //                 <CardContent>
-    //                     <div style={{ width: "100%", height: 400 }}>
-    //                         <ResponsiveContainer >
-    //                             <AreaChart data={data}
-    //                                 margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-    //                                 <defs>
-    //                                     <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-    //                                         <stop offset="5%" stopColor="#167ef5" stopOpacity={0.8} />
-    //                                         <stop offset="95%" stopColor="#167ef5" stopOpacity={0} />
-    //                                     </linearGradient>
-    //                                 </defs>
-    //                                 <XAxis dataKey="name" />
-    //                                 <YAxis />
-    //                                 <Tooltip
-    //                                     contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-    //                                     labelStyle={{ fontWeight: 'bold', color: '#666666' }} />
-    //                                 <Area type="monotone" dataKey="value" stroke="#b5ceeb" fill="url(#colorPv)" />
-    //                             </AreaChart>
-    //                         </ResponsiveContainer>
-    //                     </div>
-    //                     <Typography variant="h5" component="h5">
-    //                         {CardLateststat}
-    //                     </Typography>
-    //                     <Typography variant="h6" component="h6">
-    //                         {CardSubtitle}
-    //                     </Typography>
 
-    //                 </CardContent>
-    //             </Card>
-    //         </Grid></Grid>
-    // }
+                            <br />
+                            <div style={{ width: "100%", border: "0px" }}>
+                                <TableContainer component={Paper}>
+                                    <Table className={classes.table} aria-label="table" >
+                                        <TableHead className={classes.tableHeader} align="center" style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                                            <TableRow align="center">
+                                                <TableCell align="center">
+                                                    Date
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    Amount
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        {paymentRows.map((paymentRows, i) => (
+                                            <>
+                                                <TableRow key={i}>
+                                                    <TableCell align="center">
+                                                        {paymentRows.date}
+                                                    </TableCell>
+                                                    <TableCell align="center">
+                                                        {paymentRows.amount}
+                                                    </TableCell>
+                                                </TableRow>
+                                            </>
+                                        ))}
+                                    </Table>
+                                </TableContainer>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+        );
+    };
+
+
+
 
     const GetCardAvatar = (title) => {
         if (title.includes("Pending Shares")) {
@@ -439,13 +496,17 @@ const Dashboard = (props) => {
                             {WalletCard()}
                             {InfoCard()}
                             {/* {CardChart(minersHashrates, "Miners Hashrate", hashformat(minerHashrateTotal, 2, "H/s"))} */}
-                            <CardChart
-                                data={minersHashrates}
-                                CardSubtitle="Miners Hashrate"
-                                CardLateststat={hashformat(minerHashrateTotal, 2, "H/s")}
-                                hasSymbol
-                            />
+                            <Grid container item xs={12} md={12}>
+                                <CardChart
+                                    data={minersHashrates}
+                                    CardSubtitle="Miners Hashrate"
+                                    CardLateststat={hashformat(minerHashrateTotal, 2, "H/s")}
+                                    hasSymbol
+                                    md="12"
+                                />
+                            </Grid>
                             {WorkersTable()}
+                            {PaymentTable()}
                         </Grid>
                     )}
             </div>

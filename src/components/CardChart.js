@@ -41,7 +41,7 @@ const useStyles = makeStyles({
 
 
 
-const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasRate = true }) => {
+const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasRate = true, md = 6 }) => {
     const classes = useStyles();
 
     const valueFormatter = (number) => {
@@ -138,7 +138,7 @@ const CardChart = ({ data, CardSubtitle, CardLateststat, hasSymbol = false, hasR
 
 
     return (
-        <Grid item xs={12} sm={12} md={6}>
+        <Grid item xs={12} sm={12} md={md}>
             <Grid
                 container
                 direction="column"

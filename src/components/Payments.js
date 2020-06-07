@@ -107,6 +107,7 @@ const Payments = (props) => {
             let data;
             setPaymentTableRows([]);
 
+
             await axios
                 .get(
                     config.poolapiurl +
@@ -170,7 +171,7 @@ const Payments = (props) => {
         };
 
         loadTableData();
-    }, [poolid, props]);
+    }, [poolid]);
 
     const loadNextPage = async () => {
 

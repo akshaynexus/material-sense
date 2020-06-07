@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import withStyles from "@material-ui/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
@@ -7,6 +8,7 @@ import SectionHeader from "./typo/SectionHeader";
 import Loading from "./common/Loading";
 import config from "../config.js";
 import hashformat from "./common/hashutil.js";
+import TextField from '@material-ui/core/TextField';
 
 import useSWR from "swr";
 import axios from "axios";
@@ -32,8 +34,9 @@ const Cards = (props) => {
 
   const [algorithms, setAlgorithms] = useState([]);
 
-
   const [selectedIndex, setSelectedIndex] = useState();
+
+  const [searchInput, setSearchInput] = useState("")
 
   let filteredPoolData = data?.pools;
 
@@ -56,15 +59,37 @@ const Cards = (props) => {
   }, [])
 
   const buildCoinCards = () => {
-    console.log("build coins called");
-    console.log("length : " + filteredPoolData.length);
-    console.log("Selected Index : " + selectedIndex);
-    console.log("Algo Length : " + algorithms.length);
+    // console.log("build coins called");
+    // console.log("length : " + filteredPoolData.length);
+    // console.log("Selected Index : " + selectedIndex);
+    // console.log("Algo Length : " + algorithms.length);
 
     try {
 
+      let searchFilteredPoolData = []
+
+      if (searchInput !== "") {
+        // var tempList = filteredPoolData
+        // searchFilteredPoolData = tempList.filter(function (coin) {
+        //   return coin.coin.name === searchInput;
+        // })
+
+        let newSearchFilteredPoolData = filteredPoolData.filter((d) => {
+          console.log(d)
+          let searchValue = d.coin.name.toLowerCase();
+          return searchValue.indexOf(searchInput) !== -1;
+        });
+
+        searchFilteredPoolData = newSearchFilteredPoolData
+
+
+      } else {
+        searchFilteredPoolData = filteredPoolData
+      }
+
+
       if (selectedIndex === 0) {
-        return filteredPoolData.map((coin, index) => (
+        return searchFilteredPoolData.map((coin, index) => (
           <div key={index}>
             <CardCoin
               coin={coin.coin.name}
@@ -80,7 +105,7 @@ const Cards = (props) => {
           </div>
         ));
       } else {
-        return filteredPoolData.filter(coin => algorithms[selectedIndex - 1].indexOf(coin.coin.algorithm.toLowerCase()) !== -1).map((coin, index) => (
+        return searchFilteredPoolData.filter(coin => algorithms[selectedIndex - 1].indexOf(coin.coin.algorithm.toLowerCase()) !== -1).map((coin, index) => (
           <div key={index}>
             <CardCoin
               coin={coin.coin.name}
@@ -111,14 +136,19 @@ const Cards = (props) => {
 
     } finally {
 
-
-
     }
 
 
 
 
   };
+
+
+  const onSearchChange = (e) => {
+    setSearchInput(e.target.value.toLowerCase());
+    // Filter Search
+    buildCoinCards()
+  }
 
   const classes = styles();
   // const currentPath = props.location.pathname;
@@ -127,7 +157,6 @@ const Cards = (props) => {
     <React.Fragment>
       <CssBaseline />
       <div>
-
         <Grid container justify="center">
           <Grid
             spacing={10}
@@ -137,6 +166,7 @@ const Cards = (props) => {
             className={classes.grid}
           >
             <Grid item xs={12}>
+
               <SectionHeader
                 title="Coins"
                 subtitle="Available coins to mine"
@@ -144,6 +174,9 @@ const Cards = (props) => {
                 getAlgoIndex={handleChange}
                 style={{ padding: "10px" }}
               />
+
+              <TextField id="outlined-search" value={searchInput} onChange={(e) => onSearchChange(e)} label="Search Coin" type="search" variant="outlined" style={{ marginBottom: '25px', width: '400px', color: 'white' }} />
+              <br />
               {!data && algorithms ? (
                 <Loading
                   overlay={true}

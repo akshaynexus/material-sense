@@ -200,7 +200,7 @@ const Blocks = (props) => {
         };
 
         loadTableData();
-    }, [props, poolid, page, rowsPerPage, totalPages]);
+    }, [poolid, page, rowsPerPage, totalPages]);
 
     const formatDate = (dateString) => {
         var options = {};

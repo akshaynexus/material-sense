@@ -9,15 +9,17 @@ const styles = (theme) => ({
   paper: {
     padding: theme.spacing(3),
     textAlign: "left",
+    marginLeft: '5px',
     color: theme.palette.text.secondary,
   },
   avatar: {
-    margin: 10,
+    marginTop: 10,
+    marginBottom: 0
   },
   avatarContainer: {
     [theme.breakpoints.down("sm")]: {
       marginLeft: 0,
-      marginBottom: theme.spacing(4),
+      marginBottom: theme.spacing(5),
     },
   },
   itemContainer: {
@@ -33,20 +35,25 @@ const styles = (theme) => ({
   baseline: {
     alignSelf: "baseline",
     marginLeft: theme.spacing(4),
+    display: "flex",
+    width: "90%",
     [theme.breakpoints.down("sm")]: {
-      display: "flex",
-      flexDirection: "column",
+      display: "grid",
+      gridTemplateColumns: "50% 50%",
+      gridRow: "auto auto",
+      gridRowGap: '15px',
       textAlign: "center",
       alignItems: "center",
       width: "100%",
-      marginTop: theme.spacing(2),
-      marginBottom: theme.spacing(2),
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
       marginLeft: 0,
     },
   },
   inline: {
     display: "inline-block",
     marginLeft: theme.spacing(4),
+    flexGrow: '1',
     [theme.breakpoints.down("sm")]: {
       marginLeft: 0,
     },
@@ -184,7 +191,7 @@ class CardCoin extends Component {
             </div>
           </Card>
         </CardActionArea>
-      </div>
+      </div >
     );
   }
 }

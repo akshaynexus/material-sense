@@ -125,7 +125,7 @@ const Miners = (props) => {
         };
 
         loadTableData();
-    }, [props, poolid]);
+    }, [poolid]);
 
     const WorkersTable = () => {
         return (

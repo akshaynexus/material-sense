@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { Route, HashRouter, Switch } from "react-router-dom";
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -13,6 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import BrightnessMediumIcon from '@material-ui/icons/BrightnessMedium';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -25,6 +26,7 @@ import Stats from "./components/Stats";
 import Blocks from "./components/Blocks";
 import Miners from "./components/Miners";
 import Payments from "./components/Payments";
+import ConnectComponent from "./components/ConnectComponent";
 
 import { Link, withRouter } from "react-router-dom";
 import { Link as MaterialLink } from "@material-ui/core";
@@ -101,9 +103,17 @@ function CustomIcon(data) {
 }
 
 export default function PersistentDrawerRight() {
+
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+
+  // const handleDrawerOpen = useCallback(() => setOpen(true), [open]);
+  // const handleDrawerClose = useCallback(() => setOpen(false), [open]);
+
+  // const toggleDrawer = useMemo(() => {
+  //   setOpen(!open)
+  // }, [])
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -112,6 +122,13 @@ export default function PersistentDrawerRight() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const changeTheme = () => {
+
+    const currentTheme = JSON.parse(localStorage.getItem('isDarkTheme', "true"));
+    localStorage.setItem('isDarkTheme', JSON.stringify(!currentTheme));
+    window.location.reload();
+  }
 
   return (
     <>
@@ -138,7 +155,11 @@ export default function PersistentDrawerRight() {
 
               <Typography variant="h6" noWrap className={classes.title} style={{ marginLeft: '20px', marginRight: '20px' }}>
                 Mineit Pool
-          </Typography>
+                </Typography>
+
+              <IconButton edge="start" onClick={changeTheme} color="inherit" aria-label="menu">
+                <BrightnessMediumIcon />
+              </IconButton>
 
             </Toolbar>
           </AppBar>
@@ -151,9 +172,6 @@ export default function PersistentDrawerRight() {
               paper: classes.drawerPaper,
             }}
           >
-
-
-
             <div className={classes.drawerHeader}>
               <IconButton onClick={handleDrawerClose}>
                 {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -199,6 +217,7 @@ export default function PersistentDrawerRight() {
               <Route exact path="/blocks" component={Blocks} />
               <Route exact path="/miners" component={Miners} />
               <Route exact path="/payments" component={Payments} />
+              <Route exact path="/connect" component={ConnectComponent} />
               <Route exact path="/signup" component={Signup} />
               <Route exact path="/wizard" component={Wizard} />
               <Route exact path="/cards" component={Cards} />
@@ -210,3 +229,4 @@ export default function PersistentDrawerRight() {
     </>
   );
 }
+

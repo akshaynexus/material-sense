@@ -248,7 +248,7 @@ const Stats = (props) => {
 
     getGraphData();
     getPoolData();
-  }, [props, poolid]);
+  }, [poolid]);
 
   //Extra row cards for basic pool data
   const InfoCard = () => {
@@ -353,3 +353,4 @@ const Stats = (props) => {
 };
 
 export default withSnackbar(Stats);
+
