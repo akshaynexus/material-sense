@@ -34,8 +34,10 @@ const styles = (theme) => ({
   },
   baseline: {
     alignSelf: "baseline",
-    marginLeft: theme.spacing(4),
-    display: "flex",
+    marginLeft: theme.spacing(2),
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+    gridAutoFlow: "row",
     width: "90%",
     [theme.breakpoints.down("sm")]: {
       display: "grid",

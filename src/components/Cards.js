@@ -159,11 +159,11 @@ const Cards = (props) => {
       <div>
         <Grid container justify="center">
           <Grid
-            spacing={10}
+            spacing={2}
             alignItems="center"
             justify="center"
             container
-            className={classes.grid}
+
           >
             <Grid item xs={12}>
 
