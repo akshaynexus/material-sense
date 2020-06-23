@@ -59,20 +59,13 @@ const Cards = (props) => {
   }, [])
 
   const buildCoinCards = () => {
-    // console.log("build coins called");
-    // console.log("length : " + filteredPoolData.length);
-    // console.log("Selected Index : " + selectedIndex);
-    // console.log("Algo Length : " + algorithms.length);
+
 
     try {
 
       let searchFilteredPoolData = []
 
       if (searchInput !== "") {
-        // var tempList = filteredPoolData
-        // searchFilteredPoolData = tempList.filter(function (coin) {
-        //   return coin.coin.name === searchInput;
-        // })
 
         let newSearchFilteredPoolData = filteredPoolData.filter((d) => {
           console.log(d)
@@ -150,7 +143,7 @@ const Cards = (props) => {
     buildCoinCards()
   }
 
-  const classes = styles();
+  // const classes = styles();
   // const currentPath = props.location.pathname;
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { Route, HashRouter, Switch } from "react-router-dom";
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -28,7 +28,7 @@ import Miners from "./components/Miners";
 import Payments from "./components/Payments";
 import ConnectComponent from "./components/ConnectComponent";
 
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Link as MaterialLink } from "@material-ui/core";
 
 import SvgIcon from "@material-ui/core/SvgIcon";

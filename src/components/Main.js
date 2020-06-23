@@ -94,7 +94,7 @@ class Main extends Component {
     getStartedDialog: false,
   };
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   openDialog = (event) => {
     this.setState({ learnMoredialog: true });

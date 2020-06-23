@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
-// import Topbar from "./Topbar";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -483,7 +482,6 @@ const Dashboard = (props) => {
     return (
         <React.Fragment>
             <CssBaseline />
-            {/* <Topbar currentPath={"/dashboard"} /> */}
             <div className="container_main">
                 {loading.loading ? (
                     <Loading
@@ -495,7 +493,6 @@ const Dashboard = (props) => {
                         <Grid container spacing={2} direction="row">
                             {WalletCard()}
                             {InfoCard()}
-                            {/* {CardChart(minersHashrates, "Miners Hashrate", hashformat(minerHashrateTotal, 2, "H/s"))} */}
                             <Grid container item xs={12} md={12}>
                                 <CardChart
                                     data={minersHashrates}

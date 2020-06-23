@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
-// import Topbar from "./Topbar";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
@@ -116,10 +115,6 @@ const Payments = (props) => {
                 .then(function (response) {
                     // handle success
                     data = response.data;
-                    // Get total posts value from the header.
-
-                    // let lastTransactionData = "";
-                    // let amount = 0.0;
 
                     if (data.length === 0) setHasMoreData(false);
 
@@ -135,27 +130,12 @@ const Payments = (props) => {
                         ]);
                         setTransactionConfirmations((transactionConfirmation) => [...new Set([...transactionConfirmation, d.transactionConfirmationData])]);
 
-
-
-                        // setAmounts(amount => [...amount, d.amount])
-                        // if (index === 0) lastTransactionData = d.transactionConfirmationData
-                        // console.log("Last transaction data : " + lastTransactionData + "Amount : " + amount + "index :" + index)
-                        // if (lastTransactionData === d.transactionConfirmationData) {
-                        //     amount += d.amount;
-                        // } else {
-                        //     setAmounts(amounts => [...amounts, amount])
-                        //     amount = 0.0;
-                        // }
-                        // lastTransactionData = d.transactionConfirmationData;
-
                         return true;
                     });
 
                     props.enqueueSnackbar("Successfully fetched the table data.", {
                         variant: "success",
                     });
-
-                    // setDataFetched(true);
 
                     setLoading({ loading: false, loadingtext: "" });
 
@@ -178,7 +158,6 @@ const Payments = (props) => {
         try {
             let data;
 
-            // console.log("page number " + page);
             setLoading({ loading: true, loadingtext: "Loading more rows" });
             const nextPage = page + 1;
             console.log("page to load" + nextPage);
@@ -192,10 +171,6 @@ const Payments = (props) => {
                 .then((response) => {
                     // handle success
                     data = response.data;
-                    // Get total posts value from the header.
-
-                    // let lastTransactionData = "";
-                    // let amount = 0.0;
                     if (data.length === 0) setHasMoreData(false);
 
                     data.map((d, index) => {
@@ -222,10 +197,6 @@ const Payments = (props) => {
                     setLoading({ loading: false, loadingtext: "" });
                     setDataFetched(true);
 
-                    // props.enqueueSnackbar("Successfully fetched the table data.", {
-                    //     variant: "success",
-                    // });
-
                     return true;
                 })
                 .catch(function (error) {
@@ -236,23 +207,8 @@ const Payments = (props) => {
                 });
 
         } catch (e) {
-
         }
-
-
     };
-
-    // window.onscroll = debounce(() => {
-    //     if (
-    //         window.innerHeight + document.documentElement.scrollTop
-    //         === document.documentElement.offsetHeight
-    //     ) {
-    //         // Do awesome stuff like loading more content!
-    //         console.log("load new items");
-    //         setLoading({ loading: true, loadingtext: "Loading more data" });
-    //         loadNextPage()
-    //     }
-    // }, 100);
 
     useEffect(() => {
 
@@ -261,7 +217,6 @@ const Payments = (props) => {
             transactionConfirmations
                 .map((transactionConfirmation) => {
                     let tempAmount = 0.0;
-                    // console.log("pre temporary amount " + tempAmount)
 
                     setTimeout(() => {
                         paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
@@ -269,10 +224,9 @@ const Payments = (props) => {
                                 tempAmount += paymentTableRow.amount
                                 return true;
                             })
-                        // console.log("post temporary amount " + tempAmount)
-                        // setAmounts((amounts) => [...amounts, tempAmount]);
+
                         setAmounts((amounts) => ([...amounts, tempAmount]));
-                        // console.log(amounts)
+
                     })
 
 
@@ -377,35 +331,6 @@ const Payments = (props) => {
                                             </>
                                         )}
                                 </List>}
-
-                            {/* {transactionConfirmations
-                                    .map((transactionConfirmation, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell align="center">
-                                                {transactionConfirmation}
-                                            </TableCell>
-
-                                            {paymentTableRows.filter(paymentTableRow => (paymentTableRow.confirmation === transactionConfirmation))
-                                                .map((paymentTableRow, i) => (
-
-                                                    <TableRow key={i}>
-                                                        <TableCell align="center">
-                                                            {paymentTableRow.sent}
-                                                        </TableCell>
-                                                        <TableCell align="center">
-                                                            {paymentTableRow.address}
-                                                        </TableCell>
-                                                        <TableCell align="center">
-                                                            {paymentTableRow.amount}
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))}
-
-                                        </TableRow>
-                                    ))} */}
-
-
-
 
                         </CardContent>
                     </Card >

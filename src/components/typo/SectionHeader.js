@@ -23,7 +23,7 @@ const SectionHeader = ({ classes, title, subtitle, val, getAlgoIndex }) => {
 
   return (
     <Grid container spacing={1} justify="center">
-      <Grid item xs={9} spacing={1}>
+      <Grid item xs={9}>
         <div className={classes.sectionContainer}>
           <Typography variant="subtitle1" className={classes.title}>
             {title}
@@ -33,7 +33,7 @@ const SectionHeader = ({ classes, title, subtitle, val, getAlgoIndex }) => {
           </Typography>
         </div>
       </Grid>
-      <Grid item xs={3} spacing={1}>
+      <Grid item xs={3} >
         <div align="right">
           <FormControl align="left" className={classes.sectionContainer}>
             <InputLabel id="demo-simple-select-label">Algo Type</InputLabel>
