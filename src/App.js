@@ -8,7 +8,6 @@ import { SnackbarProvider } from "notistack";
 
 // import SideDrawer from './SideDrawer';
 
-
 const theme = createMuiTheme({
   palette: {
     secondary: {
@@ -33,7 +32,7 @@ const theme_two = createMuiTheme({
     primary: {
       main: blue[800],
     },
-    type: "light",
+    type: "dark",
   },
   typography: {
     // Use the system font instead of the default Roboto font.
@@ -42,11 +41,9 @@ const theme_two = createMuiTheme({
 });
 
 class App extends Component {
-
   render() {
-
     // localStorage.setItem('isDarkTheme', JSON.stringify(true));
-    const isDarkTheme = JSON.parse(localStorage.getItem('isDarkTheme', "true"));
+    const isDarkTheme = JSON.parse(localStorage.getItem("isDarkTheme", "true"));
 
     // let isDarkTheme = false;
 
@@ -58,7 +55,7 @@ class App extends Component {
             <Routes />
           </SnackbarProvider>
         </ThemeProvider>
-      </div >
+      </div>
     );
   }
 }

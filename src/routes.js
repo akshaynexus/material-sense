@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
+import React, { useState } from "react";
+import clsx from "clsx";
 import { Route, HashRouter, Switch } from "react-router-dom";
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import BrightnessMediumIcon from '@material-ui/icons/BrightnessMedium';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import List from "@material-ui/core/List";
+import Typography from "@material-ui/core/Typography";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import BrightnessMediumIcon from "@material-ui/icons/BrightnessMedium";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
 
 import Dashboard from "./components/Dashboard";
 import Wizard from "./components/Wizard";
@@ -39,17 +39,17 @@ const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
+    display: "flex",
   },
   appBar: {
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   hide: {
-    display: 'none',
+    display: "none",
   },
   drawer: {
     width: drawerWidth,
@@ -69,24 +69,24 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
   },
   drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: -drawerWidth,
   },
   contentShift: {
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -103,7 +103,6 @@ function CustomIcon(data) {
 }
 
 export default function PersistentDrawerRight() {
-
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -124,11 +123,12 @@ export default function PersistentDrawerRight() {
   };
 
   const changeTheme = () => {
-
-    const currentTheme = JSON.parse(localStorage.getItem('isDarkTheme', "true"));
-    localStorage.setItem('isDarkTheme', JSON.stringify(!currentTheme));
+    const currentTheme = JSON.parse(
+      localStorage.getItem("isDarkTheme", "true")
+    );
+    localStorage.setItem("isDarkTheme", JSON.stringify(!currentTheme));
     window.location.reload();
-  }
+  };
 
   return (
     <>
@@ -153,14 +153,23 @@ export default function PersistentDrawerRight() {
                 <MenuIcon />
               </IconButton>
 
-              <Typography variant="h6" noWrap className={classes.title} style={{ marginLeft: '20px', marginRight: '20px' }}>
+              <Typography
+                variant="h6"
+                noWrap
+                className={classes.title}
+                style={{ marginLeft: "20px", marginRight: "20px" }}
+              >
                 Mineit Pool
-                </Typography>
+              </Typography>
 
-              <IconButton edge="start" onClick={changeTheme} color="inherit" aria-label="menu">
+              <IconButton
+                edge="start"
+                onClick={changeTheme}
+                color="inherit"
+                aria-label="menu"
+              >
                 <BrightnessMediumIcon />
               </IconButton>
-
             </Toolbar>
           </AppBar>
           <Drawer
@@ -174,12 +183,15 @@ export default function PersistentDrawerRight() {
           >
             <div className={classes.drawerHeader}>
               <IconButton onClick={handleDrawerClose}>
-                {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                {theme.direction === "rtl" ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )}
               </IconButton>
             </div>
             <Divider />
             <List>
-
               {Menu.map((item, index) => (
                 <ListItem
                   component={item.external ? MaterialLink : Link}
@@ -189,20 +201,20 @@ export default function PersistentDrawerRight() {
                     item.external
                       ? null
                       : {
-                        pathname: item.pathname
-                      }
+                          pathname: item.pathname,
+                        }
                   }
                   button
                   key={item.label}
                 >
                   {/* <ListItemIcon><HomeIcon /></ListItemIcon> */}
-                  <ListItemIcon><CustomIcon path={item.icon} /></ListItemIcon>
+                  <ListItemIcon>
+                    <CustomIcon path={item.icon} />
+                  </ListItemIcon>
                   <ListItemText primary={item.label} />
                 </ListItem>
               ))}
-
             </List>
-
           </Drawer>
           <main
             className={clsx(classes.content, {
@@ -223,10 +235,8 @@ export default function PersistentDrawerRight() {
               <Route exact path="/cards" component={Cards} />
             </Switch>
           </main>
-
         </div>
       </HashRouter>
     </>
   );
 }
-

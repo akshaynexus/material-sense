@@ -19,207 +19,207 @@ import Menu from "./Menu";
 const logo = require("../images/logo.svg");
 
 const styles = (theme) => ({
-    appBar: {
-        position: "relative",
+  appBar: {
+    position: "relative",
+  },
+  inline: {
+    display: "inline",
+  },
+  flex: {
+    display: "flex",
+    [theme.breakpoints.down("sm")]: {
+      display: "flex",
+      alignItems: "center",
     },
-    inline: {
-        display: "inline",
+  },
+  link: {
+    textDecoration: "none",
+    color: "inherit",
+  },
+  productLogo: {
+    display: "inline-block",
+    // borderLeft: `1px solid ${theme.palette.grey["A100"]}`,
+    marginLeft: 32,
+    paddingLeft: 24,
+    [theme.breakpoints.up("md")]: {
+      paddingTop: "1.5em",
     },
-    flex: {
-        display: "flex",
-        [theme.breakpoints.down("sm")]: {
-            display: "flex",
-            alignItems: "center",
-        },
+  },
+  tagline: {
+    display: "inline-block",
+    marginLeft: 10,
+    [theme.breakpoints.up("md")]: {
+      paddingTop: "0.8em",
     },
-    link: {
-        textDecoration: "none",
-        color: "inherit",
+  },
+  iconContainer: {
+    display: "none",
+    [theme.breakpoints.down("sm")]: {
+      display: "block",
     },
-    productLogo: {
-        display: "inline-block",
-        // borderLeft: `1px solid ${theme.palette.grey["A100"]}`,
-        marginLeft: 32,
-        paddingLeft: 24,
-        [theme.breakpoints.up("md")]: {
-            paddingTop: "1.5em",
-        },
+  },
+  iconButton: {
+    float: "right",
+  },
+  tabContainer: {
+    marginLeft: 32,
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
     },
-    tagline: {
-        display: "inline-block",
-        marginLeft: 10,
-        [theme.breakpoints.up("md")]: {
-            paddingTop: "0.8em",
-        },
-    },
-    iconContainer: {
-        display: "none",
-        [theme.breakpoints.down("sm")]: {
-            display: "block",
-        },
-    },
-    iconButton: {
-        float: "right",
-    },
-    tabContainer: {
-        marginLeft: 32,
-        [theme.breakpoints.down("sm")]: {
-            display: "none",
-        },
-    },
-    tabItem: {
-        paddingTop: 20,
-        paddingBottom: 20,
-        minWidth: "auto",
-    },
+  },
+  tabItem: {
+    paddingTop: 20,
+    paddingBottom: 20,
+    minWidth: "auto",
+  },
 });
 
 class Topbar extends Component {
-    state = {
-        value: 0,
-        menuDrawer: false,
-    };
+  state = {
+    value: 0,
+    menuDrawer: false,
+  };
 
-    handleChange = (event, value) => {
-        this.setState({ value });
-    };
+  handleChange = (event, value) => {
+    this.setState({ value });
+  };
 
-    mobileMenuOpen = (event) => {
-        this.setState({ menuDrawer: true });
-    };
+  mobileMenuOpen = (event) => {
+    this.setState({ menuDrawer: true });
+  };
 
-    mobileMenuClose = (event) => {
-        this.setState({ menuDrawer: false });
-    };
+  mobileMenuClose = (event) => {
+    this.setState({ menuDrawer: false });
+  };
 
-    componentDidMount() {
-        window.scrollTo(0, 0);
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
+
+  current = () => {
+    if (this.props.currentPath === "/home") {
+      return 0;
     }
+    if (this.props.currentPath.includes("/stats")) {
+      return 1;
+    }
+    if (this.props.currentPath.includes("/dashboard")) {
+      return 2;
+    }
+    if (this.props.currentPath === "/blocks") {
+      return 3;
+    }
+    if (this.props.currentPath === "/miners") {
+      return 4;
+    }
+    if (this.props.currentPath === "/payments") {
+      return 5;
+    }
+    if (this.props.currentPath === "/signup") {
+      return 6;
+    }
+    if (this.props.currentPath === "/wizard") {
+      return 7;
+    }
+    if (this.props.currentPath === "/cards") {
+      return 8;
+    }
+  };
 
-    current = () => {
-        if (this.props.currentPath === "/home") {
-            return 0;
-        }
-        if (this.props.currentPath.includes("/stats")) {
-            return 1;
-        }
-        if (this.props.currentPath.includes("/dashboard")) {
-            return 2;
-        }
-        if (this.props.currentPath === "/blocks") {
-            return 3;
-        }
-        if (this.props.currentPath === "/miners") {
-            return 4;
-        }
-        if (this.props.currentPath === "/payments") {
-            return 5;
-        }
-        if (this.props.currentPath === "/signup") {
-            return 6;
-        }
-        if (this.props.currentPath === "/wizard") {
-            return 7;
-        }
-        if (this.props.currentPath === "/cards") {
-            return 8;
-        }
-    };
+  render() {
+    const { classes } = this.props;
 
-    render() {
-        const { classes } = this.props;
+    return (
+      <AppBar position="static" color="default" className={classes.appBar}>
+        <Toolbar>
+          <Grid container spacing={1} alignItems="baseline">
+            <Grid item xs={7} className={classes.flex}>
+              <div className={classes.iconContainer}>
+                <IconButton
+                  onClick={this.mobileMenuOpen}
+                  className={classes.iconButton}
+                  color="inherit"
+                  aria-label="Menu"
+                >
+                  <MenuIcon />
+                </IconButton>
+              </div>
+              <div className={classes.inline}>
+                <Typography variant="h6" color="inherit" noWrap>
+                  <Link to="/" className={classes.link}>
+                    <img width={20} src={logo} alt="" />
+                    <span className={classes.tagline}>Mineit Pool</span>
+                  </Link>
+                </Typography>
+              </div>
 
-        return (
-            <AppBar position="static" color="default" className={classes.appBar}>
-                <Toolbar>
-                    <Grid container spacing={1} alignItems="baseline">
-                        <Grid item xs={7} className={classes.flex}>
-                            <div className={classes.iconContainer}>
-                                <IconButton
-                                    onClick={this.mobileMenuOpen}
-                                    className={classes.iconButton}
-                                    color="inherit"
-                                    aria-label="Menu"
-                                >
-                                    <MenuIcon />
-                                </IconButton>
-                            </div>
-                            <div className={classes.inline}>
-                                <Typography variant="h6" color="inherit" noWrap>
-                                    <Link to="/" className={classes.link}>
-                                        <img width={20} src={logo} alt="" />
-                                        <span className={classes.tagline}>Mineit Pool</span>
-                                    </Link>
-                                </Typography>
-                            </div>
-
-                            {!this.props.noTabs && (
-                                <React.Fragment>
-                                    {/* <div className={classes.productLogo}>
+              {!this.props.noTabs && (
+                <React.Fragment>
+                  {/* <div className={classes.productLogo}>
                     <Typography>Altcoin pool UI</Typography>
                   </div> */}
-                                    <div className={classes.tabContainer}>
-                                        <SwipeableDrawer
-                                            anchor="left"
-                                            open={this.state.menuDrawer}
-                                            onClose={this.mobileMenuClose}
-                                            onOpen={this.mobileMenuOpen}
-                                        >
-                                            <AppBar title="Menu" />
-                                            <List>
-                                                {Menu.map((item, index) => (
-                                                    <ListItem
-                                                        component={item.external ? MaterialLink : Link}
-                                                        href={item.external ? item.pathname : null}
-                                                        to={
-                                                            item.external
-                                                                ? null
-                                                                : {
-                                                                    pathname: item.pathname,
-                                                                    search: this.props.location.search,
-                                                                }
-                                                        }
-                                                        button
-                                                        key={item.label}
-                                                    >
-                                                        <ListItemText primary={item.label} />
-                                                    </ListItem>
-                                                ))}
-                                            </List>
-                                        </SwipeableDrawer>
-                                        <Tabs
-                                            value={this.current() || this.state.value}
-                                            indicatorColor="primary"
-                                            textColor="primary"
-                                            onChange={this.handleChange}
-                                        >
-                                            {Menu.map((item, index) => (
-                                                <Tab
-                                                    key={index}
-                                                    component={item.external ? MaterialLink : Link}
-                                                    href={item.external ? item.pathname : null}
-                                                    to={
-                                                        item.external
-                                                            ? null
-                                                            : {
-                                                                pathname: item.pathname,
-                                                                search: this.props.location.search,
-                                                            }
-                                                    }
-                                                    classes={{ root: classes.tabItem }}
-                                                    label={item.label}
-                                                />
-                                            ))}
-                                        </Tabs>
-                                    </div>
-                                </React.Fragment>
-                            )}
-                        </Grid>
-                    </Grid>
-                </Toolbar>
-            </AppBar>
-        );
-    }
+                  <div className={classes.tabContainer}>
+                    <SwipeableDrawer
+                      anchor="left"
+                      open={this.state.menuDrawer}
+                      onClose={this.mobileMenuClose}
+                      onOpen={this.mobileMenuOpen}
+                    >
+                      <AppBar title="Menu" />
+                      <List>
+                        {Menu.map((item, index) => (
+                          <ListItem
+                            component={item.external ? MaterialLink : Link}
+                            href={item.external ? item.pathname : null}
+                            to={
+                              item.external
+                                ? null
+                                : {
+                                    pathname: item.pathname,
+                                    search: this.props.location.search,
+                                  }
+                            }
+                            button
+                            key={item.label}
+                          >
+                            <ListItemText primary={item.label} />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </SwipeableDrawer>
+                    <Tabs
+                      value={this.current() || this.state.value}
+                      indicatorColor="primary"
+                      textColor="primary"
+                      onChange={this.handleChange}
+                    >
+                      {Menu.map((item, index) => (
+                        <Tab
+                          key={index}
+                          component={item.external ? MaterialLink : Link}
+                          href={item.external ? item.pathname : null}
+                          to={
+                            item.external
+                              ? null
+                              : {
+                                  pathname: item.pathname,
+                                  search: this.props.location.search,
+                                }
+                          }
+                          classes={{ root: classes.tabItem }}
+                          label={item.label}
+                        />
+                      ))}
+                    </Tabs>
+                  </div>
+                </React.Fragment>
+              )}
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
+    );
+  }
 }
 
 export default withRouter(withStyles(styles)(Topbar));

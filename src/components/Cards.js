@@ -8,7 +8,7 @@ import SectionHeader from "./typo/SectionHeader";
 import Loading from "./common/Loading";
 import config from "../config.js";
 import hashformat from "./common/hashutil.js";
-import TextField from '@material-ui/core/TextField';
+import TextField from "@material-ui/core/TextField";
 
 import useSWR from "swr";
 import axios from "axios";
@@ -20,11 +20,8 @@ const styles = (theme) => ({
 });
 
 const Cards = (props) => {
-
   const swrUrl = config.poolapiurl + "pools/";
-  const { data } = useSWR(swrUrl, (url) =>
-    axios(url).then((r) => r.data)
-  );
+  const { data } = useSWR(swrUrl, (url) => axios(url).then((r) => r.data));
 
   const [loading] = useState({
     loading: true,
@@ -36,50 +33,42 @@ const Cards = (props) => {
 
   const [selectedIndex, setSelectedIndex] = useState();
 
-  const [searchInput, setSearchInput] = useState("")
+  const [searchInput, setSearchInput] = useState("");
 
   let filteredPoolData = data?.pools;
 
   const handleChange = (e) => {
-    console.log(e.target.value)
-    setSelectedIndex(e.target.value)
-  }
+    console.log(e.target.value);
+    setSelectedIndex(e.target.value);
+  };
 
   useEffect(() => {
     const objectArray = Object.entries(config.algos);
 
     objectArray.forEach(([key, value]) => {
       // console.log(key)
-      console.log(value)
-      setAlgorithms(algorithms => [...algorithms, value + ","]);
+      console.log(value);
+      setAlgorithms((algorithms) => [...algorithms, value + ","]);
     });
 
-    setSelectedIndex(0)
-
-  }, [])
+    setSelectedIndex(0);
+  }, []);
 
   const buildCoinCards = () => {
-
-
     try {
-
-      let searchFilteredPoolData = []
+      let searchFilteredPoolData = [];
 
       if (searchInput !== "") {
-
         let newSearchFilteredPoolData = filteredPoolData.filter((d) => {
-          console.log(d)
+          console.log(d);
           let searchValue = d.coin.name.toLowerCase();
           return searchValue.indexOf(searchInput) !== -1;
         });
 
-        searchFilteredPoolData = newSearchFilteredPoolData
-
-
+        searchFilteredPoolData = newSearchFilteredPoolData;
       } else {
-        searchFilteredPoolData = filteredPoolData
+        searchFilteredPoolData = filteredPoolData;
       }
-
 
       if (selectedIndex === 0) {
         return searchFilteredPoolData.map((coin, index) => (
@@ -98,50 +87,47 @@ const Cards = (props) => {
           </div>
         ));
       } else {
-        return searchFilteredPoolData.filter(coin => algorithms[selectedIndex - 1].indexOf(coin.coin.algorithm.toLowerCase()) !== -1).map((coin, index) => (
-          <div key={index}>
-            <CardCoin
-              coin={coin.coin.name}
-              ticker={coin.coin.type}
-              algo={coin.coin.algorithm}
-              minercount={coin.poolStats.connectedMiners}
-              poolhashrate={hashformat(coin.poolStats.poolHashrate, 2, "H/s")}
-              diff={hashformat(coin.networkStats.networkDifficulty, 2, "")}
-              fee={coin.poolFeePercent + "%"}
-              poolid={coin.id}
-            />
-            <br />
-          </div>
-        ));
+        return searchFilteredPoolData
+          .filter(
+            (coin) =>
+              algorithms[selectedIndex - 1].indexOf(
+                coin.coin.algorithm.toLowerCase()
+              ) !== -1
+          )
+          .map((coin, index) => (
+            <div key={index}>
+              <CardCoin
+                coin={coin.coin.name}
+                ticker={coin.coin.type}
+                algo={coin.coin.algorithm}
+                minercount={coin.poolStats.connectedMiners}
+                poolhashrate={hashformat(coin.poolStats.poolHashrate, 2, "H/s")}
+                diff={hashformat(coin.networkStats.networkDifficulty, 2, "")}
+                fee={coin.poolFeePercent + "%"}
+                poolid={coin.id}
+              />
+              <br />
+            </div>
+          ));
       }
-
-
     } catch (e) {
-
       const objectArray = Object.entries(config.algos);
       const temp = [];
       objectArray.forEach(([key, value]) => {
-        temp.push(value + ",")
+        temp.push(value + ",");
       });
 
       setAlgorithms(temp);
-      setSelectedIndex(0)
-
+      setSelectedIndex(0);
     } finally {
-
     }
-
-
-
-
   };
-
 
   const onSearchChange = (e) => {
     setSearchInput(e.target.value.toLowerCase());
     // Filter Search
-    buildCoinCards()
-  }
+    buildCoinCards();
+  };
 
   // const classes = styles();
   // const currentPath = props.location.pathname;
@@ -151,15 +137,8 @@ const Cards = (props) => {
       <CssBaseline />
       <div>
         <Grid container justify="center">
-          <Grid
-            spacing={2}
-            alignItems="center"
-            justify="center"
-            container
-
-          >
+          <Grid spacing={2} alignItems="center" justify="center" container>
             <Grid item xs={12}>
-
               <SectionHeader
                 title="Coins"
                 subtitle="Available coins to mine"
@@ -168,7 +147,15 @@ const Cards = (props) => {
                 style={{ padding: "10px" }}
               />
 
-              <TextField id="outlined-search" value={searchInput} onChange={(e) => onSearchChange(e)} label="Search Coin" type="search" variant="outlined" style={{ marginBottom: '25px', width: '400px', color: 'white' }} />
+              <TextField
+                id="outlined-search"
+                value={searchInput}
+                onChange={(e) => onSearchChange(e)}
+                label="Search Coin"
+                type="search"
+                variant="outlined"
+                style={{ marginBottom: "25px", width: "400px", color: "white" }}
+              />
               <br />
               {!data && algorithms ? (
                 <Loading
@@ -177,8 +164,8 @@ const Cards = (props) => {
                   loadingtext={"Loading coin data"}
                 />
               ) : (
-                  buildCoinCards()
-                )}
+                buildCoinCards()
+              )}
             </Grid>
           </Grid>
         </Grid>
