@@ -67,8 +67,7 @@ const Dashboard = (props) => {
     // Name of the chain, getting the value from the router parameter.
 
     const [address, setAddress] = React.useState(
-        localStorage.getItem("address") || ""
-    );
+        localStorage.getItem("address") || "");
 
     const [workers, setWorkers] = useState([]);
 
@@ -99,6 +98,11 @@ const Dashboard = (props) => {
         error: "",
     });
 
+    const loadWalletAndPaymentData = () => {
+        loadWalletData();
+        loadPaymentData();
+    }
+
     const loadWalletData = async () => {
 
         setWalletData({
@@ -113,6 +117,7 @@ const Dashboard = (props) => {
 
         let data;
         if (address === "") {
+
         } else {
             setLoading({ loading: true, loadingtext: "Loading wallet data" });
             await axios
@@ -207,11 +212,16 @@ const Dashboard = (props) => {
 
         let data;
         if (address === "") {
+
+            props.enqueueSnackbar("Enter Address!", {
+                variant: "warning",
+            });
+
         } else {
             setPaymentRows([])
             setLoading({ loading: true, loadingtext: "Loading payment data" });
 
-            https://mineit.io/api/pools/indexchain/miners/iBKhEDqxg1SxNgWu6S3sqxXhJ6Mu8bm5Ze/payments
+            // https://mineit.io/api/pools/indexchain/miners/iBKhEDqxg1SxNgWu6S3sqxXhJ6Mu8bm5Ze/payments
 
             await axios
                 .get(config.poolapiurl + `pools/${poolid}/miners/${address}/payments`)
@@ -302,7 +312,7 @@ const Dashboard = (props) => {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={loadWalletData}
+                                onClick={loadWalletAndPaymentData}
                                 style={{ width: "25%", height: "20%" }}
                             >
                                 Load wallet
