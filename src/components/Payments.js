@@ -107,7 +107,7 @@ const Payments = (props) => {
       await axios
         .get(
           config.poolapiurl +
-            `pools/${poolid}/payments?page=${page}&pageSize=75`
+          `pools/${poolid}/payments?page=${page}&pageSize=75`
         )
         .then(function (response) {
           // handle success
@@ -115,31 +115,41 @@ const Payments = (props) => {
 
           if (data.length === 0) setHasMoreData(false);
 
-          data.map((d, index) => {
-            setPaymentTableRows((paymentTableRow) => [
-              ...paymentTableRow,
-              {
-                sent: formatDate(d.created),
-                address: d.address,
-                amount: d.amount,
-                confirmation: d.transactionConfirmationData,
-              },
-            ]);
-            setTransactionConfirmations((transactionConfirmation) => [
-              ...new Set([
-                ...transactionConfirmation,
-                d.transactionConfirmationData,
-              ]),
-            ]);
-
-            return true;
-          });
+          setLoading({ loading: false, loadingtext: "" });
 
           props.enqueueSnackbar("Successfully fetched the table data.", {
             variant: "success",
           });
 
-          setLoading({ loading: false, loadingtext: "" });
+
+          data.map((d, index) => {
+
+            setTimeout(() => {
+              setPaymentTableRows((paymentTableRow) => [
+                ...paymentTableRow,
+                {
+                  sent: formatDate(d.created),
+                  address: d.address,
+                  amount: d.amount,
+                  confirmation: d.transactionConfirmationData,
+                },
+              ]);
+              setTransactionConfirmations((transactionConfirmation) => [
+                ...new Set([
+                  ...transactionConfirmation,
+                  d.transactionConfirmationData,
+                ]),
+              ]);
+            }, 1000);
+
+
+
+            return true;
+          });
+
+
+
+
 
           return true;
         })
@@ -166,7 +176,7 @@ const Payments = (props) => {
       await axios
         .get(
           config.poolapiurl +
-            `pools/${poolid}/payments?page=${nextPage}&pageSize=75`
+          `pools/${poolid}/payments?page=${nextPage}&pageSize=75`
         )
         .then((response) => {
           // handle success
@@ -207,7 +217,7 @@ const Payments = (props) => {
           });
           setLoading({ loading: false, loadingtext: "" });
         });
-    } catch (e) {}
+    } catch (e) { }
   };
 
   useEffect(() => {
@@ -269,91 +279,91 @@ const Payments = (props) => {
               {!loading ? (
                 "No Data"
               ) : (
-                <List>
-                  {transactionConfirmations.map(
-                    (transactionConfirmation, index) => (
-                      <>
-                        <Divider />
+                  <List>
+                    {transactionConfirmations.map(
+                      (transactionConfirmation, index) => (
+                        <>
+                          <Divider />
 
-                        <ExpansionPanel>
-                          <ExpansionPanelSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1c-content"
-                            id="panel1c-header"
-                          >
-                            <div>
-                              <Typography className={classes.heading}>
-                                {transactionConfirmation}
-                              </Typography>
-                            </div>
-                          </ExpansionPanelSummary>
-                          <ExpansionPanelDetails
-                            className={classes.detailsview}
-                          >
-                            <div>
-                              <Typography
-                                variant="h6"
-                                align="left"
-                                style={{ marginLeft: "100px", padding: "5px" }}
-                              >
-                                Total Paid : {amounts[index]}
-                              </Typography>
-                            </div>
-                            <div
-                              className={clsx(classes.column, classes.helper)}
+                          <ExpansionPanel>
+                            <ExpansionPanelSummary
+                              expandIcon={<ExpandMoreIcon />}
+                              aria-controls="panel1c-content"
+                              id="panel1c-header"
                             >
-                              <Table
-                                className={classes.table}
-                                aria-label="table"
-                              >
-                                <TableHead
-                                  className={classes.tableHeader}
-                                  align="center"
-                                  style={{
-                                    fontSize: "20px",
-                                    fontWeight: "bold",
-                                  }}
+                              <div>
+                                <Typography className={classes.heading}>
+                                  {transactionConfirmation}
+                                </Typography>
+                              </div>
+                            </ExpansionPanelSummary>
+                            <ExpansionPanelDetails
+                              className={classes.detailsview}
+                            >
+                              <div>
+                                <Typography
+                                  variant="h6"
+                                  align="left"
+                                  style={{ marginLeft: "100px", padding: "5px" }}
                                 >
-                                  <TableRow align="center">
-                                    <TableCell align="center">Date</TableCell>
-                                    <TableCell align="center">
-                                      Address
+                                  Total Paid : {amounts[index]}
+                                </Typography>
+                              </div>
+                              <div
+                                className={clsx(classes.column, classes.helper)}
+                              >
+                                <Table
+                                  className={classes.table}
+                                  aria-label="table"
+                                >
+                                  <TableHead
+                                    className={classes.tableHeader}
+                                    align="center"
+                                    style={{
+                                      fontSize: "20px",
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    <TableRow align="center">
+                                      <TableCell align="center">Date</TableCell>
+                                      <TableCell align="center">
+                                        Address
                                     </TableCell>
-                                    <TableCell align="center">
-                                      Paid Amount
+                                      <TableCell align="center">
+                                        Paid Amount
                                     </TableCell>
-                                  </TableRow>
-                                </TableHead>
-                                {paymentTableRows
-                                  .filter(
-                                    (paymentTableRow) =>
-                                      paymentTableRow.confirmation ===
-                                      transactionConfirmation
-                                  )
-                                  .map((paymentTableRow, i) => (
-                                    <>
-                                      <TableRow key={i}>
-                                        <TableCell align="center">
-                                          {paymentTableRow.sent}
-                                        </TableCell>
-                                        <TableCell align="center">
-                                          {paymentTableRow.address}
-                                        </TableCell>
-                                        <TableCell align="center">
-                                          {paymentTableRow.amount}
-                                        </TableCell>
-                                      </TableRow>
-                                    </>
-                                  ))}
-                              </Table>
-                            </div>
-                          </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                      </>
-                    )
-                  )}
-                </List>
-              )}
+                                    </TableRow>
+                                  </TableHead>
+                                  {paymentTableRows
+                                    .filter(
+                                      (paymentTableRow) =>
+                                        paymentTableRow.confirmation ===
+                                        transactionConfirmation
+                                    )
+                                    .map((paymentTableRow, i) => (
+                                      <>
+                                        <TableRow key={i}>
+                                          <TableCell align="center">
+                                            {paymentTableRow.sent}
+                                          </TableCell>
+                                          <TableCell align="center">
+                                            {paymentTableRow.address}
+                                          </TableCell>
+                                          <TableCell align="center">
+                                            {paymentTableRow.amount}
+                                          </TableCell>
+                                        </TableRow>
+                                      </>
+                                    ))}
+                                </Table>
+                              </div>
+                            </ExpansionPanelDetails>
+                          </ExpansionPanel>
+                        </>
+                      )
+                    )}
+                  </List>
+                )}
             </CardContent>
           </Card>
         </Grid>
